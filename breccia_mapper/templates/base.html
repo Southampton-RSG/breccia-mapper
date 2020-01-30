@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+{% load bootstrap4 %}
+{% if 'use_i18n'|bootstrap_setting %}
+    {% load i18n %}
+    {% get_current_language as LANGUAGE_CODE %}
+{% endif %}
+<html lang="{{ LANGUAGE_CODE|default:'en_us' }}">
+
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    {% bootstrap_css %}
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/fontawesome.min.css"
+          integrity="sha256-/sdxenK1NDowSNuphgwjv8wSosSNZB0t5koXqd7XqOI="
+          crossorigin="anonymous" />
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/solid.min.css"
+          integrity="sha256-8DcgqUGhWHHsTLj1qcGr0OuPbKkN1RwDjIbZ6DKh/RA="
+          crossorigin="anonymous" />
+
+    {% load staticfiles %}
+    <link rel="stylesheet"
+          href="{% static 'css/global.css' %}">
+
+    {% if 'javascript_in_head'|bootstrap_setting %}
+        {% if 'include_jquery'|bootstrap_setting %}
+            {# jQuery JavaScript if it is in head #}
+            {% bootstrap_jquery jquery='include_jquery'|bootstrap_setting %}
+        {% endif %}
+
+        {# Bootstrap JavaScript if it is in head #}
+        {% bootstrap_javascript %}
+    {% endif %}
+
+    {% block extra_head %}{% endblock %}
+
+</head>
+
+<body>
+<div class="content" style="display: flex; flex-direction: column">
+    {% block navbar %}
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a href="{% url 'index' %}" class="navbar-brand">
+                    {{ settings.PROJECT_SHORT_NAME }}
+                </a>
+
+                <button type="button" class="navbar-toggler"
+                        data-toggle="collapse" data-target="#navbarCollapse"
+                        aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse" id="navbarCollapse">
+                    <ul class="navbar-nav mt-2 mt-lg-0">
+                        {% if request.user.is_superuser %}
+                            <li class="nav-item">
+                                <a href="{% url 'admin:index' %}" class="nav-link">Admin</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+
+                    <ul class="navbar-nav mt-2 mt-lg-0 ml-auto">
+                        {% if request.user.is_authenticated %}
+                            <li class="nav-item">
+                                {% if request.user.person %}
+                                    <a href="{{ request.user.get_absolute_url }}" class="nav-link">
+                                        <i class="fas fa-user-circle"></i>
+                                        {{ request.user }}
+                                    </a>
+
+                                {% else %}
+                                    <span class="navbar-text">
+                                        <i class="fas fa-user-circle"></i>
+                                        {{ request.user }}
+                                    </span>
+
+                                {% endif %}
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'logout' %}" class="nav-link">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Log Out
+                                </a>
+                            </li>
+
+                        {% else %}
+                            <li class="nav-item">
+                                <a href="{% url 'login' %}" class="nav-link">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    Log In
+                                </a>
+                            </li>
+
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    {% endblock %}
+
+    {# Global banner if config.NOTICE_TEXT is set using Constance #}
+    {% if config.NOTICE_TEXT %}
+        <div class="alert {{ config.NOTICE_CLASS }} rounded-0 mb-0" role="alert">
+            <h4 class="alert-heading text-center mb-0">{{ config.NOTICE_TEXT }}</h4>
+        </div>
+    {% endif %}
+
+    {% block before_content %}{% endblock %}
+
+    <main class="container">
+        {# Display Django messages as Bootstrap alerts #}
+        {% bootstrap_messages %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <div class="container">
+        {% block after_content %}{% endblock %}
+    </div>
+</div>
+
+<footer class="footer bg-light">
+    <div class="container">
+        <span class="text-muted">{{ settings.PROJECT_LONG_NAME }}</span>
+    </div>
+</footer>
+
+{% if not 'javascript_in_head'|bootstrap_setting %}
+    {% if 'include_jquery'|bootstrap_setting %}
+        {# jQuery JavaScript if it is in body #}
+        {% bootstrap_jquery jquery='include_jquery'|bootstrap_setting %}
+    {% endif %}
+
+    {# Bootstrap JavaScript if it is in body #}
+    {% bootstrap_javascript %}
+{% endif %}
+
+{% block extra_script %}{% endblock %}
+</body>
+
+</html>

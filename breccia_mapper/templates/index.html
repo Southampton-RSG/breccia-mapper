@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+    {% load staticfiles %}
+    <link rel="stylesheet"
+          href="{% static 'css/masthead.css' %}">
+{% endblock %}
+
+{% block before_content %}
+    <header class="container-fluid masthead text-white text-left"
+            style="background-image: url('https://via.placeholder.com/800x500')">
+        <div class="overlay"></div>
+
+        <div class="row">
+            <div class="ml-5 px-4 mt-3 pt-3 textbox-container">
+                <h1 class="display-1">{{ settings.PROJECT_LONG_NAME }}</h1>
+                <p class="lead">Snappy leader here...</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="bg-secondary py-3">
+        <div class="container text-white">
+            <h2>Snappy tagline here...</h2>
+        </div>
+    </div>
+
+    <div class="bg-light py-2 mb-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h2 class="card-title">Do Feature 1</h2>
+
+                            <span class="fas fa-5x fa-atlas"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h2 class="card-title">Do Feature 2</h2>
+
+                            <span class="fas fa-5x fa-atlas"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h2 class="card-title">Do Feature 3</h2>
+
+                            <span class="fas fa-5x fa-atlas"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="row align-items-center">
+        <div class="col-sm-8">
+            <h2 class="pb-2">About {{ settings.PROJECT_LONG_NAME }}</h2>
+
+            <p>
+                {{ settings.PROJECT_LONG_NAME }} is...
+            </p>
+        </div>
+
+        <div class="col-sm-4">
+            <img class="img-fluid py-3" src="https://via.placeholder.com/400x400">
+        </div>
+    </div>
+{% endblock %}

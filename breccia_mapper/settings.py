@@ -8,6 +8,9 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
+
+Before production deployment, see
+https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 """
 
 import collections
@@ -16,12 +19,24 @@ import pathlib
 from decouple import config, Csv
 import dj_database_url
 
+
+# Settings exported to templates
+# https://github.com/jakubroztocil/django-settings-export
+
+SETTINGS_EXPORT = [
+    'DEBUG',
+    'PROJECT_LONG_NAME',
+    'PROJECT_SHORT_NAME',
+]
+
+
+PROJECT_LONG_NAME = config('PROJECT_LONG_NAME', default='Project Long Name')
+PROJECT_SHORT_NAME = config('PROJECT_SHORT_NAME', default='shortname')
+
+
 # Build paths inside the project like this: BASE_DIR.joinpath(...)
 BASE_DIR = pathlib.Path(__file__).parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
@@ -48,6 +63,9 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    'bootstrap4',
+    'constance',
+    'constance.backends.database',
 ]
 
 FIRST_PARTY_APPS = [
@@ -75,6 +93,8 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django_settings_export.settings_export',
+                'constance.context_processors.config',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
