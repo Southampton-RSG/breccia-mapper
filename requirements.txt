@@ -1,0 +1,5 @@
+dj-database-url
+django~=2.2
+django-constance
+django-dbbackup
+python-decouple

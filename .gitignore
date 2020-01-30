@@ -1,0 +1,12 @@
+# IDE files
+.idea/
+.vscode/
+
+# Runtime
+venv/
+
+db.sqlite3
+debug.log*
+
+# Configuration
+settings.ini
