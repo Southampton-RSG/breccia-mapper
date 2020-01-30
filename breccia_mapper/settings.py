@@ -16,6 +16,8 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 import collections
 import pathlib
 
+from django.urls import reverse_lazy
+
 from decouple import config, Csv
 import dj_database_url
 
@@ -149,6 +151,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/2.2/topics/auth/customizing/#using-a-custom-user-model-when-starting-a-project
 
 AUTH_USER_MODEL = 'people.User'
+
+# Login flow
+
+LOGIN_URL = reverse_lazy('login')
+
+LOGIN_REDIRECT_URL = reverse_lazy('index')
 
 
 # Internationalization
