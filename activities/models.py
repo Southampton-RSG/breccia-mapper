@@ -5,7 +5,7 @@ class ActivitySeries(models.Model):
     """
     A series of related :class:`Activity`s
     """
-    
+
     class Meta:
         verbose_name_plural = 'activity series'
 
@@ -18,7 +18,7 @@ class Activity(models.Model):
     """
     An instance of an activity - e.g. a workshop
     """
-    
+
     class Meta:
         verbose_name_plural = 'activities'
 
