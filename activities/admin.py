@@ -1,3 +1,17 @@
+"""
+Admin site panels for models in the Activities app.
+"""
+
 from django.contrib import admin
 
-# Register your models here.
+from . import models
+
+
+@admin.register(models.ActivitySeries)
+class ActivitySeriesAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(models.Activity)
+class ActivityAdmin(admin.ModelAdmin):
+    pass
