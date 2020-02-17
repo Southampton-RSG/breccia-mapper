@@ -13,6 +13,9 @@ class ActivitySeries(models.Model):
     name = models.CharField(max_length=1023,
                             blank=False, null=False)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Activity(models.Model):
     """
@@ -30,3 +33,6 @@ class Activity(models.Model):
     series = models.ForeignKey(ActivitySeries, related_name='instances',
                                on_delete=models.PROTECT,
                                blank=True, null=True)
+
+    def __str__(self) -> str:
+        return self.name

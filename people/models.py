@@ -30,6 +30,9 @@ class Person(models.Model):
                                                   through_fields=('source', 'target'),
                                                   symmetrical=False)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class RelationshipQuestion(models.Model):
     """
@@ -42,6 +45,9 @@ class RelationshipQuestion(models.Model):
     #: Text of question
     text = models.CharField(max_length=1023,
                             blank=False, null=False)
+
+    def __str__(self) -> str:
+        return self.text
 
 
 class RelationshipQuestionChoice(models.Model):
@@ -62,6 +68,9 @@ class RelationshipQuestionChoice(models.Model):
     #: Text of answer
     text = models.CharField(max_length=1023,
                             blank=False, null=False)
+
+    def __str__(self) -> str:
+        return self.text
 
 
 class Relationship(models.Model):
@@ -84,3 +93,6 @@ class Relationship(models.Model):
     target = models.ForeignKey(Person, related_name='relationships_as_target',
                                on_delete=models.CASCADE,
                                blank=False, null=False)
+
+    def __str__(self) -> str:
+        return f'{self.source} -> {self.target}'
