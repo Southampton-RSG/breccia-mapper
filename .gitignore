@@ -11,3 +11,5 @@ debug.log*
 
 # Configuration
 settings.ini
+deployment-key
+deployment-key.pub
