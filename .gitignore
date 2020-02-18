@@ -3,6 +3,7 @@
 .vscode/
 
 # Runtime
+/static/
 venv/
 
 *.pyc
