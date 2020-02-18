@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>
+        <a href="#">Relationships</a> /
+        {{ object }}
+    </h1>
+
+    <hr>
+
+    <div class="row align-content-center">
+        <div class="col-md-6">
+            <h2>Source</h2>
+            {{ relationship.source }}
+
+            <a class="btn btn-sm btn-info"
+               href="{% url 'people:person.detail' pk=relationship.source.pk %}">Profile</a>
+        </div>
+
+        <div class="col-md-6">
+            <h2>Target</h2>
+            {{ relationship.target }}
+
+            <a class="btn btn-sm btn-info"
+               href="{% url 'people:person.detail' pk=relationship.target.pk %}">Profile</a>
+        </div>
+    </div>
+
+{% endblock %}

@@ -29,6 +29,12 @@ class Person(models.Model):
                                                   through='Relationship',
                                                   through_fields=('source', 'target'),
                                                   symmetrical=False)
+    
+    @property
+    def relationships(self):
+        return self.relationships_as_source.all().union(
+            self.relationships_as_target.all()
+        )
 
     def __str__(self) -> str:
         return self.name

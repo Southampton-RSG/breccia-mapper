@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>
+        <a href="#">People</a> /
+        {{ object }}
+    </h1>
+
+    <hr>
+
+    <h2>Relationships As Source</h2>
+
+    <table class="table table-borderless">
+        <thead>
+            <tr>
+                <th>Contact Name</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for relationship in person.relationships_as_source.all %}
+                <tr>
+                    <td>{{ relationship.target }}</td>
+                    <td>
+                        <a class="btn btn-sm btn-info"
+                           href="{% url 'people:person.detail' pk=relationship.target.pk %}">Profile</a>
+                    </td>
+                    <td>
+                        <a class="btn btn-sm btn-info"
+                           href="{% url 'people:relationship.detail' pk=relationship.pk %}">Relationship Detail</a>
+                    </td>
+                </tr>
+
+            {% empty %}
+                <tr>
+                    <td colspan="2">No known relationships</td>
+                </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Relationships As Target</h2>
+
+    <table class="table table-borderless">
+        <thead>
+        <tr>
+            <th>Contact Name</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for relationship in person.relationships_as_target.all %}
+            <tr>
+                <td>{{ relationship.source }}</td>
+                <td>
+                    <a class="btn btn-sm btn-info"
+                       href="{% url 'people:person.detail' pk=relationship.source.pk %}">Profile</a>
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-info"
+                       href="{% url 'people:relationship.detail' pk=relationship.pk %}">Relationship Detail</a>
+                </td>
+            </tr>
+
+        {% empty %}
+            <tr>
+                <td colspan="2">No known relationships</td>
+            </tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
