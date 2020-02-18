@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>
-        <a href="#">Relationships</a> /
-        {{ object }}
-    </h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">People</a></li>
+            <li class="breadcrumb-item">{{ relationship.source }}</li>
+            <li class="breadcrumb-item active" aria-current="page">{{ relationship.target }}</li>
+        </ol>
+    </nav>
 
     <hr>
 
