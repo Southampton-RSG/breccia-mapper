@@ -2,9 +2,17 @@
 Views for displaying or manipulating models in the 'people' app.
 """
 
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 
 from . import models
+
+
+class PersonListView(ListView):
+    """
+    View displaying a list of :class:`Person` objects - searchable.
+    """
+    model = models.Person
+    template_name = 'people/person/list.html'
 
 
 class ProfileView(DetailView):
@@ -13,7 +21,6 @@ class ProfileView(DetailView):
     """
     model = models.Person
     template_name = 'people/person/detail.html'
-    context_object_name = 'person'
 
 
 class RelationshipDetailView(DetailView):
@@ -22,4 +29,3 @@ class RelationshipDetailView(DetailView):
     """
     model = models.Relationship
     template_name = 'people/relationship/detail.html'
-    context_object_name = 'relationship'

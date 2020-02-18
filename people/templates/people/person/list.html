@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">People</li>
+        </ol>
+    </nav>
+
+    <hr>
+
+    <table class="table table-borderless">
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for person in person_list.all %}
+                <tr>
+                    <td>{{ person }}</td>
+                    <td>
+                        <a class="btn btn-sm btn-info"
+                           href="{% url 'people:person.detail' pk=person.pk %}">Profile</a>
+                    </td>
+                </tr>
+
+            {% empty %}
+                <tr>
+                    <td>No records</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
