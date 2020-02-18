@@ -3,8 +3,12 @@
 {% block content %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">People</a></li>
-            <li class="breadcrumb-item">{{ relationship.source }}</li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'people:person.list' %}">People</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'people:person.detail' pk=relationship.source.pk %}">{{ relationship.source }}</a>
+            </li>
             <li class="breadcrumb-item active" aria-current="page">{{ relationship.target }}</li>
         </ol>
     </nav>
