@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'activities:activity.list' %}">Activities</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ object }}</li>
+        </ol>
+    </nav>
+
+    <hr>
+
+    <dl>
+        <dt>Series</dt>
+        <dl>{{ activity.series|default_if_none:'Standalone Activity' }}</dl>
+
+        <dt>Type</dt>
+        <dd>{{ activity.type }}</dd>
+
+        <dt>Medium</dt>
+        <dd>{{ activity.medium }}</dd>
+    </dl>
+
+{% endblock %}

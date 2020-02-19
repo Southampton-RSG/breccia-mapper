@@ -30,4 +30,7 @@ urlpatterns = [
 
     path('',
          include('people.urls')),
+
+    path('',
+         include('activities.urls')),
 ]
