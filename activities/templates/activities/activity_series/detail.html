@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'activities:activity-series.list' %}">Activity Series</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ object }}</li>
+        </ol>
+    </nav>
+
+    <hr>
+
+    <dl>
+        <dt>Type</dt>
+        <dd>{{ activity_series.type }}</dd>
+
+        <dt>Medium</dt>
+        <dd>{{ activity_series.medium }}</dd>
+    </dl>
+
+    <hr>
+
+    <table class="table table-borderless">
+        <thead>
+        <tr>
+            <th>Name</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for activity in activity_series.activities.all %}
+            <tr>
+                <td>{{ activity }}</td>
+                <td>
+                    <a class="btn btn-sm btn-info"
+                       href="{% url 'activities:activity.detail' pk=activity.pk %}">Details</a>
+                </td>
+            </tr>
+
+        {% empty %}
+            <tr>
+                <td>No records</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

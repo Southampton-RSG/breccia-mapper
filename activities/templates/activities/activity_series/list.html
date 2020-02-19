@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Activity Series</li>
+        </ol>
+    </nav>
+
+    <hr>
+
+    <table class="table table-borderless">
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for activity_series in activity_series_list.all %}
+                <tr>
+                    <td>{{ activity_series }}</td>
+                    <td>
+                        <a class="btn btn-sm btn-info"
+                           href="{% url 'activities:activity-series.detail' pk=activity_series.pk %}">Details</a>
+                    </td>
+                </tr>
+
+            {% empty %}
+                <tr>
+                    <td>No records</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

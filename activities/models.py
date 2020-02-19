@@ -68,7 +68,8 @@ class Activity(models.Model):
                             blank=False, null=False)
 
     #: Optional :class:`ActivitySeries` to which this activity belongs
-    series = models.ForeignKey(ActivitySeries, related_name='instances',
+    series = models.ForeignKey(ActivitySeries,
+                               related_name='activities',
                                on_delete=models.PROTECT,
                                blank=True, null=True)
 

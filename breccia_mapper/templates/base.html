@@ -64,6 +64,14 @@
                             <a href="{% url 'people:person.list' %}" class="nav-link">People</a>
                         </li>
 
+                        <li class="nav-item">
+                            <a href="{% url 'activities:activity-series.list' %}" class="nav-link">Activity Series</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{% url 'activities:activity.list' %}" class="nav-link">Activities</a>
+                        </li>
+
                         {% if request.user.is_superuser %}
                             <li class="nav-item">
                                 <a href="{% url 'admin:index' %}" class="nav-link">Admin</a>
