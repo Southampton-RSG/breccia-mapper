@@ -10,6 +10,10 @@ urlpatterns = [
          views.ProfileView.as_view(),
          name='person.profile'),
 
+    path('people/create',
+         views.PersonCreateView.as_view(),
+         name='person.create'),
+
     path('people',
          views.PersonListView.as_view(),
          name='person.list'),

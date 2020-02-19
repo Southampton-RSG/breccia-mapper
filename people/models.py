@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.urls import reverse
 
 
 class User(AbstractUser):
@@ -12,9 +14,14 @@ class Person(models.Model):
     """
     A person may be a member of the BRECcIA core team or an external stakeholder.
     """
-
     class Meta:
         verbose_name_plural = 'people'
+        
+    #: User account belonging to this person
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                related_name='person',
+                                on_delete=models.CASCADE,
+                                blank=True, null=True)
 
     #: Name of the person
     name = models.CharField(max_length=255,
@@ -35,6 +42,9 @@ class Person(models.Model):
         return self.relationships_as_source.all().union(
             self.relationships_as_target.all()
         )
+    
+    def get_absolute_url(self):
+        return reverse('people:person.detail', kwargs={'pk': self.pk})
 
     def __str__(self) -> str:
         return self.name
