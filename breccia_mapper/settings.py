@@ -234,3 +234,11 @@ CONSTANCE_CONFIG_FIELDSETS = {
 }
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+
+# Bootstrap settings
+# See https://django-bootstrap4.readthedocs.io/en/latest/settings.html
+
+BOOTSTRAP4 = {
+    'include_jquery': 'full',
+}

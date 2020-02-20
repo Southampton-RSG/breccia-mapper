@@ -1,6 +1,9 @@
 from django.db import models
 
 
+from people import models as people_models
+
+
 class ActivityType(models.Model):
     """
     Representation of the type of activity being conducted.
@@ -33,7 +36,7 @@ class ActivityMedium(models.Model):
 
 class ActivitySeries(models.Model):
     """
-    A series of related :class:`Activity`s
+    A series of related :class:`Activity`s.
     """
     class Meta:
         verbose_name_plural = 'activity series'
@@ -58,7 +61,7 @@ class ActivitySeries(models.Model):
 
 class Activity(models.Model):
     """
-    An instance of an activity - e.g. a workshop
+    An instance of an activity - e.g. a workshop.
     """
     class Meta:
         verbose_name_plural = 'activities'
@@ -73,15 +76,19 @@ class Activity(models.Model):
                                on_delete=models.PROTECT,
                                blank=True, null=True)
 
-    #: What type of activity does this series represent?
+    #: What type of activity is this?
     type = models.ForeignKey(ActivityType,
                              on_delete=models.PROTECT,
                              blank=False, null=False)
 
-    #: How are activities in this series typically conducted?
+    #: How was this activity conducted?
     medium = models.ForeignKey(ActivityMedium,
                                on_delete=models.PROTECT,
                                blank=False, null=False)
+    
+    #: Who attended this activity?
+    attendance_list = models.ManyToManyField(people_models.Person,
+                                             related_name='activities')
 
     def __str__(self) -> str:
         return self.name
