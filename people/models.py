@@ -139,5 +139,11 @@ class Relationship(models.Model):
                                on_delete=models.CASCADE,
                                blank=False, null=False)
 
+    #: Answers to :class:`RelationshipQuestion`s
+    question_answers = models.ManyToManyField(RelationshipQuestionChoice)
+
+    def get_absolute_url(self):
+        return reverse('people:relationship.detail', kwargs={'pk': self.pk})
+
     def __str__(self) -> str:
         return f'{self.source} -> {self.target}'
