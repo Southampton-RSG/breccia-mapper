@@ -1,3 +1,5 @@
+import typing
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -54,6 +56,12 @@ class RelationshipQuestion(models.Model):
     """
     Question which may be asked about a relationship.
     """
+    class Meta:
+        ordering = [
+            'order',
+            'text',
+        ]
+
     #: Version number of this question - to allow modification without invalidating existing data
     version = models.PositiveSmallIntegerField(default=1,
                                                blank=False, null=False)
@@ -61,6 +69,19 @@ class RelationshipQuestion(models.Model):
     #: Text of question
     text = models.CharField(max_length=1023,
                             blank=False, null=False)
+
+    #: Position of this question in the list
+    order = models.SmallIntegerField(default=0,
+                                     blank=False, null=False)
+    
+    @property
+    def choices(self) -> typing.List[typing.List[str]]:
+        """
+        Convert the :class:`RelationshipQuestionChoices` for this question into Django choices.
+        """
+        return [
+            [choice.pk, str(choice)] for choice in self.answers.all()
+        ]
 
     def __str__(self) -> str:
         return self.text
@@ -75,6 +96,10 @@ class RelationshipQuestionChoice(models.Model):
             models.UniqueConstraint(fields=['question', 'text'],
                                     name='unique_question_answer')
         ]
+        ordering = [
+            'order',
+            'text',
+        ]
 
     #: Question to which this answer belongs
     question = models.ForeignKey(RelationshipQuestion, related_name='answers',
@@ -84,6 +109,10 @@ class RelationshipQuestionChoice(models.Model):
     #: Text of answer
     text = models.CharField(max_length=1023,
                             blank=False, null=False)
+
+    #: Position of this answer in the list
+    order = models.SmallIntegerField(default=0,
+                                     blank=False, null=False)
 
     def __str__(self) -> str:
         return self.text

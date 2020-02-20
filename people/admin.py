@@ -16,14 +16,20 @@ class PersonAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(models.RelationshipQuestion)
-class RelationshipQuestionAdmin(admin.ModelAdmin):
-    pass
-
-
 @admin.register(models.RelationshipQuestionChoice)
 class RelationshipQuestionChoiceAdmin(admin.ModelAdmin):
     pass
+
+
+class RelationshipQuestionChoiceInline(admin.TabularInline):
+    model = models.RelationshipQuestionChoice
+
+
+@admin.register(models.RelationshipQuestion)
+class RelationshipQuestionAdmin(admin.ModelAdmin):
+    inlines = [
+        RelationshipQuestionChoiceInline,
+    ]
 
 
 @admin.register(models.Relationship)
