@@ -97,6 +97,7 @@ class RelationshipQuestionChoice(models.Model):
                                     name='unique_question_answer')
         ]
         ordering = [
+            'question__order',
             'order',
             'text',
         ]
@@ -147,3 +148,13 @@ class Relationship(models.Model):
 
     def __str__(self) -> str:
         return f'{self.source} -> {self.target}'
+    
+    @property
+    def reverse(self):
+        """
+        Get the reverse of this relationship.
+
+        @raise Relationship.DoesNotExist: When the reverse relationship is not known
+        """
+        return type(self).objects.get(source=self.target,
+                                      target=self.source)
