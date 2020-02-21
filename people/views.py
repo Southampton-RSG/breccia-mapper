@@ -21,7 +21,7 @@ class PersonCreateView(CreateView):
     def form_valid(self, form):
         if 'user' in self.request.GET:
             form.instance.user = self.request.user
-        
+
         return super().form_valid(form)
 
 
@@ -51,8 +51,8 @@ class ProfileView(DetailView):
 
         except AttributeError:
             return self.request.user.person
-        
-    
+
+
 class PersonUpdateView(UpdateView):
     """
     View for updating a :class:`Person` record.
@@ -68,7 +68,7 @@ class RelationshipDetailView(DetailView):
     """
     model = models.Relationship
     template_name = 'people/relationship/detail.html'
-    
+
 
 class RelationshipCreateView(CreateView):
     """
@@ -79,12 +79,12 @@ class RelationshipCreateView(CreateView):
     model = models.Relationship
     template_name = 'people/relationship/create.html'
     form_class = forms.RelationshipForm
-    
+
     def get(self, request, *args, **kwargs):
         self.person = models.Person.objects.get(pk=self.kwargs.get('person_pk'))
 
         return super().get(request, *args, **kwargs)
-    
+
     def post(self, request, *args, **kwargs):
         self.person = models.Person.objects.get(pk=self.kwargs.get('person_pk'))
 
@@ -97,19 +97,18 @@ class RelationshipCreateView(CreateView):
         initial['target'] = self.person
 
         return initial
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         context['person'] = self.person
 
         return context
-    
+
     def form_valid(self, form):
         """
         Form is valid - create :class:`Relationship` and save answers to questions.
         """
         self.object = form.save()
-        
-        return HttpResponseRedirect(self.object.get_absolute_url())
 
+        return HttpResponseRedirect(self.object.get_absolute_url())

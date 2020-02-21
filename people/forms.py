@@ -17,7 +17,7 @@ class PersonForm(forms.ModelForm):
             'relationship_targets',
         ]
 
-        
+
 class RelationshipForm(forms.ModelForm):
     """
     Form to allow users to describe a relationship - includes :class:`RelationshipQuestion`s.
@@ -30,7 +30,7 @@ class RelationshipForm(forms.ModelForm):
             'source',
             'target',
         ]
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -50,7 +50,6 @@ class RelationshipForm(forms.ModelForm):
             # Save answers to relationship questions
             for key, value in self.cleaned_data.items():
                 if key.startswith('question_'):
-                    question_pk = key.split('_')[-1]
                     answer = models.RelationshipQuestionChoice.objects.get(pk=value)
                     self.instance.question_answers.add(answer)
 

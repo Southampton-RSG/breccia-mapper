@@ -14,10 +14,10 @@ class ActivityType(models.Model):
     name = models.CharField(max_length=255,
                             unique=True,
                             blank=False, null=False)
-    
+
     def __str__(self) -> str:
         return self.name
-    
+
 
 class ActivityMedium(models.Model):
     """
@@ -85,7 +85,7 @@ class Activity(models.Model):
     medium = models.ForeignKey(ActivityMedium,
                                on_delete=models.PROTECT,
                                blank=False, null=False)
-    
+
     #: Who attended this activity?
     attendance_list = models.ManyToManyField(people_models.Person,
                                              related_name='activities')

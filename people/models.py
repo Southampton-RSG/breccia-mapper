@@ -21,7 +21,7 @@ class Person(models.Model):
     """
     class Meta:
         verbose_name_plural = 'people'
-        
+
     #: User account belonging to this person
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 related_name='person',
@@ -44,7 +44,7 @@ class Person(models.Model):
 
     ###############################################################
     # Data collected for analysis of community makeup and structure
-    
+
     class GenderChoices(TextChoices):
         MALE = 'M', _('Male')
         FEMALE = 'F', _('Female')
@@ -76,7 +76,7 @@ class Person(models.Model):
         return self.relationships_as_source.all().union(
             self.relationships_as_target.all()
         )
-    
+
     def get_absolute_url(self):
         return reverse('people:person.detail', kwargs={'pk': self.pk})
 
@@ -105,7 +105,7 @@ class RelationshipQuestion(models.Model):
     #: Position of this question in the list
     order = models.SmallIntegerField(default=0,
                                      blank=False, null=False)
-    
+
     @property
     def choices(self) -> typing.List[typing.List[str]]:
         """
@@ -180,7 +180,7 @@ class Relationship(models.Model):
 
     def __str__(self) -> str:
         return f'{self.source} -> {self.target}'
-    
+
     @property
     def reverse(self):
         """
