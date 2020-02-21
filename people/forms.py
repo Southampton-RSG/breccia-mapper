@@ -12,11 +12,11 @@ class PersonForm(forms.ModelForm):
     """
     class Meta:
         model = models.Person
-        fields = [
-            'name',
-            'core_member',
+        exclude = [
+            'user',
+            'relationship_targets',
         ]
-        
+
         
 class RelationshipForm(forms.ModelForm):
     """

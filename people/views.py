@@ -3,7 +3,7 @@ Views for displaying or manipulating models in the 'people' app.
 """
 
 from django.http import HttpResponseRedirect
-from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from . import forms, models
 
@@ -51,6 +51,15 @@ class ProfileView(DetailView):
 
         except AttributeError:
             return self.request.user.person
+        
+    
+class PersonUpdateView(UpdateView):
+    """
+    View for updating a :class:`Person` record.
+    """
+    model = models.Person
+    template_name = 'people/person/update.html'
+    form_class = forms.PersonForm
 
 
 class RelationshipDetailView(DetailView):

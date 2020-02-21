@@ -22,6 +22,10 @@ urlpatterns = [
          views.ProfileView.as_view(),
          name='person.detail'),
 
+    path('people/<int:pk>/update',
+         views.PersonUpdateView.as_view(),
+         name='person.update'),
+
     path('people/<int:person_pk>/relationships/create',
          views.RelationshipCreateView.as_view(),
          name='person.relationship.create'),
