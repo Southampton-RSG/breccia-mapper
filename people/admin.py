@@ -11,6 +11,16 @@ from . import models
 admin.site.register(models.User, UserAdmin)
 
 
+@admin.register(models.Organisation)
+class OrganisationAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(models.Role)
+class RoleAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(models.Person)
 class PersonAdmin(admin.ModelAdmin):
     pass

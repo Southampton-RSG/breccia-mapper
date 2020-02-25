@@ -23,6 +23,20 @@ class Organisation(models.Model):
     """
     name = models.CharField(max_length=255,
                             blank=False, null=False)
+    
+    def __str__(self) -> str:
+        return self.name
+    
+    
+class Role(models.Model):
+    """
+    Role which a :class:`Person` holds within the project.
+    """
+    name = models.CharField(max_length=255,
+                            blank=False, null=False)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Person(models.Model):
@@ -89,6 +103,14 @@ class Person(models.Model):
                                      on_delete=models.PROTECT,
                                      related_name='members',
                                      blank=True, null=True)
+    
+    job_title = models.CharField(max_length=255,
+                                 blank=True, null=False)
+    
+    role = models.ForeignKey(Role,
+                             on_delete=models.PROTECT,
+                             related_name='holders',
+                             blank=True, null=True)
 
     @property
     def relationships(self):
