@@ -37,6 +37,10 @@ class RelationshipForm(forms.ModelForm):
             'source',
             'target',
         ]
+        widgets = {
+            'source': Select2Widget(),
+            'target': Select2Widget(),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
