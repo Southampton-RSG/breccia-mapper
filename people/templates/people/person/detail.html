@@ -47,6 +47,20 @@
             <dt>Role</dt>
             <dd>{{ person.role }}</dd>
         {% endif %}
+
+        {% if person.dispipline %}
+            <dt>Discipline</dt>
+            <dd>{{ person.discipline }}</dd>
+        {% endif %}
+
+        {% if person.themes.exists %}
+            <dt>Project Themes</dt>
+            <dd>
+                {% for theme in person.themes.all %}
+                    {{ theme }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </dd>
+        {% endif %}
     </dl>
 
     <a class="btn btn-success"

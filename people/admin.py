@@ -21,6 +21,11 @@ class RoleAdmin(admin.ModelAdmin):
     pass
 
 
+@admin.register(models.Theme)
+class ThemeAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(models.Person)
 class PersonAdmin(admin.ModelAdmin):
     pass

@@ -3,7 +3,7 @@ Forms for creating / updating models belonging to the 'people' app.
 """
 from django import forms
 
-from django_select2.forms import Select2Widget
+from django_select2.forms import Select2Widget, Select2MultipleWidget
 
 from . import models
 
@@ -21,6 +21,7 @@ class PersonForm(forms.ModelForm):
         widgets = {
             'nationality': Select2Widget(),
             'country_of_residence': Select2Widget(),
+            'themes': Select2MultipleWidget(),
         }
 
 

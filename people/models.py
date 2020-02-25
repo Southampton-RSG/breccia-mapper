@@ -39,6 +39,32 @@ class Role(models.Model):
         return self.name
 
 
+class Discipline(models.Model):
+    """
+    Discipline within which a :class:`Person` works.
+    """
+    name = models.CharField(max_length=255,
+                            blank=False, null=False)
+
+    #: Short code using system such as JACS 3
+    code = models.CharField(max_length=15,
+                            blank=True, null=False)
+
+    def __str__(self) -> str:
+        return self.name
+    
+    
+class Theme(models.Model):
+    """
+    Project theme within which a :class:`Person` works.
+    """
+    name = models.CharField(max_length=255,
+                            blank=False, null=False)
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class Person(models.Model):
     """
     A person may be a member of the BRECcIA core team or an external stakeholder.
@@ -98,19 +124,33 @@ class Person(models.Model):
     nationality = CountryField(blank=True, null=True)
 
     country_of_residence = CountryField(blank=True, null=True)
-    
+
+    #: Organisation this person is employed by or affiliated with
     organisation = models.ForeignKey(Organisation,
                                      on_delete=models.PROTECT,
                                      related_name='members',
                                      blank=True, null=True)
-    
+
+    #: Job title this person holds within their organisation
     job_title = models.CharField(max_length=255,
                                  blank=True, null=False)
-    
+
+    #: Discipline within which this person works
+    discipline = models.ForeignKey(Discipline,
+                                   on_delete=models.PROTECT,
+                                   related_name='people',
+                                   blank=True, null=True)
+
+    #: Role this person holds within the project
     role = models.ForeignKey(Role,
                              on_delete=models.PROTECT,
                              related_name='holders',
                              blank=True, null=True)
+
+    #: Project themes within this person works
+    themes = models.ManyToManyField(Theme,
+                                    related_name='people',
+                                    blank=True)
 
     @property
     def relationships(self):
