@@ -17,6 +17,14 @@ class User(AbstractUser):
     """
 
 
+class Organisation(models.Model):
+    """
+    Organisation to which a :class:`Person` belongs.
+    """
+    name = models.CharField(max_length=255,
+                            blank=False, null=False)
+
+
 class Person(models.Model):
     """
     A person may be a member of the BRECcIA core team or an external stakeholder.
@@ -76,6 +84,11 @@ class Person(models.Model):
     nationality = CountryField(blank=True, null=True)
 
     country_of_residence = CountryField(blank=True, null=True)
+    
+    organisation = models.ForeignKey(Organisation,
+                                     on_delete=models.PROTECT,
+                                     related_name='members',
+                                     blank=True, null=True)
 
     @property
     def relationships(self):
