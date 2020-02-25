@@ -68,6 +68,8 @@ THIRD_PARTY_APPS = [
     'bootstrap4',
     'constance',
     'constance.backends.database',
+    'django_countries',
+    'django_select2',
 ]
 
 FIRST_PARTY_APPS = [

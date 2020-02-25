@@ -38,6 +38,8 @@
         {% bootstrap_javascript %}
     {% endif %}
 
+    {{ form.media.css }}
+
     {% block extra_head %}{% endblock %}
 
 </head>
@@ -154,6 +156,8 @@
     {# Bootstrap JavaScript if it is in body #}
     {% bootstrap_javascript %}
 {% endif %}
+
+{{ form.media.js }}
 
 {% block extra_script %}{% endblock %}
 </body>

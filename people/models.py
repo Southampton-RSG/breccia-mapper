@@ -6,6 +6,8 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from django_countries.fields import CountryField
+
 from backports.db.models.enums import TextChoices
 
 
@@ -70,6 +72,10 @@ class Person(models.Model):
     age_group = models.CharField(max_length=5,
                                  choices=AgeGroupChoices.choices,
                                  blank=True, null=False)
+    
+    nationality = CountryField(blank=True, null=True)
+
+    country_of_residence = CountryField(blank=True, null=True)
 
     @property
     def relationships(self):
