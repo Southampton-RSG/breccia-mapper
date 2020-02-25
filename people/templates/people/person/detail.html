@@ -10,79 +10,154 @@
         </ol>
     </nav>
 
+    <h1>{{ person }}</h1>
+
+    <dl>
+        {% if person.gender %}
+            <dt>Gender</dt>
+            <dd>{{ person.get_gender_display }}</dd>
+        {% endif %}
+
+        {% if person.age_group %}
+            <dt>Age Group</dt>
+            <dd>{{ person.get_age_group_display }}</dd>
+        {% endif %}
+
+        {% if person.nationality %}
+            <dt>Nationality</dt>
+            <dd>{{ person.nationality.name }}</dd>
+        {% endif %}
+
+        {% if person.country_of_residence %}
+            <dt>Country of Residence</dt>
+            <dd>{{ person.country_of_residence.name }}</dd>
+        {% endif %}
+
+        {% if person.organisation %}
+            <dt>Organisation</dt>
+            <dd>{{ person.organisation }}</dd>
+        {% endif %}
+
+        {% if person.job_title %}
+            <dt>Job Title</dt>
+            <dd>{{ person.job_title }}</dd>
+        {% endif %}
+
+        {% if person.role %}
+            <dt>Role</dt>
+            <dd>{{ person.role }}</dd>
+        {% endif %}
+    </dl>
+
     <a class="btn btn-success"
        href="{% url 'people:person.update' pk=person.pk %}">Update</a>
 
     <hr>
 
-    <h2>Relationships As Source</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Relationships As Source</h2>
 
-    <a class="btn btn-success"
-       href="{% url 'people:person.relationship.create' person_pk=person.pk %}">New Relationship
-    </a>
-
-    <table class="table table-borderless">
-        <thead>
-            <tr>
-                <th>Contact Name</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for relationship in person.relationships_as_source.all %}
+            <table class="table table-borderless">
+                <thead>
                 <tr>
-                    <td>{{ relationship.target }}</td>
-                    <td>
-                        <a class="btn btn-sm btn-info"
-                           href="{% url 'people:person.detail' pk=relationship.target.pk %}">Profile</a>
-                    </td>
-                    <td>
-                        <a class="btn btn-sm btn-info"
-                           href="{% url 'people:relationship.detail' pk=relationship.pk %}">Relationship Detail</a>
-                    </td>
+                    <th>Contact Name</th>
+                    <th></th>
+                    <th></th>
                 </tr>
+                </thead>
 
-            {% empty %}
+                <tbody>
+                {% for relationship in person.relationships_as_source.all %}
+                    <tr>
+                        <td>{{ relationship.target }}</td>
+                        <td>
+                            <a class="btn btn-sm btn-info"
+                               href="{% url 'people:person.detail' pk=relationship.target.pk %}">Profile</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-info"
+                               href="{% url 'people:relationship.detail' pk=relationship.pk %}">Relationship Detail</a>
+                        </td>
+                    </tr>
+
+                {% empty %}
+                    <tr>
+                        <td colspan="2">No known relationships</td>
+                    </tr>
+
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <a class="btn btn-success btn-block"
+               href="{% url 'people:person.relationship.create' person_pk=person.pk %}">New Relationship
+            </a>
+        </div>
+
+        <div class="col-md-6">
+            <h2>Relationships As Target</h2>
+
+            <table class="table table-borderless">
+                <thead>
                 <tr>
-                    <td colspan="2">No known relationships</td>
+                    <th>Contact Name</th>
+                    <th></th>
+                    <th></th>
                 </tr>
+                </thead>
 
-            {% endfor %}
-        </tbody>
-    </table>
+                <tbody>
+                {% for relationship in person.relationships_as_target.all %}
+                    <tr>
+                        <td>{{ relationship.source }}</td>
+                        <td>
+                            <a class="btn btn-sm btn-info"
+                               href="{% url 'people:person.detail' pk=relationship.source.pk %}">Profile</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-info"
+                               href="{% url 'people:relationship.detail' pk=relationship.pk %}">Relationship Detail</a>
+                        </td>
+                    </tr>
 
-    <h2>Relationships As Target</h2>
+                {% empty %}
+                    <tr>
+                        <td colspan="2">No known relationships</td>
+                    </tr>
+
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <hr>
+
+    <h2>Activities</h2>
 
     <table class="table table-borderless">
         <thead>
         <tr>
-            <th>Contact Name</th>
-            <th></th>
-            <th></th>
+            <th>Name</th>
         </tr>
         </thead>
 
         <tbody>
-        {% for relationship in person.relationships_as_target.all %}
+        {% for activity in person.activities.all %}
             <tr>
-                <td>{{ relationship.source }}</td>
+                <td>{{ activity }}</td>
                 <td>
                     <a class="btn btn-sm btn-info"
-                       href="{% url 'people:person.detail' pk=relationship.source.pk %}">Profile</a>
-                </td>
-                <td>
-                    <a class="btn btn-sm btn-info"
-                       href="{% url 'people:relationship.detail' pk=relationship.pk %}">Relationship Detail</a>
+                       href="{% url 'activities:activity.detail' pk=activity.pk %}">Details</a>
                 </td>
             </tr>
 
         {% empty %}
             <tr>
-                <td colspan="2">No known relationships</td>
+                <td>No records</td>
             </tr>
-
         {% endfor %}
         </tbody>
     </table>
