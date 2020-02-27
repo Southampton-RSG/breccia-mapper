@@ -5,7 +5,7 @@ Views for displaying or manipulating models in the 'people' app.
 from django.http import HttpResponseRedirect
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
-from . import forms, models
+from . import forms, models, permissions
 
 
 class PersonCreateView(CreateView):
@@ -33,7 +33,7 @@ class PersonListView(ListView):
     template_name = 'people/person/list.html'
 
 
-class ProfileView(DetailView):
+class ProfileView(permissions.UserIsLinkedPersonMixin, DetailView):
     """
     View displaying the profile of a :class:`Person` - who may be a user.
     """
@@ -50,10 +50,11 @@ class ProfileView(DetailView):
             return super().get_object(queryset)
 
         except AttributeError:
+            # pk was not provided in URL
             return self.request.user.person
 
 
-class PersonUpdateView(UpdateView):
+class PersonUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
     """
     View for updating a :class:`Person` record.
     """
@@ -62,15 +63,16 @@ class PersonUpdateView(UpdateView):
     form_class = forms.PersonForm
 
 
-class RelationshipDetailView(DetailView):
+class RelationshipDetailView(permissions.UserIsLinkedPersonMixin, DetailView):
     """
     View displaying details of a :class:`Relationship`.
     """
     model = models.Relationship
     template_name = 'people/relationship/detail.html'
+    related_person_field = 'source'
 
 
-class RelationshipCreateView(CreateView):
+class RelationshipCreateView(permissions.UserIsLinkedPersonMixin, CreateView):
     """
     View for creating a :class:`Relationship`.
 
@@ -79,6 +81,15 @@ class RelationshipCreateView(CreateView):
     model = models.Relationship
     template_name = 'people/relationship/create.html'
     form_class = forms.RelationshipForm
+
+    def get_test_person(self) -> models.Person:
+        """
+        
+        """
+        if self.request.method == 'POST':
+            return models.Person.objects.get(pk=self.request.POST.get('source'))
+        
+        return models.Person.objects.get(pk=self.kwargs.get('person_pk'))
 
     def get(self, request, *args, **kwargs):
         self.person = models.Person.objects.get(pk=self.kwargs.get('person_pk'))

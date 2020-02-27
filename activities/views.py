@@ -8,6 +8,7 @@ from django.views.generic import DetailView, ListView, View
 from django.views.generic.detail import SingleObjectMixin
 
 from people import models as people_models
+from people import permissions
 from . import models
 
 
@@ -54,20 +55,23 @@ class ActivityDetailView(DetailView):
         return context
 
 
-class ActivityAttendanceView(SingleObjectMixin, View):
+class ActivityAttendanceView(permissions.UserIsLinkedPersonMixin, SingleObjectMixin, View):
     """
     View to add or delete attendance of an activity.
     """
     model = models.Activity
 
+    def get_test_person(self) -> people_models.Person:
+        data = json.loads(self.request.body)
+
+        self.person = people_models.Person.objects.get(pk=data['pk'])
+        return self.person
+
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
         if request.is_ajax():
-            data = json.loads(request.body)
-
-            person = people_models.Person.objects.get(pk=data['pk'])
-            self.object.attendance_list.add(person)
+            self.object.attendance_list.add(self.person)
 
             return HttpResponse(status=204)
 
@@ -77,10 +81,7 @@ class ActivityAttendanceView(SingleObjectMixin, View):
         self.object = self.get_object()
 
         if request.is_ajax():
-            data = json.loads(request.body)
-
-            person = people_models.Person.objects.get(pk=data['pk'])
-            self.object.attendance_list.remove(person)
+            self.object.attendance_list.remove(self.person)
 
             return HttpResponse(status=204)
 
