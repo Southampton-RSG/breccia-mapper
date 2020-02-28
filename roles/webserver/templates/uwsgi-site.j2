@@ -1,0 +1,18 @@
+[uwsgi]
+project = {{ project_name }}
+uid = {{ web_user }}
+base = /var/www
+
+chdir = %(base)/%(project)
+home = {{ venv_dir }}
+module = {{ project_full_name }}.wsgi:application
+logto = %(chdir)/%(project).log
+
+master = true
+processes = 2
+listen = 128
+
+socket = /run/uwsgi/%(project).sock
+chown-socket = %(uid):{{ web_group }}
+chmod-socket = 660
+vacuum = true

@@ -1,0 +1,18 @@
+# Template populated on {{ template_run_date }}
+[settings]
+
+SECRET_KEY={{ secret_key }}
+DEBUG={{ "True" if deploy_mode > 1 else "False" }}
+ALLOWED_HOSTS={{ inventory_hostname }},localhost,127.0.0.1
+DATABASE_URL=mysql://{{ db_user }}:{{ db_pass }}@localhost:3306/{{ db_name }}
+
+# LDAP auth
+AUTH_LDAP_SERVER_URI={{ ldap_server }}
+AUTH_LDAP_USER_SEARCH={{ ldap_user_search }}
+AUTH_LDAP_GROUP_SEARCH={{ ldap_group_search }}
+
+# PURE settings
+PURE_URL={{ pure_api_url }}
+PURE_API_KEY={{ pure_api_key }}
+PURE_USERNAME={{ pure_api_user }}
+PURE_PASSWORD={{ pure_api_pass }}

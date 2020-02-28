@@ -1,0 +1,16 @@
+---
+deploy_mode_dict:
+  1: Production
+  2: Staging
+  3: Development
+deploy_mode: 3
+
+secret_key: '{{ lookup("password", "/tmp/secretkeyfile") }}'
+
+project_name: 'breccia-mapper'
+project_full_name: 'breccia_mapper'
+project_dir: '/var/www/{{ project_name }}'
+venv_dir: '{{ project_dir }}/venv'
+web_user: nginx
+web_group: nginx
+db_name: '{{ project_name }}'

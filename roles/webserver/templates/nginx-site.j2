@@ -1,0 +1,17 @@
+server {
+    listen 80;
+    server_name {{ inventory_hostname }} localhost 127.0.0.1;
+
+    location /favicon.ico {
+        alias {{ project_dir }}/static/img/favicon.ico;
+    }
+
+    location /static/ {
+        alias {{ project_dir }}/static/;
+    }
+
+    location / {
+        include     uwsgi_params;
+        uwsgi_pass  unix:/run/uwsgi/{{ project_name }}.sock;
+    }
+}

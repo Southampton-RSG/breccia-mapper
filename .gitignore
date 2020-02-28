@@ -14,3 +14,7 @@ debug.log*
 settings.ini
 deployment-key
 deployment-key.pub
+
+# Deployment
+.vagrant/
+staging.yml

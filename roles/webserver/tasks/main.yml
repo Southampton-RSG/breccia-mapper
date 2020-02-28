@@ -1,0 +1,221 @@
+---
+- name: Test connection
+  ping:
+
+- name: Enable EPEL
+  yum:
+    name: epel-release
+    state: latest
+
+- name: Update system packages
+  yum:
+    name: '*'
+    state: latest
+
+- name: Install system prerequisites
+  yum:
+    name: '{{ packages }}'
+    state: latest
+  vars:
+    packages:
+      - gcc
+      - git
+      - nginx
+      - python36
+      - python36-devel
+      - python36-pip
+      - python36-setuptools
+      - python36-virtualenv
+      - policycoreutils-python
+      - python
+      - python-setuptools
+      - python2-cryptography
+
+- name: (Vagrant only) Clone / update from local repo
+  git:
+    repo: '/vagrant'
+    dest: '{{ project_dir }}'
+  when: vagrant_dir.stat.exists == True
+
+- name: (Vagrant only) Copy local settings file
+  copy:
+    src: '{{ settings_file | default("settings.ini") }}'
+    dest: '{{ project_dir }}/settings.ini'
+    owner: '{{ web_user }}'
+    group: '{{ web_group }}'
+    mode: 0600
+  when: vagrant_dir.stat.exists == True
+
+- name: (Vagrant only) Add DB to settings file
+  ini_file:
+    path: '{{ project_dir }}/settings.ini'
+    section: settings
+    option: DATABASE_URL
+    value: 'mysql://{{ db_user }}:{{ db_pass }}@localhost:3306/{{ db_name }}'
+  when: vagrant_dir.stat.exists == True
+
+- name: Copy deploy key
+  copy:
+    src: 'deployment-key'
+    dest: '/tmp/deployment-key'
+    mode: 0600
+  when: vagrant_dir.stat.exists == False
+
+- name: Clone / update from source repo
+  git:
+    repo: 'git@github.com:Southampton-RSG/breccia-mapper.git'
+    dest: '{{ project_dir }}'
+    key_file: '/tmp/deployment-key'
+    version: '{{ branch | default ("master") }}'
+    accept_hostkey: yes
+  when: vagrant_dir.stat.exists == False
+
+- name: Copy and populate settings template
+  template:
+    src: 'settings.j2'
+    dest: '{{ project_dir }}/settings.ini'
+    owner: '{{ web_user }}'
+    group: '{{ web_group }}'
+    mode: 0600
+  when: vagrant_dir.stat.exists == False
+
+- name: Set ownership of source directory
+  file:
+    path: '{{ project_dir }}'
+    owner: '{{ web_user }}'
+    group: '{{ web_group }}'
+    recurse: yes
+
+- name: Install pip requirements
+  pip:
+    requirements: '{{ project_dir }}/requirements.txt'
+    virtualenv: '{{ venv_dir }}'
+    virtualenv_command: virtualenv-3
+
+- name: Create static directory
+  file:
+    path: '{{ project_dir }}/static'
+    state: directory
+    owner: '{{ web_user }}'
+    group: '{{ web_group }}'
+    mode: 0755
+
+- name: Run Django setup stages
+  django_manage:
+    command: '{{ item }}'
+    app_path: '{{ project_dir }}'
+    virtualenv: '{{ venv_dir }}'
+  with_items:
+    - migrate
+    - collectstatic
+
+- name: Apply SELinux type
+  file:
+    path: '{{ project_dir }}/static'
+    state: directory
+    setype: httpd_sys_content_t
+
+- name: (Not production) Set SELinux permissive mode
+  selinux_permissive:
+    name: httpd_t
+    permissive: yes
+  when: deploy_mode > 1
+
+- name: Install uWSGI
+  pip:
+    name: uwsgi
+    state: latest
+    executable: pip3
+
+- name: Setup uWSGI config
+  file:
+    path: /etc/uwsgi/sites
+    state: directory
+    mode: 0755
+
+- name: Setup uWSGI service
+  template:
+    src: uwsgi-service.j2
+    dest: /etc/systemd/system/uwsgi.service
+
+- name: Ensure uWSGI running
+  service:
+    name: uwsgi
+    state: started
+    enabled: yes
+
+- name: Copy web config files
+  template:
+    src: uwsgi-site.j2
+    dest: '/etc/uwsgi/sites/{{ project_name }}.ini'
+
+- name: Generate self-signed SSL certificate
+  block:
+    - name: Create directories
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - /etc/ssl
+        - /etc/ssl/crt
+        - /etc/ssl/private
+        - /etc/ssl/csr
+
+    - name: Create keys
+      openssl_privatekey:
+        path: /etc/ssl/private/{{ inventory_hostname }}.pem
+        owner: '{{ web_user }}'
+        group: '{{ web_user }}'
+
+    - name: Create Certificate Signing Request (CSR)
+      openssl_csr:
+        path: /etc/ssl/csr/{{ inventory_hostname }}.csr
+        privatekey_path: /etc/ssl/private/{{ inventory_hostname }}.pem
+        common_name: "{{ inventory_hostname }}"
+        owner: '{{ web_user }}'
+        group: '{{ web_user }}'
+
+    - name: Generate certificate
+      openssl_certificate:
+        path: /etc/ssl/crt/{{ inventory_hostname }}.crt
+        privatekey_path: /etc/ssl/private/{{ inventory_hostname }}.pem
+        csr_path: /etc/ssl/csr/{{ inventory_hostname }}.csr
+        provider: selfsigned
+        owner: '{{ web_user }}'
+        group: '{{ web_user }}'
+
+    - name: Copy Nginx site
+      template:
+        src: nginx-site-ssl.j2
+        dest: '/etc/nginx/conf.d/{{ project_name }}-ssl.conf'
+        owner: '{{ web_user }}'
+        group: '{{ web_group }}'
+
+  when: deploy_mode > 1
+
+- name: Copy Nginx site
+  template:
+    src: nginx-site.j2
+    dest: '/etc/nginx/conf.d/{{ project_name }}.conf'
+    owner: '{{ web_user }}'
+    group: '{{ web_group }}'
+
+- name: Restart uWSGI and Nginx
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items:
+    - uwsgi
+    - nginx
+
+- name: Open webserver ports on firewall
+  firewalld:
+    service: '{{ item }}'
+    state: enabled
+    permanent: yes
+    immediate: yes
+  loop:
+    - http
+    - https
+  when: vagrant_dir.stat.exists == False
