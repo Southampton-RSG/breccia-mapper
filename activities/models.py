@@ -42,7 +42,7 @@ class ActivitySeries(models.Model):
         verbose_name_plural = 'activity series'
 
     #: Name of activity series
-    name = models.CharField(max_length=1023,
+    name = models.CharField(max_length=255,
                             blank=False, null=False)
 
     #: What type of activity does this series represent?
@@ -67,7 +67,7 @@ class Activity(models.Model):
         verbose_name_plural = 'activities'
 
     #: Name of activity
-    name = models.CharField(max_length=1023,
+    name = models.CharField(max_length=255,
                             blank=False, null=False)
 
     #: Optional :class:`ActivitySeries` to which this activity belongs

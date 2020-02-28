@@ -180,7 +180,7 @@ class RelationshipQuestion(models.Model):
                                                blank=False, null=False)
 
     #: Text of question
-    text = models.CharField(max_length=1023,
+    text = models.CharField(max_length=255,
                             blank=False, null=False)
 
     #: Position of this question in the list
@@ -221,7 +221,7 @@ class RelationshipQuestionChoice(models.Model):
                                  blank=False, null=False)
 
     #: Text of answer
-    text = models.CharField(max_length=1023,
+    text = models.CharField(max_length=255,
                             blank=False, null=False)
 
     #: Position of this answer in the list
