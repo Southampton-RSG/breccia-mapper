@@ -14,3 +14,6 @@ venv_dir: '{{ project_dir }}/venv'
 web_user: nginx
 web_group: nginx
 db_name: '{{ project_name }}'
+
+display_short_name: 'BRECcIA'
+display_long_name: 'BRECcIA Mapper'
