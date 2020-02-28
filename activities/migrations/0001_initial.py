@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='ActivitySeries',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=1023)),
+                ('name', models.CharField(max_length=255)),
             ],
             options={
                 'verbose_name_plural': 'activity series',
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             name='Activity',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=1023)),
+                ('name', models.CharField(max_length=255)),
                 ('series', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='instances', to='activities.ActivitySeries')),
             ],
             options={

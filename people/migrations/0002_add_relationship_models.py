@@ -24,14 +24,14 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('version', models.PositiveSmallIntegerField(default=1)),
-                ('text', models.CharField(max_length=1023)),
+                ('text', models.CharField(max_length=255)),
             ],
         ),
         migrations.CreateModel(
             name='RelationshipQuestionChoice',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('text', models.CharField(max_length=1023)),
+                ('text', models.CharField(max_length=255)),
                 ('question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='answers', to='people.RelationshipQuestion')),
             ],
         ),
