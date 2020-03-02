@@ -105,6 +105,7 @@
     command: '{{ item }}'
     app_path: '{{ project_dir }}'
     virtualenv: '{{ venv_dir }}'
+  become_user: '{{ web_user }}'
   with_items:
     - migrate
     - collectstatic
