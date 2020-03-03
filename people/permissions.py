@@ -30,4 +30,8 @@ class UserIsLinkedPersonMixin(UserPassesTestMixin):
         return getattr(self.get_object(), self.related_person_field)
 
     def test_func(self) -> bool:
-        return self.request.user.is_staff or self.get_test_person() == self.request.user.person
+        """
+        Require that user is either staff or is the linked person.
+        """
+        user = self.request.user
+        return user.is_authenticated and (user.is_staff or self.get_test_person() == user.person)
