@@ -23,7 +23,7 @@ class User(AbstractUser):
             person = self.person
             return True
 
-        except Person.DoesNotExist:
+        except AttributeError:
             return False
 
 
