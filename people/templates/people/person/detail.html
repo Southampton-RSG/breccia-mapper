@@ -66,6 +66,9 @@
     <a class="btn btn-success"
        href="{% url 'people:person.update' pk=person.pk %}">Update</a>
 
+    <a class="btn btn-info"
+       href="{% url 'password_change' %}?next={{ person.get_absolute_url }}">Change Password</a>
+
     <hr>
 
     <div class="row">

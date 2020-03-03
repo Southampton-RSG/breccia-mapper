@@ -18,3 +18,4 @@ deployment-key.pub
 # Deployment
 .vagrant/
 staging.yml
+/.dbbackup/

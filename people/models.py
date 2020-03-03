@@ -15,6 +15,16 @@ class User(AbstractUser):
     """
     Custom user model in case we need to make changes later.
     """
+    def has_person(self) -> bool:
+        """
+        Does this user have a linked :class:`Person` record?
+        """
+        try:
+            person = self.person
+            return True
+
+        except Person.DoesNotExist:
+            return False
 
 
 class Organisation(models.Model):

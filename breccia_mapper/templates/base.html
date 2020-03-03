@@ -127,6 +127,17 @@
         </div>
     {% endif %}
 
+    {% if request.user.is_authenticated and not request.user.has_person %}
+        <div class="alert alert-info rounded-0" role="alert">
+            <p class="text-center mb-0">
+                Your profile is currently blank.  Please fill in your details so you can be part of the network.
+
+                <a class="btn btn-success"
+                   href="{% url 'people:person.create' %}?user">Profile</a>
+            </p>
+        </div>
+    {% endif %}
+
     {% block before_content %}{% endblock %}
 
     <main class="container">
