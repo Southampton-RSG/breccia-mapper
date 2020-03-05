@@ -25,22 +25,17 @@ class PersonForm(forms.ModelForm):
         }
 
 
-class RelationshipForm(forms.ModelForm):
+class RelationshipAnswerSetForm(forms.ModelForm):
     """
-    Form to allow users to describe a relationship - includes :class:`RelationshipQuestion`s.
+    Form to allow users to describe a relationship.
 
     Dynamic fields inspired by https://jacobian.org/2010/feb/28/dynamic-form-generation/
     """
     class Meta:
-        model = models.Relationship
+        model = models.RelationshipAnswerSet
         fields = [
-            'source',
-            'target',
+            'relationship',
         ]
-        widgets = {
-            'source': Select2Widget(),
-            'target': Select2Widget(),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -53,7 +48,7 @@ class RelationshipForm(forms.ModelForm):
                                       choices=choices)
             self.fields['question_{}'.format(question.pk)] = field
 
-    def save(self, commit=True) -> models.Relationship:
+    def save(self, commit=True) -> models.RelationshipAnswerSet:
         # Save Relationship model
         self.instance = super().save(commit=commit)
 
@@ -61,7 +56,9 @@ class RelationshipForm(forms.ModelForm):
             # Save answers to relationship questions
             for key, value in self.cleaned_data.items():
                 if key.startswith('question_'):
-                    answer = models.RelationshipQuestionChoice.objects.get(pk=value)
+                    question_id = key.replace('question_', '', 1)
+                    answer = models.RelationshipQuestionChoice.objects.get(pk=value,
+                                                                           question__pk=question_id)
                     self.instance.question_answers.add(answer)
 
         return self.instance
