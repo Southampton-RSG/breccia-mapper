@@ -107,6 +107,7 @@
     virtualenv: '{{ venv_dir }}'
   become_user: '{{ web_user }}'
   with_items:
+    - dbbackup
     - migrate
     - collectstatic
 
