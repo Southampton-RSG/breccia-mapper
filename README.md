@@ -1,5 +1,8 @@
 # BRECcIA-Mapper (provisional name)
 
+The canonical source for this project is hosted on [GitHub](https://github.com/Southampton-RSG/breccia-mapper),
+please log any issues there.
+
 BRECcIA-Mapper is a web app to collect and explore data about the relationships between researchers and their stakeholders on large-scale, multi-site research projects.
 
 TODO motivations, usage, license
