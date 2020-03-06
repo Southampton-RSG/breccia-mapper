@@ -71,6 +71,7 @@ THIRD_PARTY_APPS = [
     'dbbackup',
     'django_countries',
     'django_select2',
+    'rest_framework',
 ]
 
 FIRST_PARTY_APPS = [

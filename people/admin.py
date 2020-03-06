@@ -31,11 +31,6 @@ class PersonAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(models.RelationshipQuestionChoice)
-class RelationshipQuestionChoiceAdmin(admin.ModelAdmin):
-    pass
-
-
 class RelationshipQuestionChoiceInline(admin.TabularInline):
     model = models.RelationshipQuestionChoice
 
