@@ -37,4 +37,16 @@ urlpatterns = [
     path('relationships/<int:relationship_pk>/update',
          views.RelationshipUpdateView.as_view(),
          name='relationship.update'),
+
+    path('api/people',
+         views.PersonApiView.as_view(),
+         name='person.api.list'),
+
+    path('api/relationships',
+         views.RelationshipApiView.as_view(),
+         name='relationship.api.list'),
+
+    path('network',
+         views.NetworkView.as_view(),
+         name='network'),
 ]

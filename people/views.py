@@ -4,9 +4,11 @@ Views for displaying or manipulating models in the 'people' app.
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView
+from django.views.generic import CreateView, DetailView, ListView, TemplateView, UpdateView
 
-from . import forms, models, permissions
+from rest_framework.views import APIView, Response
+
+from . import forms, models, permissions, serializers
 
 
 class PersonCreateView(CreateView):
@@ -176,3 +178,36 @@ class RelationshipUpdateView(permissions.UserIsLinkedPersonMixin, CreateView):
         form.save()
         
         return HttpResponseRedirect(self.relationship.get_absolute_url())
+    
+
+class PersonApiView(APIView):
+    """
+    List all :class:`Person` instances.
+    """
+    def get(self, request, format=None):
+        """
+        List all :class:`Person` instances.
+        """
+        serializer = serializers.PersonSerializer(models.Person.objects.all(),
+                                                  many=True)
+        return Response(serializer.data)
+    
+    
+class RelationshipApiView(APIView):
+    """
+    List all :class:`Relationship` instances.
+    """
+    def get(self, request, format=None):
+        """
+        List all :class:`Relationship` instances.
+        """
+        serializer = serializers.RelationshipSerializer(models.Relationship.objects.all(),
+                                                        many=True)
+        return Response(serializer.data)
+    
+    
+class NetworkView(TemplateView):
+    """
+    View to display relationship network.
+    """
+    template_name = 'people/network.html'
