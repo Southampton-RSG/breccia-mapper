@@ -2,6 +2,7 @@
 Views for displaying or manipulating models in the 'people' app.
 """
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import CreateView, DetailView, ListView, TemplateView, UpdateView
@@ -206,7 +207,7 @@ class RelationshipApiView(APIView):
         return Response(serializer.data)
     
     
-class NetworkView(TemplateView):
+class NetworkView(LoginRequiredMixin, TemplateView):
     """
     View to display relationship network.
     """
