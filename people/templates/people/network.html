@@ -21,6 +21,7 @@
             crossorigin="anonymous"></script>
 
     <script type="application/javascript">
+        // Holder for Cytoscape.js graph - see https://js.cytoscape.org/
         var cy;
 
         /**
@@ -97,20 +98,39 @@
          */
         function get_network() {
             cy = cytoscape({
-                container: document.getElementById('cy')
+                container: document.getElementById('cy'),
+                style: [
+                    {
+                        selector: 'node[name]',
+                        style: {
+                            label: 'data(name)',
+                            'text-halign': 'center',
+                            'text-valign': 'center',
+                            'font-size': 8
+                        }
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'mid-target-arrow-shape': 'triangle',
+                            'curve-style': 'straight',
+                            'width': 1,
+                        }
+                    }
+                ]
             });
 
             $.when(get_people_ajax()).then(function() {
-                get_relationships_ajax()
+                $.when(get_relationships_ajax()).then(function() {
+                    var layout = cy.layout({
+                        name: 'cose',
+                        randomize: true,
+                        animate: false,
+                        idealEdgeLength: function(edge) {return 64;}
+                    });
 
-            }).then(function() {
-                var layout = cy.layout({
-                    name: 'circle',
-                    randomize: true,
-                    animate: false
-                });
-
-                layout.run();
+                    layout.run();
+                })
             });
 
         }
