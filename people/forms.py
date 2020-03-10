@@ -23,9 +23,28 @@ class PersonForm(forms.ModelForm):
             'country_of_residence': Select2Widget(),
             'themes': Select2MultipleWidget(),
         }
+        
+        
+class DynamicAnswerSetBase(forms.Form):
+    field_class = forms.ChoiceField
+    field_widget = None
+    field_required = True
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for question in models.RelationshipQuestion.objects.all():
+            # Get choices from model and add default 'not selected' option
+            choices = question.choices + [['', '---------']]
+
+            field = self.field_class(label=question,
+                                     choices=choices,
+                                     widget=self.field_widget,
+                                     required=self.field_required)
+            self.fields['question_{}'.format(question.pk)] = field
 
 
-class RelationshipAnswerSetForm(forms.ModelForm):
+class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
     """
     Form to allow users to describe a relationship.
 
@@ -36,17 +55,6 @@ class RelationshipAnswerSetForm(forms.ModelForm):
         fields = [
             'relationship',
         ]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        for question in models.RelationshipQuestion.objects.all():
-            # Get choices from model and add default 'not selected' option
-            choices = question.choices + [['', '---------']]
-
-            field = forms.ChoiceField(label=question,
-                                      choices=choices)
-            self.fields['question_{}'.format(question.pk)] = field
 
     def save(self, commit=True) -> models.RelationshipAnswerSet:
         # Save Relationship model
@@ -62,3 +70,12 @@ class RelationshipAnswerSetForm(forms.ModelForm):
                     self.instance.question_answers.add(answer)
 
         return self.instance
+    
+    
+class NetworkFilterForm(DynamicAnswerSetBase):
+    """
+    Form to provide filtering on the network view.
+    """
+    field_class = forms.MultipleChoiceField
+    field_widget = Select2MultipleWidget
+    field_required = False

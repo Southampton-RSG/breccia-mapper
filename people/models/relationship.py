@@ -152,4 +152,11 @@ class RelationshipAnswerSet(models.Model):
     question_answers = models.ManyToManyField(RelationshipQuestionChoice)
 
     #: When were these answers collected?
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True,
+                                     editable=False)
+    
+    replaced_timestamp = models.DateTimeField(blank=True, null=True,
+                                              editable=False)
+
+    def get_absolute_url(self):
+        return self.relationship.get_absolute_url()
