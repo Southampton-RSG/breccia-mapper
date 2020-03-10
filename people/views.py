@@ -125,7 +125,7 @@ class RelationshipCreateView(permissions.UserIsLinkedPersonMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse('people:relationship.update', kwargs={'pk': self.object.pk})
+        return reverse('people:relationship.update', kwargs={'relationship_pk': self.object.pk})
 
 
 class RelationshipUpdateView(permissions.UserIsLinkedPersonMixin, CreateView):
