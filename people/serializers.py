@@ -14,9 +14,26 @@ class PersonSerializer(serializers.ModelSerializer):
             'pk',
             'name',
         ]
-        
+
+
+class MinimalPersonSerializer(serializers.ModelSerializer):
+    """
+    Serializer containing just the necessary fields to identify a :class:`Person`.
+
+    Used for nesting within other serializers.
+    """
+    class Meta:
+        model = models.Person
+        fields = [
+            'pk',
+            'name',
+        ]
+
         
 class RelationshipSerializer(serializers.ModelSerializer):
+    source = MinimalPersonSerializer()
+    target = MinimalPersonSerializer()
+
     class Meta:
         model = models.Relationship
         fields = [
