@@ -1,6 +1,7 @@
 [uwsgi]
 project = {{ project_name }}
 uid = {{ web_user }}
+gid = {{ web_group }}
 base = /var/www
 
 chdir = %(base)/%(project)

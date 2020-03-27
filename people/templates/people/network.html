@@ -9,6 +9,27 @@
 
     <hr>
 
+    <form class="form"
+          method="POST">
+        {% csrf_token %}
+
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Filter Relationships</h3>
+                    {% load bootstrap4 %}
+                    {% bootstrap_form form %}
+            </div>
+
+            <div class="col-md-6">
+                <h3>Filter People</h3>
+            </div>
+
+        </div>
+        {% buttons %}
+            <button class="btn btn-block btn-info" type="submit">Filter</button>
+        {% endbuttons %}
+    </form>
+
     <div id="cy"
          style="width: 100%; min-height: 1000px; flex-grow: 1; border: 2px solid black"></div>
 
@@ -16,37 +37,54 @@
 {% endblock %}
 
 {% block extra_script %}
+    <!--
+    Embedding graph data in page as JSON allows filtering to be performed entirely on the backend when we send a POST.
+
+    This is useful since one of the most popular browsers in several of the target countries is Opera Mini,
+    which renders JavaScript on a proxy server to avoid running it on the frontend.
+    -->
+    {{ person_set|json_script:'person-set-data' }}
+
+    {{ relationship_set|json_script:'relationship-set-data' }}
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.14.0/cytoscape.min.js"
             integrity="sha256-rI7zH7xDqO306nxvXUw9gqkeBpvvmddDdlXJjJM7rEM="
             crossorigin="anonymous"></script>
 
     <script type="application/javascript">
-        var cy;
-
         /**
-         * Get all :class:`Person` records from people:person.api.list endpoint.
-         *
-         * @returns JQuery Promise from AJAX
+         * Populate a Cytoscape network from :class:`Person` and :class:`Relationship` JSON embedded in page.
          */
-        function get_people_ajax(){
-            return $.ajax({
-                url: '{% url "people:person.api.list" %}',
-                success: success_people_ajax,
-                error: function (xhr, status, error) {
-                    console.error(error);
-                }
+        function get_network() {
+            // Initialise Cytoscape graph
+            // See https://js.cytoscape.org/ for documentation
+            var cy = cytoscape({
+                container: document.getElementById('cy'),
+                style: [
+                    {
+                        selector: 'node[name]',
+                        style: {
+                            label: 'data(name)',
+                            'text-halign': 'center',
+                            'text-valign': 'center',
+                            'font-size': 8
+                        }
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'mid-target-arrow-shape': 'triangle',
+                            'curve-style': 'straight',
+                            'width': 1,
+                        }
+                    }
+                ]
             });
-        }
 
-        /**
-         * Add nodes to Cytoscape network from :class:`Person` JSON.
-         *
-         * @param data: JSON representation of people
-         * @param status: unused
-         * @param xhr: unused
-         */
-        function success_people_ajax(data, status, xhr) {
-            for (var person of data) {
+            // Load people and add to graph
+            var person_set = JSON.parse(document.getElementById('person-set-data').textContent);
+
+            for (var person of person_set) {
                 cy.add({
                     group: 'nodes',
                     data: {
@@ -55,32 +93,11 @@
                     }
                 })
             }
-        }
 
-        /**
-         * Get all :class:`Relationship` records from people:relationship.api.list endpoint.
-         *
-         * @returns JQuery Promise from AJAX
-         */
-        function get_relationships_ajax() {
-            return $.ajax({
-                url: '{% url "people:relationship.api.list" %}',
-                success: success_relationships_ajax,
-                error: function (xhr, status, error) {
-                    console.error(error);
-                }
-            });
-        }
+            // Load relationships and add to graph
+            var relationship_set = JSON.parse(document.getElementById('relationship-set-data').textContent);
 
-        /**
-         * Add edges to Cytoscape network from :class:`Relationship` JSON.
-         *
-         * @param data: JSON representation of relationships
-         * @param status: unused
-         * @param xhr: unused
-         */
-        function success_relationships_ajax(data, status, xhr) {
-            for (var relationship of data) {
+            for (var relationship of relationship_set) {
                 cy.add({
                     group: 'edges',
                     data: {
@@ -90,29 +107,16 @@
                     }
                 })
             }
-        }
 
-        /**
-         * Populate a Cytoscape network from :class:`Person` and :class:`Relationship` API.
-         */
-        function get_network() {
-            cy = cytoscape({
-                container: document.getElementById('cy')
+            // Optimise graph layout
+            var layout = cy.layout({
+                name: 'cose',
+                randomize: true,
+                animate: false,
+                idealEdgeLength: function(edge) {return 64;}
             });
 
-            $.when(get_people_ajax()).then(function() {
-                get_relationships_ajax()
-
-            }).then(function() {
-                var layout = cy.layout({
-                    name: 'circle',
-                    randomize: true,
-                    animate: false
-                });
-
-                layout.run();
-            });
-
+            layout.run();
         }
 
         $( window ).on('load', get_network());
