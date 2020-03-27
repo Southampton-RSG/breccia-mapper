@@ -4,9 +4,7 @@ Views for displaying or manipulating instances of :class:`Person`.
 
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
-from rest_framework.views import APIView, Response
-
-from people import forms, models, permissions, serializers
+from people import forms, models, permissions
 
 
 class PersonCreateView(CreateView):
@@ -62,17 +60,3 @@ class PersonUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
     model = models.Person
     template_name = 'people/person/update.html'
     form_class = forms.PersonForm
-
-
-class PersonApiView(APIView):
-    """
-    List all :class:`Person` instances.
-    """
-
-    def get(self, request, format=None):
-        """
-        List all :class:`Person` instances.
-        """
-        serializer = serializers.PersonSerializer(models.Person.objects.all(),
-                                                  many=True)
-        return Response(serializer.data)

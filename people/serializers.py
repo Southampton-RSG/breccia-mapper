@@ -16,24 +16,21 @@ class PersonSerializer(serializers.ModelSerializer):
         ]
 
 
-class MinimalPersonSerializer(serializers.ModelSerializer):
-    """
-    Serializer containing just the necessary fields to identify a :class:`Person`.
-
-    Used for nesting within other serializers.
-    """
+class PersonExportSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Person
         fields = [
             'pk',
             'name',
+            'core_member',
+            'gender',
+            'age_group',
+            'nationality',
+            'country_of_residence',
         ]
 
         
 class RelationshipSerializer(serializers.ModelSerializer):
-    source = MinimalPersonSerializer()
-    target = MinimalPersonSerializer()
-
     class Meta:
         model = models.Relationship
         fields = [

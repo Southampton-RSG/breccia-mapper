@@ -38,13 +38,13 @@ urlpatterns = [
          views.relationship.RelationshipUpdateView.as_view(),
          name='relationship.update'),
 
-    path('api/people',
-         views.person.PersonApiView.as_view(),
-         name='person.api.list'),
+    path('people/export',
+         views.export.PersonExportView.as_view(),
+         name='person.export'),
 
-    path('api/relationships',
-         views.relationship.RelationshipApiView.as_view(),
-         name='relationship.api.list'),
+    path('relationships/export',
+         views.export.RelationshipExportView.as_view(),
+         name='relationship.export'),
 
     path('network',
          views.network.NetworkView.as_view(),

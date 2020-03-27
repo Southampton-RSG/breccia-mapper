@@ -6,9 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView
 
-from rest_framework.views import APIView, Response
-
-from people import forms, models, permissions, serializers
+from people import forms, models, permissions
 
 
 class RelationshipDetailView(permissions.UserIsLinkedPersonMixin, DetailView):
@@ -130,17 +128,3 @@ class RelationshipUpdateView(permissions.UserIsLinkedPersonMixin, CreateView):
             answer_set.save()
 
         return response
-
-
-class RelationshipApiView(APIView):
-    """
-    List all :class:`Relationship` instances.
-    """
-
-    def get(self, request, format=None):
-        """
-        List all :class:`Relationship` instances.
-        """
-        serializer = serializers.RelationshipSerializer(models.Relationship.objects.all(),
-                                                        many=True)
-        return Response(serializer.data)
