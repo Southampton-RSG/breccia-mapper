@@ -246,3 +246,12 @@ CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 BOOTSTRAP4 = {
     'include_jquery': 'full',
 }
+
+
+# Django Rest Framework settings for API
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework_csv.renderers.CSVRenderer',
+    ]
+}
