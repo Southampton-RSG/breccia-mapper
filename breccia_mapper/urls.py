@@ -28,6 +28,10 @@ urlpatterns = [
          views.IndexView.as_view(),
          name='index'),
 
+    path('export',
+         views.ExportListView.as_view(),
+         name='export'),
+
     path('',
          include('people.urls')),
 
