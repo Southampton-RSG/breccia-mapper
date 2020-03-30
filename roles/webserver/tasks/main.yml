@@ -233,6 +233,7 @@
     permanent: yes
     immediate: yes
   loop:
+    - ssh
     - http
     - https
   when: ansible_facts.services['firewalld.service'] is defined and ansible_facts.services['firewalld.service'].state == 'running'
