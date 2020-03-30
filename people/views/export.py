@@ -1,13 +1,14 @@
 import csv
 import typing
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.views.generic.list import BaseListView
 
 from .. import models, serializers
 
 
-class CsvExportView(BaseListView):
+class CsvExportView(LoginRequiredMixin, BaseListView):
     model = None
     serializer_class = None
 

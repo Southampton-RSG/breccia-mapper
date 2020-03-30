@@ -2,12 +2,13 @@
 Views for displaying or manipulating instances of :class:`Person`.
 """
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from people import forms, models, permissions
 
 
-class PersonCreateView(CreateView):
+class PersonCreateView(LoginRequiredMixin, CreateView):
     """
     View to create a new instance of :class:`Person`.
 
@@ -24,7 +25,7 @@ class PersonCreateView(CreateView):
         return super().form_valid(form)
 
 
-class PersonListView(ListView):
+class PersonListView(LoginRequiredMixin, ListView):
     """
     View displaying a list of :class:`Person` objects - searchable.
     """
