@@ -12,6 +12,17 @@
     name: '*'
     state: latest
 
+- name: Enable RedHat Software Collections - RHEL
+  rhsm_repository:
+    name: rhel-server-rhscl-7-rpms
+  when: ansible_distribution == "RedHat"
+
+- name: Enable RedHat Software Collections - CentOS
+  yum:
+    name: centos-release-scl
+    state: latest
+  when: ansible_distribution == "CentOS"
+
 - name: Install system prerequisites
   yum:
     name: '{{ packages }}'
@@ -20,12 +31,8 @@
     packages:
       - gcc
       - git
-      - nginx
-      - python36
-      - python36-devel
-      - python36-pip
-      - python36-setuptools
-      - python36-virtualenv
+      - rh-nginx114
+      - rh-python36
       - policycoreutils-python
       - python
       - python-setuptools
@@ -86,11 +93,15 @@
     group: '{{ web_group }}'
     recurse: yes
 
+- name: Create venv
+  shell: |
+    source scl_source enable rh-python36
+    python3 -m venv {{ venv_dir }}
+
 - name: Install pip requirements
   pip:
     requirements: '{{ project_dir }}/requirements.txt'
     virtualenv: '{{ venv_dir }}'
-    virtualenv_command: virtualenv-3
 
 - name: Create static directory
   file:
@@ -124,10 +135,9 @@
   when: deploy_mode > 1
 
 - name: Install uWSGI
-  pip:
-    name: uwsgi
-    state: latest
-    executable: pip3
+  shell: |
+    source scl_source enable rh-python36
+    pip3 install uwsgi
 
 - name: Setup uWSGI config
   file:
@@ -145,6 +155,7 @@
     name: uwsgi
     state: started
     enabled: yes
+    daemon_reload: yes
 
 - name: Copy web config files
   template:
@@ -189,7 +200,7 @@
     - name: Copy Nginx site
       template:
         src: nginx-site-ssl.j2
-        dest: '/etc/nginx/conf.d/{{ project_name }}-ssl.conf'
+        dest: '/etc/opt/rh/rh-nginx114/nginx/conf.d/{{ project_name }}-ssl.conf'
         owner: '{{ web_user }}'
         group: '{{ web_group }}'
 
@@ -198,7 +209,7 @@
 - name: Copy Nginx site
   template:
     src: nginx-site.j2
-    dest: '/etc/nginx/conf.d/{{ project_name }}.conf'
+    dest: '/etc/opt/rh/rh-nginx114/nginx/conf.d/{{ project_name }}.conf'
     owner: '{{ web_user }}'
     group: '{{ web_group }}'
 
@@ -207,9 +218,10 @@
     name: "{{ item }}"
     state: restarted
     enabled: yes
+    daemon_reload: yes
   with_items:
     - uwsgi
-    - nginx
+    - rh-nginx114-nginx
 
 - name: Open webserver ports on firewall
   firewalld:

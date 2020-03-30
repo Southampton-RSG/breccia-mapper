@@ -22,6 +22,7 @@
     name: mariadb
     state: restarted
     enabled: yes
+    daemon_reload: yes
 
 - name: Create database
   mysql_db:

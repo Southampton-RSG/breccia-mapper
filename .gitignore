@@ -16,6 +16,7 @@ deployment-key
 deployment-key.pub
 
 # Deployment
+/.dbbackup/
 .vagrant/
 staging.yml
-/.dbbackup/
+production.yml
