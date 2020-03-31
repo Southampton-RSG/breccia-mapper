@@ -31,6 +31,9 @@ class PersonExportSerializer(serializers.ModelSerializer):
 
         
 class RelationshipSerializer(serializers.ModelSerializer):
+    source = PersonSerializer()
+    target = PersonSerializer()
+
     class Meta:
         model = models.Relationship
         fields = [
