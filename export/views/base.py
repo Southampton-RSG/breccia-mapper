@@ -3,9 +3,8 @@ import typing
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
+from django.views.generic import TemplateView
 from django.views.generic.list import BaseListView
-
-from .. import models, serializers
 
 
 class CsvExportView(LoginRequiredMixin, BaseListView):
@@ -26,11 +25,5 @@ class CsvExportView(LoginRequiredMixin, BaseListView):
         return response
 
 
-class PersonExportView(CsvExportView):
-    model = models.Person
-    serializer_class = serializers.PersonExportSerializer
-    
-
-class RelationshipExportView(CsvExportView):
-    model = models.Relationship
-    serializer_class = serializers.RelationshipSerializer
+class ExportListView(LoginRequiredMixin, TemplateView):
+    template_name = 'export/export.html'
