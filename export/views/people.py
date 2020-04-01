@@ -6,7 +6,7 @@ from people import models
 
 class PersonExportView(base.CsvExportView):
     model = models.person.Person
-    serializer_class = serializers.people.PersonExportSerializer
+    serializer_class = serializers.people.PersonSerializer
 
 
 class RelationshipExportView(base.CsvExportView):

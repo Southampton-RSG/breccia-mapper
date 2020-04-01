@@ -7,7 +7,7 @@ from people import models
 from . import base
 
 
-class PersonSerializer(serializers.ModelSerializer):
+class SimplePersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Person
         fields = [
@@ -16,7 +16,7 @@ class PersonSerializer(serializers.ModelSerializer):
         ]
 
 
-class PersonExportSerializer(serializers.ModelSerializer):
+class PersonSerializer(base.FlattenedModelSerializer):
     class Meta:
         model = models.Person
         fields = [
@@ -31,8 +31,8 @@ class PersonExportSerializer(serializers.ModelSerializer):
 
 
 class RelationshipSerializer(base.FlattenedModelSerializer):
-    source = PersonSerializer()
-    target = PersonSerializer()
+    source = SimplePersonSerializer()
+    target = SimplePersonSerializer()
 
     class Meta:
         model = models.Relationship

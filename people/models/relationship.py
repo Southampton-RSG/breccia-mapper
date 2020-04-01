@@ -43,7 +43,7 @@ class RelationshipQuestion(models.Model):
     @property
     def choices(self) -> typing.List[typing.List[str]]:
         """
-        Convert the :class:`RelationshipQuestionChoices` for this question into Django choices.
+        Convert the :class:`RelationshipQuestionChoice`s for this question into Django choices.
         """
         return [
             [choice.pk, str(choice)] for choice in self.answers.all()
