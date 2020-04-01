@@ -17,4 +17,8 @@ urlpatterns = [
     path('export/relationships',
          views.people.RelationshipExportView.as_view(),
          name='relationship'),
+
+    path('export/activities',
+         views.activities.ActivityExportView.as_view(),
+         name='activity'),
 ]
