@@ -46,13 +46,15 @@ class FlattenedModelSerializer(serializers.ModelSerializer):
         return data_out
     
     @property
-    def column_headers(self) -> typing.Collection:
+    def column_headers(self) -> typing.List[str]:
         """
         Get all column headers that will be output by this serializer.
         """
-        return self.flatten_data(self.fields,
-                                 sub_type=serializers.BaseSerializer,
-                                 sub_value_accessor=lambda x: x.fields.items())
+        fields = self.flatten_data(self.fields,
+                                   sub_type=serializers.BaseSerializer,
+                                   sub_value_accessor=lambda x: x.fields.items())
+        
+        return list(fields)
 
     def to_representation(self, instance) -> typing.OrderedDict:
         """
@@ -99,15 +101,26 @@ class RelationshipSerializer(FlattenedModelSerializer):
             'source',
             'target',
         ]
+
+    @property
+    def column_headers(self) -> typing.List[str]:
+        headers = super().column_headers
+
+        # Add relationship questions to columns
+        for question in models.RelationshipQuestion.objects.all():
+            headers.append(question.slug)
+        
+        return headers
         
     def to_representation(self, instance):
         rep = super().to_representation(instance)
 
-        # try:
-        #     for answer in instance.current_answers.question_answers.all():
-        #         rep[answer.question.text] = answer.text
-        #
-        # except AttributeError:
-        #     pass
+        try:
+            # Add relationship question answers to data
+            for answer in instance.current_answers.question_answers.all():
+                rep[answer.question.slug] = answer.slug
+
+        except AttributeError:
+            pass
 
         return rep

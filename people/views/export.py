@@ -15,8 +15,9 @@ class CsvExportView(LoginRequiredMixin, BaseListView):
     def render_to_response(self, context: typing.Dict) -> HttpResponse:
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = f'attachment; filename="{self.get_context_object_name(self.object_list)}.csv"'
-        
-        serializer = self.serializer_class(self.get_queryset(), many=True)
+
+        # Force ordering by PK - though this should be default anyway
+        serializer = self.serializer_class(self.get_queryset().order_by('pk'), many=True)
 
         writer = csv.DictWriter(response, fieldnames=serializer.child.column_headers)
         writer.writeheader()
