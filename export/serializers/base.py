@@ -12,7 +12,7 @@ class FlattenedModelSerializer(serializers.ModelSerializer):
     @classmethod
     def flatten_data(cls, data,
                      sub_type: typing.Type = dict,
-                     sub_value_accessor: typing.Callable = lambda x: x.items()) -> typing.OrderedDict:
+                     sub_value_accessor: typing.Callable = lambda x: x.items()) -> OrderedDict:
         """
         Flatten a dictionary so that subdictionaries become a series of `key[.subkey[.subsubkey ...]]` entries
         in the top level dictionary.
@@ -54,7 +54,7 @@ class FlattenedModelSerializer(serializers.ModelSerializer):
 
         return list(fields)
 
-    def to_representation(self, instance) -> typing.OrderedDict:
+    def to_representation(self, instance) -> OrderedDict:
         """
 
         """
