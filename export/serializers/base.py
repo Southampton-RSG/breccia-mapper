@@ -38,7 +38,7 @@ class FlattenedModelSerializer(serializers.ModelSerializer):
                     # Keys in result dictionary are of format `key[.subkey[.subsubkey ...]]`
                     data_out[f'{key}.{sub_key}'] = sub_value
 
-            else:
+            elif value is not None:
                 data_out[key] = value
 
         return data_out
