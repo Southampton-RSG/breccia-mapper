@@ -74,4 +74,3 @@ class ActivityAttendanceSerializer(base.FlattenedModelSerializer):
             'activity',
             'person',
         ]
-

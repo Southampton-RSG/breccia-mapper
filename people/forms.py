@@ -14,9 +14,18 @@ class PersonForm(forms.ModelForm):
     """
     class Meta:
         model = models.Person
-        exclude = [
-            'user',
-            'relationship_targets',
+        fields = [
+            'name',
+            'core_member',
+            'gender',
+            'age_group',
+            'nationality',
+            'country_of_residence',
+            'organisation',
+            'job_title',
+            'discipline',
+            'role',
+            'themes',
         ]
         widgets = {
             'nationality': Select2Widget(),
