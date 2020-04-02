@@ -1,5 +1,3 @@
-import typing
-
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -28,12 +26,7 @@ class User(AbstractUser):
         """
         Does this user have a linked :class:`Person` record?
         """
-        try:
-            person = self.person
-            return True
-
-        except AttributeError:
-            return False
+        return hasattr(self, 'person')
 
 
 class Organisation(models.Model):
