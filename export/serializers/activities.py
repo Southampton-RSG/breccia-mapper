@@ -3,6 +3,7 @@ from rest_framework import serializers
 from activities import models
 
 from . import base
+from . import people as people_serializers
 
 
 class ActivityTypeSerializer(serializers.ModelSerializer):
@@ -45,8 +46,32 @@ class ActivitySerializer(base.FlattenedModelSerializer):
     class Meta:
         model = models.Activity
         fields = [
-           'name',
-           'series',
-           'type',
-           'medium',
+            'pk',
+            'name',
+            'series',
+            'type',
+            'medium',
         ]
+        
+        
+class SimpleActivitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Activity
+        fields = [
+            'pk',
+            'name',
+        ]
+
+
+class ActivityAttendanceSerializer(base.FlattenedModelSerializer):
+    activity = SimpleActivitySerializer()
+    person = people_serializers.SimplePersonSerializer()
+    
+    class Meta:
+        model = models.Activity.attendance_list.through
+        fields = [
+            'pk',
+            'activity',
+            'person',
+        ]
+

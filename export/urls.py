@@ -21,4 +21,8 @@ urlpatterns = [
     path('export/activities',
          views.activities.ActivityExportView.as_view(),
          name='activity'),
+
+    path('export/activity-attendance',
+         views.activities.ActivityAttendanceExportView.as_view(),
+         name='activity-attendance'),
 ]
