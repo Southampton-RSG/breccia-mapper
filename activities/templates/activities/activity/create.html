@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'activities:activity.list' %}">Activities</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </ol>
+    </nav>
+
+    <hr>
+
+    <form class="form"
+          method="POST">
+        {% csrf_token %}
+
+        {% load bootstrap4 %}
+        {% bootstrap_form form %}
+
+        {% buttons %}
+            <button class="btn btn-success" type="submit">Submit</button>
+        {% endbuttons %}
+    </form>
+
+{% endblock %}
