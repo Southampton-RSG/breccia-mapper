@@ -5,12 +5,12 @@ import json
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
-from django.views.generic import DetailView, ListView, View
+from django.views.generic import CreateView, DetailView, ListView, View
 from django.views.generic.detail import SingleObjectMixin
 
 from people import models as people_models
 from people import permissions
-from . import models
+from . import forms, models
 
 
 class ActivitySeriesListView(LoginRequiredMixin, ListView):
@@ -29,6 +29,15 @@ class ActivitySeriesDetailView(LoginRequiredMixin, DetailView):
     model = models.ActivitySeries
     template_name = 'activities/activity_series/detail.html'
     context_object_name = 'activity_series'
+    
+    
+class ActivityCreateView(LoginRequiredMixin, CreateView):
+    """
+    View to create a new instance of :class:`Activity`.
+    """
+    model = models.Activity
+    template_name = 'activities/activity/create.html'
+    form_class = forms.ActivityForm
 
 
 class ActivityListView(LoginRequiredMixin, ListView):
@@ -65,14 +74,13 @@ class ActivityAttendanceView(permissions.UserIsLinkedPersonMixin, SingleObjectMi
     def get_test_person(self) -> people_models.Person:
         data = json.loads(self.request.body)
 
-        self.person = people_models.Person.objects.get(pk=data['pk'])
-        return self.person
+        return people_models.Person.objects.get(pk=data['pk'])
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
         if request.is_ajax():
-            self.object.attendance_list.add(self.person)
+            self.object.attendance_list.add(self.get_test_person())
 
             return HttpResponse(status=204)
 
@@ -82,7 +90,7 @@ class ActivityAttendanceView(permissions.UserIsLinkedPersonMixin, SingleObjectMi
         self.object = self.get_object()
 
         if request.is_ajax():
-            self.object.attendance_list.remove(self.person)
+            self.object.attendance_list.remove(self.get_test_person())
 
             return HttpResponse(status=204)
 

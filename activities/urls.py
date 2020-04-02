@@ -14,6 +14,10 @@ urlpatterns = [
          views.ActivitySeriesDetailView.as_view(),
          name='activity-series.detail'),
 
+    path('activities/create',
+         views.ActivityCreateView.as_view(),
+         name='activity.create'),
+
     path('activities',
          views.ActivityListView.as_view(),
          name='activity.list'),

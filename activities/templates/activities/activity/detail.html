@@ -10,6 +10,8 @@
         </ol>
     </nav>
 
+    <h1>{{ activity.name }}</h1>
+
     {% if user_is_attending %}
         <button class="btn btn-danger"
                 onclick="clickCancelAttend();">
@@ -38,6 +40,8 @@
     </dl>
 
     <hr>
+
+    <h2>Attendance</h2>
 
     <table class="table table-borderless">
         <thead>

@@ -1,6 +1,9 @@
-# IDE files
+# IDEs
 .idea/
 .vscode/
+
+# Tools
+.mypy_cache/
 
 # Runtime
 /static/

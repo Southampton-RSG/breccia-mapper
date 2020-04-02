@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 from people import models as people_models
@@ -88,7 +89,11 @@ class Activity(models.Model):
 
     #: Who attended this activity?
     attendance_list = models.ManyToManyField(people_models.Person,
-                                             related_name='activities')
+                                             related_name='activities',
+                                             blank=True)
+
+    def get_absolute_url(self):
+        return reverse('activities:activity.detail', kwargs={'pk': self.pk})
 
     def __str__(self) -> str:
         return self.name
