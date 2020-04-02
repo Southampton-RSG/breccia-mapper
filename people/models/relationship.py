@@ -6,6 +6,7 @@ import typing
 
 from django.db import models
 from django.urls import reverse
+from django.utils.text import slugify
 
 from .person import Person
 
@@ -42,11 +43,15 @@ class RelationshipQuestion(models.Model):
     @property
     def choices(self) -> typing.List[typing.List[str]]:
         """
-        Convert the :class:`RelationshipQuestionChoices` for this question into Django choices.
+        Convert the :class:`RelationshipQuestionChoice`s for this question into Django choices.
         """
         return [
             [choice.pk, str(choice)] for choice in self.answers.all()
         ]
+    
+    @property
+    def slug(self) -> str:
+        return slugify(self.text)
 
     def __str__(self) -> str:
         return self.text
@@ -79,6 +84,10 @@ class RelationshipQuestionChoice(models.Model):
     #: Position of this answer in the list
     order = models.SmallIntegerField(default=0,
                                      blank=False, null=False)
+
+    @property
+    def slug(self) -> str:
+        return slugify(self.text)
 
     def __str__(self) -> str:
         return self.text

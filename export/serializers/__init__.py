@@ -1,0 +1,4 @@
+from . import (
+    activities,
+    people
+)

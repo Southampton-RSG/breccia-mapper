@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Export Data</li>
+        </ol>
+    </nav>
+
+    <hr>
+
+    <table class="table table-borderless">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Records</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>People</td>
+                <td></td>
+                <td>
+                    <a class="btn btn-info"
+                       href="{% url 'export:person' %}">Export</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Relationships</td>
+                <td></td>
+                <td>
+                    <a class="btn btn-info"
+                       href="{% url 'export:relationship' %}">Export</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Activities</td>
+                <td></td>
+                <td>
+                    <a class="btn btn-info"
+                       href="{% url 'export:activity' %}">Export</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+{% endblock %}

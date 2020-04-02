@@ -9,8 +9,8 @@ lint:
 
 .PHONY: staging
 staging:
-	ansible-playbook -v -i staging.yml playbook.yml -u jag1e17 -K
+	env ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -v -i staging.yml playbook.yml -u jag1e17 -K
 
 .PHONY: production
 production:
-	ansible-playbook -v -i production.yml playbook.yml -u jag1e17 -K
+	env ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -v -i production.yml playbook.yml -u jag1e17 -K

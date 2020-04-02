@@ -3,6 +3,7 @@ Views for displaying / manipulating models within the Activities app.
 """
 import json
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.views.generic import DetailView, ListView, View
 from django.views.generic.detail import SingleObjectMixin
@@ -12,7 +13,7 @@ from people import permissions
 from . import models
 
 
-class ActivitySeriesListView(ListView):
+class ActivitySeriesListView(LoginRequiredMixin, ListView):
     """
     View displaying a list of :class:`ActivitySeries`.
     """
@@ -21,7 +22,7 @@ class ActivitySeriesListView(ListView):
     context_object_name = 'activity_series_list'
 
 
-class ActivitySeriesDetailView(DetailView):
+class ActivitySeriesDetailView(LoginRequiredMixin, DetailView):
     """
     View displaying details of a single :class:`ActivitySeries`.
     """
@@ -30,7 +31,7 @@ class ActivitySeriesDetailView(DetailView):
     context_object_name = 'activity_series'
 
 
-class ActivityListView(ListView):
+class ActivityListView(LoginRequiredMixin, ListView):
     """
     View displaying a list of :class:`Activity`.
     """
@@ -38,7 +39,7 @@ class ActivityListView(ListView):
     template_name = 'activities/activity/list.html'
 
 
-class ActivityDetailView(DetailView):
+class ActivityDetailView(LoginRequiredMixin, DetailView):
     """
     View displaying details of a single :class:`Activity`.
     """

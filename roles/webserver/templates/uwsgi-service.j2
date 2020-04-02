@@ -2,8 +2,8 @@
 Description=uWSGI Emperor Service
 
 [Service]
-ExecStartPre=/bin/bash -c 'mkdir -p /run/uwsgi; chown {{ web_user }}:{{ web_group }} /run/uwsgi'
-ExecStart=/usr/local/bin/uwsgi --emperor /etc/uwsgi/sites
+ExecStartPre=/bin/bash -c 'mkdir -p /run/uwsgi; chown {{ web_user }}:{{ web_group }} /run/uwsgi; source scl_source rh-python36'
+ExecStart=/bin/scl enable rh-python36 "uwsgi --emperor /etc/uwsgi/sites"
 Restart=always
 KillSignal=SIGQUIT
 Type=notify

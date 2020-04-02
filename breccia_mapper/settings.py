@@ -77,6 +77,7 @@ THIRD_PARTY_APPS = [
 FIRST_PARTY_APPS = [
     'people',
     'activities',
+    'export',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + FIRST_PARTY_APPS
@@ -140,6 +141,11 @@ DBBACKUP_STORAGE_OPTIONS = {
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework_csv.renderers.CSVRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
     ],
 }
 

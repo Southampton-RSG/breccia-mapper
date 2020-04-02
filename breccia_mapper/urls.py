@@ -29,6 +29,9 @@ urlpatterns = [
          name='index'),
 
     path('',
+         include('export.urls')),
+
+    path('',
          include('people.urls')),
 
     path('',

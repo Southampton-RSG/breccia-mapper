@@ -14,9 +14,12 @@ class PersonSerializer(serializers.ModelSerializer):
             'pk',
             'name',
         ]
-        
+
         
 class RelationshipSerializer(serializers.ModelSerializer):
+    source = PersonSerializer()
+    target = PersonSerializer()
+
     class Meta:
         model = models.Relationship
         fields = [

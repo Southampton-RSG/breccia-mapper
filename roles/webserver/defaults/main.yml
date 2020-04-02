@@ -5,7 +5,7 @@ deploy_mode_dict:
   3: Development
 deploy_mode: 3
 
-secret_key: '{{ lookup("password", "/tmp/secretkeyfile") }}'
+secret_key: '{{ lookup("password", "/dev/null") }}'
 
 project_name: 'breccia-mapper'
 project_full_name: 'breccia_mapper'
