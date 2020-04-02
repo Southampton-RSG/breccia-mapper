@@ -48,7 +48,7 @@ class RelationshipSerializer(base.FlattenedModelSerializer):
 
         # Add relationship questions to columns
         for question in models.RelationshipQuestion.objects.all():
-            headers.append(question.slug)
+            headers.append(question.slug.replace('-', '_'))
 
         return headers
 
@@ -58,7 +58,7 @@ class RelationshipSerializer(base.FlattenedModelSerializer):
         try:
             # Add relationship question answers to data
             for answer in instance.current_answers.question_answers.all():
-                rep[answer.question.slug] = answer.slug
+                rep[answer.question.slug.replace('-', '_')] = answer.slug.replace('-', '_')
 
         except AttributeError:
             pass
