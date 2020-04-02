@@ -74,14 +74,13 @@ class ActivityAttendanceView(permissions.UserIsLinkedPersonMixin, SingleObjectMi
     def get_test_person(self) -> people_models.Person:
         data = json.loads(self.request.body)
 
-        self.person = people_models.Person.objects.get(pk=data['pk'])
-        return self.person
+        return people_models.Person.objects.get(pk=data['pk'])
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
         if request.is_ajax():
-            self.object.attendance_list.add(self.person)
+            self.object.attendance_list.add(self.get_test_person())
 
             return HttpResponse(status=204)
 
@@ -91,7 +90,7 @@ class ActivityAttendanceView(permissions.UserIsLinkedPersonMixin, SingleObjectMi
         self.object = self.get_object()
 
         if request.is_ajax():
-            self.object.attendance_list.remove(self.person)
+            self.object.attendance_list.remove(self.get_test_person())
 
             return HttpResponse(status=204)
 
