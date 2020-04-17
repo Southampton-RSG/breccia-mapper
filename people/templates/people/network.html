@@ -104,8 +104,8 @@
                     group: 'edges',
                     data: {
                         id: 'relationship-' + relationship.pk.toString(),
-                        source: 'person-' + relationship.source.toString(),
-                        target: 'person-' + relationship.target.toString()
+                        source: 'person-' + relationship.source.pk.toString(),
+                        target: 'person-' + relationship.target.pk.toString()
                     }
                 })
             }
