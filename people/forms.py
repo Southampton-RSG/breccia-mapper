@@ -35,7 +35,7 @@ class PersonForm(forms.ModelForm):
         
         
 class DynamicAnswerSetBase(forms.Form):
-    field_class = forms.ChoiceField
+    field_class = forms.ModelChoiceField
     field_widget = None
     field_required = True
     
@@ -43,11 +43,8 @@ class DynamicAnswerSetBase(forms.Form):
         super().__init__(*args, **kwargs)
 
         for question in models.RelationshipQuestion.objects.all():
-            # Get choices from model and add default 'not selected' option
-            choices = question.choices + [['', '---------']]
-
             field = self.field_class(label=question,
-                                     choices=choices,
+                                     queryset=question.answers,
                                      widget=self.field_widget,
                                      required=self.field_required)
             self.fields['question_{}'.format(question.pk)] = field
@@ -85,6 +82,6 @@ class NetworkFilterForm(DynamicAnswerSetBase):
     """
     Form to provide filtering on the network view.
     """
-    field_class = forms.MultipleChoiceField
+    field_class = forms.ModelMultipleChoiceField
     field_widget = Select2MultipleWidget
     field_required = False
