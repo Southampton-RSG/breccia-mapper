@@ -12,3 +12,8 @@ class PersonExportView(base.CsvExportView):
 class RelationshipExportView(base.CsvExportView):
     model = models.relationship.Relationship
     serializer_class = serializers.people.RelationshipSerializer
+
+
+class RelationshipAnswerSetExportView(base.CsvExportView):
+    model = models.relationship.RelationshipAnswerSet
+    serializer_class = serializers.people.RelationshipAnswerSetSerializer
