@@ -82,3 +82,9 @@ class NetworkFilterForm(DynamicAnswerSetBase):
     field_class = forms.ModelMultipleChoiceField
     field_widget = Select2MultipleWidget
     field_required = False
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Add date field to select relationships at a particular point in time
+        self.fields['date'] = forms.DateField(required=False)

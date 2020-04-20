@@ -3,7 +3,7 @@ Views for displaying networks of :class:`People` and :class:`Relationship`s.
 """
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import F, Q
+from django.db.models import Q
 from django.forms import ValidationError
 from django.utils import timezone
 from django.views.generic import FormView
@@ -41,13 +41,15 @@ class NetworkView(LoginRequiredMixin, FormView):
         context = super().get_context_data(**kwargs)
         form: forms.NetworkFilterForm = context['form']
         if not form.is_valid():
-            raise ValidationError
+            return context
 
-        at_time = timezone.now()
+        at_date = form.cleaned_data['date']
+        if not at_date:
+            at_date = timezone.now().date()
 
         relationship_answerset_set = models.RelationshipAnswerSet.objects.filter(
-            Q(replaced_timestamp__gt=at_time) | Q(replaced_timestamp__isnull=True),
-            timestamp__lte=at_time
+            Q(replaced_timestamp__date__gte=at_date) | Q(replaced_timestamp__isnull=True),
+            timestamp__date__lte=at_date
         )
 
         # Filter answers to relationship questions
