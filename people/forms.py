@@ -69,11 +69,8 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         if commit:
             # Save answers to relationship questions
             for key, value in self.cleaned_data.items():
-                if key.startswith('question_'):
-                    question_id = key.replace('question_', '', 1)
-                    answer = models.RelationshipQuestionChoice.objects.get(pk=value,
-                                                                           question__pk=question_id)
-                    self.instance.question_answers.add(answer)
+                if key.startswith('question_') and value:
+                    self.instance.question_answers.add(value)
 
         return self.instance
     
