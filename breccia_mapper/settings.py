@@ -11,6 +11,89 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 Before production deployment, see
 https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
+
+
+Many configuration settings are input from `settings.ini`.
+The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABASE_URL, PROJECT_*_NAME, EMAIL_*
+
+- PROJECT_LONG_NAME
+  default: Project Long Name
+  Displayed in templates where the full name of the project should be used
+
+- PROJECT_SHORT_NAME
+  default: shortname
+  Displayed in templates where a short identifier for the project should be used
+
+- SECRET_KEY (REQUIRED)
+  Used to generate CSRF tokens - must never be made public
+
+- DEBUG
+  default: False
+  Should the server run in debug mode?  Provides information to users which is unsafe in production
+
+- ALLOWED_HOSTS
+  default: * if DEBUG else localhost
+  Accepted values for server header in request - protects against CSRF and CSS attacks
+
+- DATABASE_URL
+  default: sqlite://db.sqlite3
+  URL to database - uses format described at https://github.com/jacobian/dj-database-url
+  
+- DBBACKUP_STORAGE_LOCATION
+  default: .dbbackup
+  Directory where database backups should be stored
+
+- LANGUAGE_CODE
+  default: en-gb
+  Default language - used for translation - has not been enabled
+
+- TIME_ZONE
+  default: UTC
+  Default timezone
+
+- LOG_LEVEL
+  default: INFO
+  Level of messages written to log file
+
+- LOG_FILENAME
+  default: debug.log
+  Path to logfile
+
+- LOG_DAYS
+  default: 14
+  Number of days of logs to keep - logfile is rotated out at the end of each day
+
+- EMAIL_HOST
+  default: None
+  Hostname of SMTP server
+
+- DEFAULT_FROM_EMAIL
+  default: None
+  Email address from which messages are sent
+
+- EMAIL_FILE_PATH (debug only)
+  default: mail.log
+  Directory where emails will be stored if not using an SMTP server
+
+- EMAIL_HOST_USER
+  default: None
+  Username to authenticate with SMTP server
+
+- EMAIL_HOST_PASSWORD
+  default: None
+  Password to authenticate with SMTP server
+
+- EMAIL_PORT
+  default: 25
+  Port to access on SMTP server
+
+- EMAIL_USE_TLS
+  default: True if EMAIL_PORT == 587 else False
+  Use TLS to communicate with SMTP server?  Usually on port 587
+
+- EMAIL_USE_SSL
+  default: True if EMAIL_PORT == 465 else False
+  Use SSL to communicate with SMTP server?  Usually on port 465
 """
 
 import collections
@@ -185,9 +268,9 @@ LOGIN_REDIRECT_URL = reverse_lazy('index')
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = config('LANGUAGE_CODE', default='en-gb')
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = config('TIME_ZONE', default='UTC')
 
 USE_I18N = True
 
@@ -270,6 +353,27 @@ CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 BOOTSTRAP4 = {
     'include_jquery': 'full',
 }
+
+
+# Email backend settings
+# See https://docs.djangoproject.com/en/3.0/topics/email
+
+EMAIL_HOST = config('EMAIL_HOST', default=None)
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=None)
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+if EMAIL_HOST is None:
+    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+    EMAIL_FILE_PATH = config('EMAIL_FILE_PATH', default=str(BASE_DIR.joinpath('mail.log')))
+
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER', default=None)
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default=None)
+    
+    EMAIL_PORT = config('EMAIL_PORT', default=25, cast=int)
+    EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=(EMAIL_PORT == 587), cast=bool)
+    EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=(EMAIL_PORT == 465), cast=bool)
 
 
 # Import customisation app settings if present
