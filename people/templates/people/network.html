@@ -18,8 +18,12 @@
         <div class="row">
             <div class="col-md-6">
                 <h3>Filter Relationships</h3>
-                    {% load bootstrap4 %}
-                    {% bootstrap_form form %}
+                {% load bootstrap4 %}
+                {% bootstrap_form form exclude='date' %}
+
+                <hr>
+                {% bootstrap_field form.date %}
+
             </div>
 
             <div class="col-md-6">
@@ -27,12 +31,14 @@
             </div>
 
         </div>
+
         {% buttons %}
             <button class="btn btn-block btn-info" type="submit">Filter</button>
         {% endbuttons %}
     </form>
 
     <div id="cy"
+         class="mb-2"
          style="width: 100%; min-height: 1000px; flex-grow: 1; border: 2px solid black"></div>
 
 
@@ -104,8 +110,8 @@
                     group: 'edges',
                     data: {
                         id: 'relationship-' + relationship.pk.toString(),
-                        source: 'person-' + relationship.source.toString(),
-                        target: 'person-' + relationship.target.toString()
+                        source: 'person-' + relationship.source.pk.toString(),
+                        target: 'person-' + relationship.target.pk.toString()
                     }
                 })
             }

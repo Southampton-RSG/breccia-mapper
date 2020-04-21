@@ -4,6 +4,7 @@ Views for displaying networks of :class:`People` and :class:`Relationship`s.
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.forms import ValidationError
 from django.utils import timezone
 from django.views.generic import FormView
 
@@ -38,22 +39,24 @@ class NetworkView(LoginRequiredMixin, FormView):
         Add filtered QuerySets of :class:`Person` and :class:`Relationship` to the context.
         """
         context = super().get_context_data(**kwargs)
-        form = context['form']
+        form: forms.NetworkFilterForm = context['form']
+        if not form.is_valid():
+            return context
 
-        at_time = timezone.now()
+        at_date = form.cleaned_data['date']
+        if not at_date:
+            at_date = timezone.now().date()
 
-        relationship_set = models.Relationship.objects.all()
+        relationship_answerset_set = models.RelationshipAnswerSet.objects.filter(
+            Q(replaced_timestamp__date__gte=at_date) | Q(replaced_timestamp__isnull=True),
+            timestamp__date__lte=at_date
+        )
 
         # Filter answers to relationship questions
-        for key, value in form.data.items():
-            if key.startswith('question_') and value:
-                question_id = key.replace('question_', '', 1)
-                answer = models.RelationshipQuestionChoice.objects.get(pk=value,
-                                                                       question__pk=question_id)
-                relationship_set = relationship_set.filter(
-                    Q(answer_sets__replaced_timestamp__gt=at_time) | Q(answer_sets__replaced_timestamp__isnull=True),
-                    answer_sets__timestamp__lte=at_time,
-                    answer_sets__question_answers=answer
+        for field, values in form.cleaned_data.items():
+            if field.startswith('question_') and values:
+                relationship_answerset_set = relationship_answerset_set.filter(
+                    question_answers__in=values
                 )
 
         context['person_set'] = serializers.PersonSerializer(
@@ -62,11 +65,17 @@ class NetworkView(LoginRequiredMixin, FormView):
         ).data
 
         context['relationship_set'] = serializers.RelationshipSerializer(
-            relationship_set,
+            models.Relationship.objects.filter(
+                pk__in=relationship_answerset_set.values_list('relationship', flat=True)
+            ),
             many=True
         ).data
 
         return context
 
     def form_valid(self, form):
-        return self.render_to_response(self.get_context_data())
+        try:
+            return self.render_to_response(self.get_context_data())
+        
+        except ValidationError:
+            return self.form_invalid(form)

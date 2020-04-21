@@ -63,19 +63,35 @@
 
 - name: Copy deploy key
   copy:
-    src: 'deployment-key'
+    src: '{{ deployment_keyfile }}'
     dest: '/tmp/deployment-key'
     mode: 0600
-  when: vagrant_dir.stat.exists == False
+  when: vagrant_dir.stat.exists == False and deployment_keyfile is defined
 
 - name: Clone / update from source repo
   git:
     repo: 'git@github.com:Southampton-RSG/breccia-mapper.git'
     dest: '{{ project_dir }}'
-    key_file: '/tmp/deployment-key'
+    key_file: '{{ "/tmp/deployment-key" if deployment_keyfile is defined else None }}'
     version: '{{ branch | default ("master") }}'
     accept_hostkey: yes
   when: vagrant_dir.stat.exists == False
+
+- name: Copy customisation deploy key
+  copy:
+    src: '{{ customisation_repo_keyfile }}'
+    dest: '/tmp/deployment-key-customisation'
+    mode: 0600
+  when: customisation_repo_keyfile is defined
+
+- name: Clone / update from customisation repo
+  git:
+    repo: '{{ customisation_repo }}'
+    dest: '{{ project_dir }}/custom'
+    key_file: '{{ "/tmp/deployment-key-customisation" if customisation_repo_keyfile is defined else None }}'
+    version: '{{ branch | default ("master") }}'
+    accept_hostkey: yes
+  when: customisation_repo is defined
 
 - name: Copy and populate settings template
   template:

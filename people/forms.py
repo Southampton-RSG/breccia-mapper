@@ -35,7 +35,7 @@ class PersonForm(forms.ModelForm):
         
         
 class DynamicAnswerSetBase(forms.Form):
-    field_class = forms.ChoiceField
+    field_class = forms.ModelChoiceField
     field_widget = None
     field_required = True
     
@@ -43,11 +43,8 @@ class DynamicAnswerSetBase(forms.Form):
         super().__init__(*args, **kwargs)
 
         for question in models.RelationshipQuestion.objects.all():
-            # Get choices from model and add default 'not selected' option
-            choices = question.choices + [['', '---------']]
-
             field = self.field_class(label=question,
-                                     choices=choices,
+                                     queryset=question.answers,
                                      widget=self.field_widget,
                                      required=self.field_required)
             self.fields['question_{}'.format(question.pk)] = field
@@ -72,11 +69,8 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         if commit:
             # Save answers to relationship questions
             for key, value in self.cleaned_data.items():
-                if key.startswith('question_'):
-                    question_id = key.replace('question_', '', 1)
-                    answer = models.RelationshipQuestionChoice.objects.get(pk=value,
-                                                                           question__pk=question_id)
-                    self.instance.question_answers.add(answer)
+                if key.startswith('question_') and value:
+                    self.instance.question_answers.add(value)
 
         return self.instance
     
@@ -85,6 +79,12 @@ class NetworkFilterForm(DynamicAnswerSetBase):
     """
     Form to provide filtering on the network view.
     """
-    field_class = forms.MultipleChoiceField
+    field_class = forms.ModelMultipleChoiceField
     field_widget = Select2MultipleWidget
     field_required = False
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Add date field to select relationships at a particular point in time
+        self.fields['date'] = forms.DateField(required=False)

@@ -118,13 +118,12 @@ class RelationshipUpdateView(permissions.UserIsLinkedPersonMixin, CreateView):
         """
         Mark any previous answer sets as replaced.
         """
-        previous_valid_answer_sets = self.relationship.answer_sets.filter(replaced_timestamp__isnull=True)
-
         response = super().form_valid(form)
+        now_date = timezone.now().date()
 
         # Shouldn't be more than one after initial updates after migration
-        for answer_set in previous_valid_answer_sets:
-            answer_set.replaced_timestamp = timezone.now()
+        for answer_set in self.relationship.answer_sets.exclude(pk=self.object.pk):
+            answer_set.replaced_timestamp = now_date
             answer_set.save()
 
         return response

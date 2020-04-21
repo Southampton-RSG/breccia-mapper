@@ -11,7 +11,7 @@ class SimplePersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Person
         fields = [
-            'pk',
+            'id',
             'name',
         ]
 
@@ -20,7 +20,7 @@ class PersonSerializer(base.FlattenedModelSerializer):
     class Meta:
         model = models.Person
         fields = [
-            'pk',
+            'id',
             'name',
             'core_member',
             'gender',
@@ -28,8 +28,8 @@ class PersonSerializer(base.FlattenedModelSerializer):
             'nationality',
             'country_of_residence',
         ]
-
-
+        
+        
 class RelationshipSerializer(base.FlattenedModelSerializer):
     source = SimplePersonSerializer()
     target = SimplePersonSerializer()
@@ -37,9 +37,22 @@ class RelationshipSerializer(base.FlattenedModelSerializer):
     class Meta:
         model = models.Relationship
         fields = [
-            'pk',
+            'id',
             'source',
             'target',
+        ]
+
+
+class RelationshipAnswerSetSerializer(base.FlattenedModelSerializer):
+    relationship = RelationshipSerializer()
+    
+    class Meta:
+        model = models.RelationshipAnswerSet
+        fields = [
+            'id',
+            'relationship',
+            'timestamp',
+            'replaced_timestamp',
         ]
 
     @property
@@ -57,7 +70,7 @@ class RelationshipSerializer(base.FlattenedModelSerializer):
 
         try:
             # Add relationship question answers to data
-            for answer in instance.current_answers.question_answers.all():
+            for answer in instance.question_answers.all():
                 rep[answer.question.slug.replace('-', '_')] = answer.slug.replace('-', '_')
 
         except AttributeError:

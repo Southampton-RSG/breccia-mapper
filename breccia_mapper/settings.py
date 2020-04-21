@@ -14,6 +14,8 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 """
 
 import collections
+import logging
+import logging.config
 import pathlib
 
 from django.urls import reverse_lazy
@@ -241,6 +243,12 @@ LOGGING = {
     }
 }
 
+# Initialise logger now so we can use it in this file
+
+LOGGING_CONFIG = None
+logging.config.dictConfig(LOGGING)
+logger = logging.getLogger(__name__)
+
 
 # Admin panel variables
 
@@ -262,3 +270,20 @@ CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 BOOTSTRAP4 = {
     'include_jquery': 'full',
 }
+
+
+# Import customisation app settings if present
+
+TEMPLATE_NAME_INDEX = 'index.html'
+
+try:
+    from custom.settings import (
+        CUSTOMISATION_NAME,
+        TEMPLATE_NAME_INDEX
+    )
+    logger.info("Loaded customisation app: %s", CUSTOMISATION_NAME)
+
+    INSTALLED_APPS.append('custom')
+
+except ImportError as e:
+    logger.info("No customisation app loaded: %s", e)
