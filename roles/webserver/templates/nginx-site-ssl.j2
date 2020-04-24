@@ -5,7 +5,7 @@ server {
 
     ssl_certificate /etc/ssl/crt/{{ inventory_hostname }}.crt;
     ssl_certificate_key /etc/ssl/private/{{ inventory_hostname }}.pem;
-    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_protocols TLSv1.2;
 
     # Cache and tickets improve performance by ~10% on small requests
     ssl_session_cache shared:SSL:1m;
