@@ -1,0 +1,16 @@
+[
+    {
+        "model": "post_office.emailtemplate",
+        "fields": {
+            "name": "welcome-email",
+            "description": "Default welcome email template",
+            "created": "2020-04-27T12:13:30.448Z",
+            "last_updated": "2020-04-27T14:45:27.152Z",
+            "subject": "Welcome to {{settings.PROJECT_LONG_NAME}}",
+            "content": "Dear {{ user.get_full_name }},\r\n\r\nWelcome to {{ settings.PROJECT_LONG_NAME }}.\r\n\r\nThanks,\r\n\r\nThe {{ settings.PROJECT_LONG_NAME }} team",
+            "html_content": "<h1>{{ settings.PROJECT_LONG_NAME }}</h1>\r\n\r\nDear {{ user.get_full_name }},\r\n\r\nWelcome to {{ settings.PROJECT_LONG_NAME }}.\r\n\r\nThanks,\r\n\r\nThe {{ settings.PROJECT_LONG_NAME }} team",
+            "language": "",
+            "default_template": null
+        }
+    }
+]

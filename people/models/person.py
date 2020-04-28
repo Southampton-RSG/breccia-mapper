@@ -5,6 +5,8 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from django_countries.fields import CountryField
+from django_settings_export import settings_export
+from post_office import mail
 
 from backports.db.models.enums import TextChoices
 
@@ -27,6 +29,22 @@ class User(AbstractUser):
         Does this user have a linked :class:`Person` record?
         """
         return hasattr(self, 'person')
+
+    def send_welcome_email(self):
+        """Send a welcome email to a new user."""
+        # Get exported data from settings.py first
+        context = settings_export(None)
+        context.update({
+            'user': self,
+        })
+        
+        mail.send(
+            [self.email],
+            sender=settings.DEFAULT_FROM_EMAIL,
+            template=settings.TEMPLATE_WELCOME_EMAIL_NAME,
+            context=context,
+            priority='now'  # Send immediately - don't add to queue
+        )
 
 
 class Organisation(models.Model):
