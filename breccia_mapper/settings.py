@@ -38,7 +38,7 @@ The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABAS
 - DATABASE_URL
   default: sqlite://db.sqlite3
   URL to database - uses format described at https://github.com/jacobian/dj-database-url
-  
+
 - DBBACKUP_STORAGE_LOCATION
   default: .dbbackup
   Directory where database backups should be stored
@@ -106,7 +106,6 @@ from django.urls import reverse_lazy
 from decouple import config, Csv
 import dj_database_url
 
-
 # Settings exported to templates
 # https://github.com/jakubroztocil/django-settings-export
 
@@ -116,14 +115,11 @@ SETTINGS_EXPORT = [
     'PROJECT_SHORT_NAME',
 ]
 
-
 PROJECT_LONG_NAME = config('PROJECT_LONG_NAME', default='Project Long Name')
 PROJECT_SHORT_NAME = config('PROJECT_SHORT_NAME', default='shortname')
 
-
 # Build paths inside the project like this: BASE_DIR.joinpath(...)
 BASE_DIR = pathlib.Path(__file__).parent.parent
-
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
@@ -134,9 +130,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
     default='*' if DEBUG else '127.0.0.1,localhost,localhost.localdomain',
-    cast=Csv()
-)
-
+    cast=Csv())
 
 # Application definition
 
@@ -200,16 +194,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'breccia_mapper.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    'default': config(
-        'DATABASE_URL',
-        default='sqlite:///' + str(BASE_DIR.joinpath('db.sqlite3')),
-        cast=dj_database_url.parse
-    )
+    'default':
+    config('DATABASE_URL',
+           default='sqlite:///' + str(BASE_DIR.joinpath('db.sqlite3')),
+           cast=dj_database_url.parse)
 }
 
 # Django DBBackup
@@ -217,9 +209,10 @@ DATABASES = {
 
 DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
 DBBACKUP_STORAGE_OPTIONS = {
-    'location': config('DBBACKUP_STORAGE_LOCATION', default=BASE_DIR.joinpath('.dbbackup')),
+    'location':
+    config('DBBACKUP_STORAGE_LOCATION',
+           default=BASE_DIR.joinpath('.dbbackup')),
 }
-
 
 # Django REST Framework
 # https://www.django-rest-framework.org/
@@ -235,22 +228,25 @@ REST_FRAMEWORK = {
     ],
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
@@ -265,7 +261,6 @@ LOGIN_URL = reverse_lazy('login')
 
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -279,7 +274,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
@@ -287,10 +281,7 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = BASE_DIR.joinpath('static')
 
-STATICFILES_DIRS = [
-    BASE_DIR.joinpath('breccia_mapper', 'static')
-]
-
+STATICFILES_DIRS = [BASE_DIR.joinpath('breccia_mapper', 'static')]
 
 # Logging - NB the logger name is empty to capture all output
 
@@ -333,12 +324,14 @@ LOGGING_CONFIG = None
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger(__name__)
 
-
 # Admin panel variables
 
 CONSTANCE_CONFIG = collections.OrderedDict([
-    ('NOTICE_TEXT', ('', 'Text to be displayed in a notice banner at the top of every page.')),
-    ('NOTICE_CLASS', ('alert-warning', 'CSS class to use for background of notice banner.')),
+    ('NOTICE_TEXT',
+     ('',
+      'Text to be displayed in a notice banner at the top of every page.')),
+    ('NOTICE_CLASS', ('alert-warning',
+                      'CSS class to use for background of notice banner.')),
 ])
 
 CONSTANCE_CONFIG_FIELDSETS = {
@@ -347,7 +340,6 @@ CONSTANCE_CONFIG_FIELDSETS = {
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
-
 # Bootstrap settings
 # See https://django-bootstrap4.readthedocs.io/en/latest/settings.html
 
@@ -355,27 +347,32 @@ BOOTSTRAP4 = {
     'include_jquery': 'full',
 }
 
-
 # Email backend settings
 # See https://docs.djangoproject.com/en/3.0/topics/email
 
 EMAIL_HOST = config('EMAIL_HOST', default=None)
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=None)
+DEFAULT_FROM_EMAIL = config(
+    'DEFAULT_FROM_EMAIL',
+    default=f'{PROJECT_SHORT_NAME}@localhost.localdomain')
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 if EMAIL_HOST is None:
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-    EMAIL_FILE_PATH = config('EMAIL_FILE_PATH', default=str(BASE_DIR.joinpath('mail.log')))
+    EMAIL_FILE_PATH = config('EMAIL_FILE_PATH',
+                             default=str(BASE_DIR.joinpath('mail.log')))
 
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST_USER = config('EMAIL_HOST_USER', default=None)
     EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default=None)
-    
-    EMAIL_PORT = config('EMAIL_PORT', default=25, cast=int)
-    EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=(EMAIL_PORT == 587), cast=bool)
-    EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=(EMAIL_PORT == 465), cast=bool)
 
+    EMAIL_PORT = config('EMAIL_PORT', default=25, cast=int)
+    EMAIL_USE_TLS = config('EMAIL_USE_TLS',
+                           default=(EMAIL_PORT == 587),
+                           cast=bool)
+    EMAIL_USE_SSL = config('EMAIL_USE_SSL',
+                           default=(EMAIL_PORT == 465),
+                           cast=bool)
 
 # Import customisation app settings if present
 
@@ -384,11 +381,8 @@ TEMPLATE_NAME_INDEX = 'index.html'
 TEMPLATE_WELCOME_EMAIL_NAME = 'welcome-email'
 
 try:
-    from custom.settings import (
-        CUSTOMISATION_NAME,
-        TEMPLATE_NAME_INDEX,
-        TEMPLATE_WELCOME_EMAIL_NAME
-    )
+    from custom.settings import (CUSTOMISATION_NAME, TEMPLATE_NAME_INDEX,
+                                 TEMPLATE_WELCOME_EMAIL_NAME)
     logger.info("Loaded customisation app: %s", CUSTOMISATION_NAME)
 
     INSTALLED_APPS.append('custom')
