@@ -37,7 +37,9 @@ class User(AbstractUser):
         context.update({
             'user': self,
         })
-        
+
+        return False
+
         mail.send(
             [self.email],
             sender=settings.DEFAULT_FROM_EMAIL,
@@ -51,19 +53,17 @@ class Organisation(models.Model):
     """
     Organisation to which a :class:`Person` belongs.
     """
-    name = models.CharField(max_length=255,
-                            blank=False, null=False)
-    
+    name = models.CharField(max_length=255, blank=False, null=False)
+
     def __str__(self) -> str:
         return self.name
-    
-    
+
+
 class Role(models.Model):
     """
     Role which a :class:`Person` holds within the project.
     """
-    name = models.CharField(max_length=255,
-                            blank=False, null=False)
+    name = models.CharField(max_length=255, blank=False, null=False)
 
     def __str__(self) -> str:
         return self.name
@@ -73,23 +73,20 @@ class Discipline(models.Model):
     """
     Discipline within which a :class:`Person` works.
     """
-    name = models.CharField(max_length=255,
-                            blank=False, null=False)
+    name = models.CharField(max_length=255, blank=False, null=False)
 
     #: Short code using system such as JACS 3
-    code = models.CharField(max_length=15,
-                            blank=True, null=False)
+    code = models.CharField(max_length=15, blank=True, null=False)
 
     def __str__(self) -> str:
         return self.name
-    
-    
+
+
 class Theme(models.Model):
     """
     Project theme within which a :class:`Person` works.
     """
-    name = models.CharField(max_length=255,
-                            blank=False, null=False)
+    name = models.CharField(max_length=255, blank=False, null=False)
 
     def __str__(self) -> str:
         return self.name
@@ -106,21 +103,22 @@ class Person(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 related_name='person',
                                 on_delete=models.CASCADE,
-                                blank=True, null=True)
+                                blank=True,
+                                null=True)
 
     #: Name of the person
-    name = models.CharField(max_length=255,
-                            blank=False, null=False)
+    name = models.CharField(max_length=255, blank=False, null=False)
 
     #: Is this person a member of the core project team?
-    core_member = models.BooleanField(default=False,
-                                      blank=False, null=False)
+    core_member = models.BooleanField(default=False, blank=False, null=False)
 
     #: People with whom this person has relationship - via intermediate :class:`Relationship` model
-    relationship_targets = models.ManyToManyField('self', related_name='relationship_sources',
-                                                  through='Relationship',
-                                                  through_fields=('source', 'target'),
-                                                  symmetrical=False)
+    relationship_targets = models.ManyToManyField(
+        'self',
+        related_name='relationship_sources',
+        through='Relationship',
+        through_fields=('source', 'target'),
+        symmetrical=False)
 
     ###############################################################
     # Data collected for analysis of community makeup and structure
@@ -133,7 +131,8 @@ class Person(models.Model):
 
     gender = models.CharField(max_length=1,
                               choices=GenderChoices.choices,
-                              blank=True, null=False)
+                              blank=True,
+                              null=False)
 
     class AgeGroupChoices(TextChoices):
         LTE_25 = '<=25', _('25 or under')
@@ -149,8 +148,9 @@ class Person(models.Model):
 
     age_group = models.CharField(max_length=5,
                                  choices=AgeGroupChoices.choices,
-                                 blank=True, null=False)
-    
+                                 blank=True,
+                                 null=False)
+
     nationality = CountryField(blank=True, null=True)
 
     country_of_residence = CountryField(blank=True, null=True)
@@ -159,34 +159,33 @@ class Person(models.Model):
     organisation = models.ForeignKey(Organisation,
                                      on_delete=models.PROTECT,
                                      related_name='members',
-                                     blank=True, null=True)
+                                     blank=True,
+                                     null=True)
 
     #: Job title this person holds within their organisation
-    job_title = models.CharField(max_length=255,
-                                 blank=True, null=False)
+    job_title = models.CharField(max_length=255, blank=True, null=False)
 
     #: Discipline within which this person works
     discipline = models.ForeignKey(Discipline,
                                    on_delete=models.PROTECT,
                                    related_name='people',
-                                   blank=True, null=True)
+                                   blank=True,
+                                   null=True)
 
     #: Role this person holds within the project
     role = models.ForeignKey(Role,
                              on_delete=models.PROTECT,
                              related_name='holders',
-                             blank=True, null=True)
+                             blank=True,
+                             null=True)
 
     #: Project themes within this person works
-    themes = models.ManyToManyField(Theme,
-                                    related_name='people',
-                                    blank=True)
+    themes = models.ManyToManyField(Theme, related_name='people', blank=True)
 
     @property
     def relationships(self):
         return self.relationships_as_source.all().union(
-            self.relationships_as_target.all()
-        )
+            self.relationships_as_target.all())
 
     def get_absolute_url(self):
         return reverse('people:person.detail', kwargs={'pk': self.pk})
