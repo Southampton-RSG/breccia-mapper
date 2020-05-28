@@ -1,5 +1,8 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -9,6 +12,8 @@ from django_settings_export import settings_export
 from post_office import mail
 
 from backports.db.models.enums import TextChoices
+
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 __all__ = [
     'User',
@@ -24,6 +29,8 @@ class User(AbstractUser):
     """
     Custom user model in case we need to make changes later.
     """
+    email = models.EmailField(_('email address'), blank=False, null=False)
+
     def has_person(self) -> bool:
         """
         Does this user have a linked :class:`Person` record?
@@ -38,15 +45,21 @@ class User(AbstractUser):
             'user': self,
         })
 
-        return False
+        logger.info('Sending welcome mail to user \'%s\'', self.username)
 
-        mail.send(
-            [self.email],
-            sender=settings.DEFAULT_FROM_EMAIL,
-            template=settings.TEMPLATE_WELCOME_EMAIL_NAME,
-            context=context,
-            priority='now'  # Send immediately - don't add to queue
-        )
+        try:
+            mail.send(
+                [self.email],
+                sender=settings.DEFAULT_FROM_EMAIL,
+                template=settings.TEMPLATE_WELCOME_EMAIL_NAME,
+                context=context,
+                priority='now'  # Send immediately - don't add to queue
+            )
+
+        except ValidationError:
+            logger.error(
+                'Sending welcome mail failed, invalid email for user \'%s\'',
+                self.username)
 
 
 class Organisation(models.Model):
