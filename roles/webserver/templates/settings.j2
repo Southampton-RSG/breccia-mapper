@@ -3,8 +3,13 @@
 
 SECRET_KEY={{ secret_key }}
 DEBUG={{ "True" if deploy_mode > 1 else "False" }}
-ALLOWED_HOSTS={{ inventory_hostname }},localhost,127.0.0.1
 DATABASE_URL=mysql://{{ db_user }}:{{ db_pass }}@localhost:3306/{{ db_name }}
+
+{% if allowed_hosts is defined %}
+ALLOWED_HOSTS={% for h in allowed_hosts %}{{ h }},{% endfor %}
+{% else %}
+ALLOWED_HOSTS={{ inventory_hostname }},localhost,127.0.0.1
+{% endif %}
 
 PROJECT_SHORT_NAME={{ display_short_name }}
 PROJECT_LONG_NAME={{ display_long_name }}

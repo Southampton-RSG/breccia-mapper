@@ -8,7 +8,12 @@ from django.contrib.auth.admin import UserAdmin
 from . import models
 
 
-admin.site.register(models.User, UserAdmin)
+@admin.register(models.User)
+class CustomUserAdmin(UserAdmin):
+    """Add email address field to new user form."""
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ('Details', {'fields': ('email', )}),
+    )  # yapf: disable
 
 
 @admin.register(models.Organisation)
