@@ -38,6 +38,11 @@
         {% if person.organisation %}
             <dt>Organisation</dt>
             <dd>{{ person.organisation }}</dd>
+
+            {% if person.organisation_started_date %}
+                <dt>Started Date</dt>
+                <dd>{{ person.organisation_started_date }}</dd>
+            {% endif %}
         {% endif %}
 
         {% if person.job_title %}
