@@ -122,9 +122,6 @@ class Person(models.Model):
     #: Name of the person
     name = models.CharField(max_length=255, blank=False, null=False)
 
-    #: Is this person a member of the core project team?
-    core_member = models.BooleanField(default=False, blank=False, null=False)
-
     #: People with whom this person has relationship - via intermediate :class:`Relationship` model
     relationship_targets = models.ManyToManyField(
         'self',

@@ -22,14 +22,13 @@ class PersonSerializer(base.FlattenedModelSerializer):
         fields = [
             'id',
             'name',
-            'core_member',
             'gender',
             'age_group',
             'nationality',
             'country_of_residence',
         ]
-        
-        
+
+
 class RelationshipSerializer(base.FlattenedModelSerializer):
     source = SimplePersonSerializer()
     target = SimplePersonSerializer()
@@ -45,7 +44,7 @@ class RelationshipSerializer(base.FlattenedModelSerializer):
 
 class RelationshipAnswerSetSerializer(base.FlattenedModelSerializer):
     relationship = RelationshipSerializer()
-    
+
     class Meta:
         model = models.RelationshipAnswerSet
         fields = [
@@ -71,7 +70,9 @@ class RelationshipAnswerSetSerializer(base.FlattenedModelSerializer):
         try:
             # Add relationship question answers to data
             for answer in instance.question_answers.all():
-                rep[answer.question.slug.replace('-', '_')] = answer.slug.replace('-', '_')
+                rep[answer.question.slug.replace('-',
+                                                 '_')] = answer.slug.replace(
+                                                     '-', '_')
 
         except AttributeError:
             pass

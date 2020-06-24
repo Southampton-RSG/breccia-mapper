@@ -16,7 +16,6 @@ class PersonForm(forms.ModelForm):
         model = models.Person
         fields = [
             'name',
-            'core_member',
             'gender',
             'age_group',
             'nationality',
@@ -32,13 +31,13 @@ class PersonForm(forms.ModelForm):
             'country_of_residence': Select2Widget(),
             'themes': Select2MultipleWidget(),
         }
-        
-        
+
+
 class DynamicAnswerSetBase(forms.Form):
     field_class = forms.ModelChoiceField
     field_widget = None
     field_required = True
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -73,8 +72,8 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
                     self.instance.question_answers.add(value)
 
         return self.instance
-    
-    
+
+
 class NetworkFilterForm(DynamicAnswerSetBase):
     """
     Form to provide filtering on the network view.
@@ -82,9 +81,9 @@ class NetworkFilterForm(DynamicAnswerSetBase):
     field_class = forms.ModelMultipleChoiceField
     field_widget = Select2MultipleWidget
     field_required = False
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         # Add date field to select relationships at a particular point in time
         self.fields['date'] = forms.DateField(required=False)
