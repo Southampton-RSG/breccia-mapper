@@ -19,7 +19,6 @@ __all__ = [
     'User',
     'Organisation',
     'Role',
-    'Discipline',
     'Theme',
     'Person',
 ]
@@ -77,19 +76,6 @@ class Role(models.Model):
     Role which a :class:`Person` holds within the project.
     """
     name = models.CharField(max_length=255, blank=False, null=False)
-
-    def __str__(self) -> str:
-        return self.name
-
-
-class Discipline(models.Model):
-    """
-    Discipline within which a :class:`Person` works.
-    """
-    name = models.CharField(max_length=255, blank=False, null=False)
-
-    #: Short code using system such as JACS 3
-    code = models.CharField(max_length=15, blank=True, null=False)
 
     def __str__(self) -> str:
         return self.name
@@ -179,12 +165,8 @@ class Person(models.Model):
     #: Job title this person holds within their organisation
     job_title = models.CharField(max_length=255, blank=True, null=False)
 
-    #: Discipline within which this person works
-    discipline = models.ForeignKey(Discipline,
-                                   on_delete=models.PROTECT,
-                                   related_name='people',
-                                   blank=True,
-                                   null=True)
+    #: Discipline(s) within which this person works
+    disciplines = models.CharField(max_length=255, blank=True, null=True)
 
     #: Role this person holds within the project
     role = models.ForeignKey(Role,

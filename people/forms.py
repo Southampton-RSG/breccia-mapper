@@ -25,7 +25,7 @@ class PersonForm(forms.ModelForm):
             'organisation',
             'organisation_started_date',
             'job_title',
-            'discipline',
+            'disciplines',
             'role',
             'themes',
         ]
