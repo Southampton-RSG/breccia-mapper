@@ -172,6 +172,10 @@ class Person(models.Model):
                                      blank=True,
                                      null=True)
 
+    #: When did this person start at their current organisation?
+    organisation_started_date = models.DateField(
+        'Date started at this organisation', blank=False, null=True)
+
     #: Job title this person holds within their organisation
     job_title = models.CharField(max_length=255, blank=True, null=False)
 

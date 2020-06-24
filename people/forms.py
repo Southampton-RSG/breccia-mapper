@@ -2,6 +2,8 @@
 Forms for creating / updating models belonging to the 'people' app.
 """
 from django import forms
+from django.forms.widgets import SelectDateWidget
+from django.utils import timezone
 
 from django_select2.forms import Select2Widget, Select2MultipleWidget
 
@@ -21,6 +23,7 @@ class PersonForm(forms.ModelForm):
             'nationality',
             'country_of_residence',
             'organisation',
+            'organisation_started_date',
             'job_title',
             'discipline',
             'role',
@@ -31,6 +34,19 @@ class PersonForm(forms.ModelForm):
             'country_of_residence': Select2Widget(),
             'themes': Select2MultipleWidget(),
         }
+        help_texts = {
+            'organisation_started_date':
+            'If you don\'t know the exact date, an approximate date is okay.',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Defaults to showing 10 years in future - show past years instead
+        num_years_display = 60
+        this_year = timezone.datetime.now().year
+        self.fields['organisation_started_date'].widget = SelectDateWidget(
+            years=range(this_year, this_year - num_years_display, -1))
 
 
 class DynamicAnswerSetBase(forms.Form):

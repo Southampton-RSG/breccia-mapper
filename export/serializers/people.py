@@ -26,6 +26,8 @@ class PersonSerializer(base.FlattenedModelSerializer):
             'age_group',
             'nationality',
             'country_of_residence',
+            'organisation',
+            'organisation_started_date',
         ]
 
 
