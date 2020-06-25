@@ -14,61 +14,70 @@
 
     <hr>
 
-    <dl>
-        {% if person.gender %}
-            <dt>Gender</dt>
-            <dd>{{ person.get_gender_display }}</dd>
+    {% if person.user == request.user or request.user.is_superuser %}
+        {% if person.user != request.user and request.user.is_superuser %}
+            <div class="alert alert-warning">
+                <strong>NB:</strong> You are able to see the details of this person because you are an admin.
+                Regular users are not able to see this information for people other than themselves.
+            </div>
         {% endif %}
 
-        {% if person.age_group %}
-            <dt>Age Group</dt>
-            <dd>{{ person.get_age_group_display }}</dd>
-        {% endif %}
-
-        {% if person.nationality %}
-            <dt>Nationality</dt>
-            <dd>{{ person.nationality.name }}</dd>
-        {% endif %}
-
-        {% if person.country_of_residence %}
-            <dt>Country of Residence</dt>
-            <dd>{{ person.country_of_residence.name }}</dd>
-        {% endif %}
-
-        {% if person.organisation %}
-            <dt>Organisation</dt>
-            <dd>{{ person.organisation }}</dd>
-
-            {% if person.organisation_started_date %}
-                <dt>Started Date</dt>
-                <dd>{{ person.organisation_started_date }}</dd>
+        <dl>
+            {% if person.gender %}
+                <dt>Gender</dt>
+                <dd>{{ person.get_gender_display }}</dd>
             {% endif %}
-        {% endif %}
 
-        {% if person.job_title %}
-            <dt>Job Title</dt>
-            <dd>{{ person.job_title }}</dd>
-        {% endif %}
+            {% if person.age_group %}
+                <dt>Age Group</dt>
+                <dd>{{ person.get_age_group_display }}</dd>
+            {% endif %}
 
-        {% if person.role %}
-            <dt>Role</dt>
-            <dd>{{ person.role }}</dd>
-        {% endif %}
+            {% if person.nationality %}
+                <dt>Nationality</dt>
+                <dd>{{ person.nationality.name }}</dd>
+            {% endif %}
 
-        {% if person.disciplines %}
-            <dt>Discipline(s)</dt>
-            <dd>{{ person.disciplines }}</dd>
-        {% endif %}
+            {% if person.country_of_residence %}
+                <dt>Country of Residence</dt>
+                <dd>{{ person.country_of_residence.name }}</dd>
+            {% endif %}
 
-        {% if person.themes.exists %}
-            <dt>Project Themes</dt>
-            <dd>
-                {% for theme in person.themes.all %}
-                    {{ theme }}{% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </dd>
-        {% endif %}
-    </dl>
+            {% if person.organisation %}
+                <dt>Organisation</dt>
+                <dd>{{ person.organisation }}</dd>
+
+                {% if person.organisation_started_date %}
+                    <dt>Started Date</dt>
+                    <dd>{{ person.organisation_started_date }}</dd>
+                {% endif %}
+            {% endif %}
+
+            {% if person.job_title %}
+                <dt>Job Title</dt>
+                <dd>{{ person.job_title }}</dd>
+            {% endif %}
+
+            {% if person.role %}
+                <dt>Role</dt>
+                <dd>{{ person.role }}</dd>
+            {% endif %}
+
+            {% if person.disciplines %}
+                <dt>Discipline(s)</dt>
+                <dd>{{ person.disciplines }}</dd>
+            {% endif %}
+
+            {% if person.themes.exists %}
+                <dt>Project Themes</dt>
+                <dd>
+                    {% for theme in person.themes.all %}
+                        {{ theme }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </dd>
+            {% endif %}
+        </dl>
+    {% endif %}
 
     <a class="btn btn-success"
        href="{% url 'people:person.update' pk=person.pk %}">Update</a>
