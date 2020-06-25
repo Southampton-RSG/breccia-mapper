@@ -12,7 +12,8 @@ class SimplePersonSerializer(serializers.ModelSerializer):
         model = models.Person
         fields = [
             'id',
-            'name',
+            # Name is excluded from exports
+            # See https://github.com/Southampton-RSG/breccia-mapper/issues/35
         ]
 
 
@@ -21,7 +22,8 @@ class PersonSerializer(base.FlattenedModelSerializer):
         model = models.Person
         fields = [
             'id',
-            'name',
+            # Name is excluded from exports
+            # See https://github.com/Southampton-RSG/breccia-mapper/issues/35
             'gender',
             'age_group',
             'nationality',
