@@ -46,6 +46,11 @@ class RelationshipSerializer(base.FlattenedModelSerializer):
         ]
 
 
+def underscore(slug: str) -> str:
+    """Replace hyphens with underscores in text."""
+    return slug.replace('-', '_')
+
+
 class RelationshipAnswerSetSerializer(base.FlattenedModelSerializer):
     relationship = RelationshipSerializer()
 
@@ -64,7 +69,7 @@ class RelationshipAnswerSetSerializer(base.FlattenedModelSerializer):
 
         # Add relationship questions to columns
         for question in models.RelationshipQuestion.objects.all():
-            headers.append(question.slug.replace('-', '_'))
+            headers.append(underscore(question.slug))
 
         return headers
 
@@ -74,9 +79,7 @@ class RelationshipAnswerSetSerializer(base.FlattenedModelSerializer):
         try:
             # Add relationship question answers to data
             for answer in instance.question_answers.all():
-                rep[answer.question.slug.replace('-',
-                                                 '_')] = answer.slug.replace(
-                                                     '-', '_')
+                rep[underscore(answer.question.slug)] = underscore(answer.slug)
 
         except AttributeError:
             pass
