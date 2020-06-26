@@ -1,11 +1,27 @@
 """
 Forms for creating / updating models belonging to the 'people' app.
 """
+
+import typing
+
 from django import forms
+from django.forms.widgets import SelectDateWidget
+from django.utils import timezone
 
 from django_select2.forms import Select2Widget, Select2MultipleWidget
 
 from . import models
+
+
+def get_date_year_range() -> typing.Iterable[int]:
+    """
+    Get sensible year range for SelectDateWidgets in the past.
+
+    By default these widgets show 10 years in the future.
+    """
+    num_years_display = 60
+    this_year = timezone.datetime.now().year
+    return range(this_year, this_year - num_years_display, -1)
 
 
 class PersonForm(forms.ModelForm):
@@ -16,14 +32,14 @@ class PersonForm(forms.ModelForm):
         model = models.Person
         fields = [
             'name',
-            'core_member',
             'gender',
             'age_group',
             'nationality',
             'country_of_residence',
             'organisation',
+            'organisation_started_date',
             'job_title',
-            'discipline',
+            'disciplines',
             'role',
             'themes',
         ]
@@ -32,13 +48,23 @@ class PersonForm(forms.ModelForm):
             'country_of_residence': Select2Widget(),
             'themes': Select2MultipleWidget(),
         }
-        
-        
+        help_texts = {
+            'organisation_started_date':
+            'If you don\'t know the exact date, an approximate date is okay.',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['organisation_started_date'].widget = SelectDateWidget(
+            years=get_date_year_range())
+
+
 class DynamicAnswerSetBase(forms.Form):
     field_class = forms.ModelChoiceField
     field_widget = None
     field_required = True
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -73,8 +99,8 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
                     self.instance.question_answers.add(value)
 
         return self.instance
-    
-    
+
+
 class NetworkFilterForm(DynamicAnswerSetBase):
     """
     Form to provide filtering on the network view.
@@ -82,9 +108,12 @@ class NetworkFilterForm(DynamicAnswerSetBase):
     field_class = forms.ModelMultipleChoiceField
     field_widget = Select2MultipleWidget
     field_required = False
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         # Add date field to select relationships at a particular point in time
-        self.fields['date'] = forms.DateField(required=False)
+        self.fields['date'] = forms.DateField(
+            required=False,
+            widget=SelectDateWidget(years=get_date_year_range()),
+            help_text='Show relationships as they were on this date')

@@ -12,7 +12,8 @@ class SimplePersonSerializer(serializers.ModelSerializer):
         model = models.Person
         fields = [
             'id',
-            'name',
+            # Name is excluded from exports
+            # See https://github.com/Southampton-RSG/breccia-mapper/issues/35
         ]
 
 
@@ -21,15 +22,17 @@ class PersonSerializer(base.FlattenedModelSerializer):
         model = models.Person
         fields = [
             'id',
-            'name',
-            'core_member',
+            # Name is excluded from exports
+            # See https://github.com/Southampton-RSG/breccia-mapper/issues/35
             'gender',
             'age_group',
             'nationality',
             'country_of_residence',
+            'organisation',
+            'organisation_started_date',
         ]
-        
-        
+
+
 class RelationshipSerializer(base.FlattenedModelSerializer):
     source = SimplePersonSerializer()
     target = SimplePersonSerializer()
@@ -43,9 +46,14 @@ class RelationshipSerializer(base.FlattenedModelSerializer):
         ]
 
 
+def underscore(slug: str) -> str:
+    """Replace hyphens with underscores in text."""
+    return slug.replace('-', '_')
+
+
 class RelationshipAnswerSetSerializer(base.FlattenedModelSerializer):
     relationship = RelationshipSerializer()
-    
+
     class Meta:
         model = models.RelationshipAnswerSet
         fields = [
@@ -61,7 +69,7 @@ class RelationshipAnswerSetSerializer(base.FlattenedModelSerializer):
 
         # Add relationship questions to columns
         for question in models.RelationshipQuestion.objects.all():
-            headers.append(question.slug.replace('-', '_'))
+            headers.append(underscore(question.slug))
 
         return headers
 
@@ -71,7 +79,7 @@ class RelationshipAnswerSetSerializer(base.FlattenedModelSerializer):
         try:
             # Add relationship question answers to data
             for answer in instance.question_answers.all():
-                rep[answer.question.slug.replace('-', '_')] = answer.slug.replace('-', '_')
+                rep[underscore(answer.question.slug)] = underscore(answer.slug)
 
         except AttributeError:
             pass

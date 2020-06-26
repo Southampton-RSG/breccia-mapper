@@ -376,16 +376,20 @@ else:
 
 # Import customisation app settings if present
 
-CUSTOMISATION_NAME = None
-TEMPLATE_NAME_INDEX = 'index.html'
-TEMPLATE_WELCOME_EMAIL_NAME = 'welcome-email'
-
 try:
-    from custom.settings import (CUSTOMISATION_NAME, TEMPLATE_NAME_INDEX,
-                                 TEMPLATE_WELCOME_EMAIL_NAME)
+    from custom.settings import (
+        CUSTOMISATION_NAME,
+        TEMPLATE_NAME_INDEX,
+        TEMPLATE_WELCOME_EMAIL_NAME
+    )
     logger.info("Loaded customisation app: %s", CUSTOMISATION_NAME)
 
     INSTALLED_APPS.append('custom')
 
-except ImportError as e:
-    logger.info("No customisation app loaded: %s", e)
+except ImportError as exc:
+    logger.info("No customisation app loaded: %s", exc)
+
+    # Set default values if no customisations loaded
+    CUSTOMISATION_NAME = None
+    TEMPLATE_NAME_INDEX = 'index.html'
+    TEMPLATE_WELCOME_EMAIL_NAME = 'welcome-email'

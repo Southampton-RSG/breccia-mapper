@@ -25,8 +25,7 @@
           crossorigin="anonymous" />
 
     {% load staticfiles %}
-    <link rel="stylesheet"
-          href="{% static 'css/global.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
 
     {% if 'javascript_in_head'|bootstrap_setting %}
         {% if 'include_jquery'|bootstrap_setting %}
@@ -38,147 +37,152 @@
         {% bootstrap_javascript %}
     {% endif %}
 
-    {{ form.media.css }}
+    {% if form %}
+        {{ form.media.css }}
+    {% endif %}
 
     {% block extra_head %}{% endblock %}
 
 </head>
 
 <body>
-<div class="content" style="display: flex; flex-direction: column">
-    {% block navbar %}
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a href="{% url 'index' %}" class="navbar-brand">
-                    {{ settings.PROJECT_SHORT_NAME }}
-                </a>
+    <div class="content" style="display: flex; flex-direction: column">
+        {% block navbar %}
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container">
+                    <a href="{% url 'index' %}" class="navbar-brand">
+                        {{ settings.PROJECT_SHORT_NAME }}
+                    </a>
 
-                <button type="button" class="navbar-toggler"
-                        data-toggle="collapse" data-target="#navbarCollapse"
-                        aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navbar">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                    <button type="button" class="navbar-toggler"
+                            data-toggle="collapse" data-target="#navbarCollapse"
+                            aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navbar">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
 
-                <div class="navbar-collapse collapse" id="navbarCollapse">
-                    <ul class="navbar-nav mt-2 mt-lg-0">
-                        <li class="nav-item">
-                            <a href="{% url 'people:person.list' %}" class="nav-link">People</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{% url 'activities:activity-series.list' %}" class="nav-link">Activity Series</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{% url 'activities:activity.list' %}" class="nav-link">Activities</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{% url 'people:network' %}" class="nav-link">Network</a>
-                        </li>
-
-                        {% if request.user.is_superuser %}
+                    <div class="navbar-collapse collapse" id="navbarCollapse">
+                        <ul class="navbar-nav mt-2 mt-lg-0">
                             <li class="nav-item">
-                                <a href="{% url 'export:index' %}" class="nav-link">Export</a>
+                                <a href="{% url 'people:person.list' %}" class="nav-link">People</a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="{% url 'admin:index' %}" class="nav-link">Admin</a>
+                                <a href="{% url 'activities:activity-series.list' %}" class="nav-link">Activity Series</a>
                             </li>
-                        {% endif %}
-                    </ul>
 
-                    <ul class="navbar-nav mt-2 mt-lg-0 ml-auto">
-                        {% if request.user.is_authenticated %}
                             <li class="nav-item">
-                                {% if request.user.person %}
-                                    <a href="{% url 'people:person.profile' %}" class="nav-link">
-                                        <i class="fas fa-user-circle"></i>
-                                        {{ request.user }}
+                                <a href="{% url 'activities:activity.list' %}" class="nav-link">Activities</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{% url 'people:network' %}" class="nav-link">Network</a>
+                            </li>
+
+                            {% if request.user.is_superuser %}
+                                <li class="nav-item">
+                                    <a href="{% url 'export:index' %}" class="nav-link">Export</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{% url 'admin:index' %}" class="nav-link">Admin</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+
+                        <ul class="navbar-nav mt-2 mt-lg-0 ml-auto">
+                            {% if request.user.is_authenticated %}
+                                <li class="nav-item">
+                                    {% if request.user.person %}
+                                        <a href="{% url 'people:person.profile' %}" class="nav-link">
+                                            <i class="fas fa-user-circle"></i>
+                                            {{ request.user }}
+                                        </a>
+
+                                    {% else %}
+                                        <a href="{% url 'people:person.create' %}?user" class="nav-link">
+                                            <i class="fas fa-user-circle"></i>
+                                            {{ request.user }}
+                                        </a>
+
+                                    {% endif %}
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{% url 'logout' %}" class="nav-link">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        Log Out
                                     </a>
+                                </li>
 
-                                {% else %}
-                                    <a href="{% url 'people:person.create' %}?user" class="nav-link">
-                                        <i class="fas fa-user-circle"></i>
-                                        {{ request.user }}
+                            {% else %}
+                                <li class="nav-item">
+                                    <a href="{% url 'login' %}" class="nav-link">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                        Log In
                                     </a>
+                                </li>
 
-                                {% endif %}
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{% url 'logout' %}" class="nav-link">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                    Log Out
-                                </a>
-                            </li>
-
-                        {% else %}
-                            <li class="nav-item">
-                                <a href="{% url 'login' %}" class="nav-link">
-                                    <i class="fas fa-sign-in-alt"></i>
-                                    Log In
-                                </a>
-                            </li>
-
-                        {% endif %}
-                    </ul>
+                            {% endif %}
+                        </ul>
+                    </div>
                 </div>
+            </nav>
+        {% endblock %}
+
+        {# Global banner if config.NOTICE_TEXT is set using Constance #}
+        {% if config.NOTICE_TEXT %}
+            <div class="alert {{ config.NOTICE_CLASS }} rounded-0 mb-3" role="alert">
+                <h4 class="alert-heading text-center mb-0">{{ config.NOTICE_TEXT }}</h4>
             </div>
-        </nav>
-    {% endblock %}
+        {% endif %}
 
-    {# Global banner if config.NOTICE_TEXT is set using Constance #}
-    {% if config.NOTICE_TEXT %}
-        <div class="alert {{ config.NOTICE_CLASS }} rounded-0 mb-3" role="alert">
-            <h4 class="alert-heading text-center mb-0">{{ config.NOTICE_TEXT }}</h4>
+        {% if request.user.is_authenticated and not request.user.has_person %}
+            <div class="alert alert-info rounded-0" role="alert">
+                <p class="text-center mb-0">
+                    Your profile is currently blank.
+                    Please fill in your details so you can be part of the network.
+
+                    <a class="btn btn-success"
+                    href="{% url 'people:person.create' %}?user">Profile</a>
+                </p>
+            </div>
+        {% endif %}
+
+        {% block before_content %}{% endblock %}
+
+        <main class="container">
+            {# Display Django messages as Bootstrap alerts #}
+            {% bootstrap_messages %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <div class="container">
+            {% block after_content %}{% endblock %}
         </div>
-    {% endif %}
+    </div>
 
-    {% if request.user.is_authenticated and not request.user.has_person %}
-        <div class="alert alert-info rounded-0" role="alert">
-            <p class="text-center mb-0">
-                Your profile is currently blank.  Please fill in your details so you can be part of the network.
-
-                <a class="btn btn-success"
-                   href="{% url 'people:person.create' %}?user">Profile</a>
-            </p>
+    <footer class="footer bg-light">
+        <div class="container">
+            <span class="text-muted">{{ settings.PROJECT_LONG_NAME }}</span>
         </div>
+    </footer>
+
+    {% if not 'javascript_in_head'|bootstrap_setting %}
+        {% if 'include_jquery'|bootstrap_setting %}
+            {# jQuery JavaScript if it is in body #}
+            {% bootstrap_jquery jquery='include_jquery'|bootstrap_setting %}
+        {% endif %}
+
+        {# Bootstrap JavaScript if it is in body #}
+        {% bootstrap_javascript %}
     {% endif %}
 
-    {% block before_content %}{% endblock %}
-
-    <main class="container">
-        {# Display Django messages as Bootstrap alerts #}
-        {% bootstrap_messages %}
-
-        {% block content %}{% endblock %}
-    </main>
-
-    <div class="container">
-        {% block after_content %}{% endblock %}
-    </div>
-</div>
-
-<footer class="footer bg-light">
-    <div class="container">
-        <span class="text-muted">{{ settings.PROJECT_LONG_NAME }}</span>
-    </div>
-</footer>
-
-{% if not 'javascript_in_head'|bootstrap_setting %}
-    {% if 'include_jquery'|bootstrap_setting %}
-        {# jQuery JavaScript if it is in body #}
-        {% bootstrap_jquery jquery='include_jquery'|bootstrap_setting %}
+    {% if form %}
+        {{ form.media.js }}
     {% endif %}
 
-    {# Bootstrap JavaScript if it is in body #}
-    {% bootstrap_javascript %}
-{% endif %}
-
-{{ form.media.js }}
-
-{% block extra_script %}{% endblock %}
+    {% block extra_script %}{% endblock %}
 </body>
 
 </html>

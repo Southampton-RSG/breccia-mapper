@@ -19,7 +19,6 @@ __all__ = [
     'User',
     'Organisation',
     'Role',
-    'Discipline',
     'Theme',
     'Person',
 ]
@@ -82,19 +81,6 @@ class Role(models.Model):
         return self.name
 
 
-class Discipline(models.Model):
-    """
-    Discipline within which a :class:`Person` works.
-    """
-    name = models.CharField(max_length=255, blank=False, null=False)
-
-    #: Short code using system such as JACS 3
-    code = models.CharField(max_length=15, blank=True, null=False)
-
-    def __str__(self) -> str:
-        return self.name
-
-
 class Theme(models.Model):
     """
     Project theme within which a :class:`Person` works.
@@ -121,9 +107,6 @@ class Person(models.Model):
 
     #: Name of the person
     name = models.CharField(max_length=255, blank=False, null=False)
-
-    #: Is this person a member of the core project team?
-    core_member = models.BooleanField(default=False, blank=False, null=False)
 
     #: People with whom this person has relationship - via intermediate :class:`Relationship` model
     relationship_targets = models.ManyToManyField(
@@ -175,15 +158,15 @@ class Person(models.Model):
                                      blank=True,
                                      null=True)
 
+    #: When did this person start at their current organisation?
+    organisation_started_date = models.DateField(
+        'Date started at this organisation', blank=False, null=True)
+
     #: Job title this person holds within their organisation
     job_title = models.CharField(max_length=255, blank=True, null=False)
 
-    #: Discipline within which this person works
-    discipline = models.ForeignKey(Discipline,
-                                   on_delete=models.PROTECT,
-                                   related_name='people',
-                                   blank=True,
-                                   null=True)
+    #: Discipline(s) within which this person works
+    disciplines = models.CharField(max_length=255, blank=True, null=True)
 
     #: Role this person holds within the project
     role = models.ForeignKey(Role,
