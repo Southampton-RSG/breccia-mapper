@@ -1,6 +1,9 @@
 """
 Forms for creating / updating models belonging to the 'people' app.
 """
+
+import typing
+
 from django import forms
 from django.forms.widgets import SelectDateWidget
 from django.utils import timezone
@@ -8,6 +11,17 @@ from django.utils import timezone
 from django_select2.forms import Select2Widget, Select2MultipleWidget
 
 from . import models
+
+
+def get_date_year_range() -> typing.Iterable[int]:
+    """
+    Get sensible year range for SelectDateWidgets in the past.
+
+    By default these widgets show 10 years in the future.
+    """
+    num_years_display = 60
+    this_year = timezone.datetime.now().year
+    return range(this_year, this_year - num_years_display, -1)
 
 
 class PersonForm(forms.ModelForm):
@@ -42,11 +56,8 @@ class PersonForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Defaults to showing 10 years in future - show past years instead
-        num_years_display = 60
-        this_year = timezone.datetime.now().year
         self.fields['organisation_started_date'].widget = SelectDateWidget(
-            years=range(this_year, this_year - num_years_display, -1))
+            years=get_date_year_range())
 
 
 class DynamicAnswerSetBase(forms.Form):
@@ -102,4 +113,7 @@ class NetworkFilterForm(DynamicAnswerSetBase):
         super().__init__(*args, **kwargs)
 
         # Add date field to select relationships at a particular point in time
-        self.fields['date'] = forms.DateField(required=False)
+        self.fields['date'] = forms.DateField(
+            required=False,
+            widget=SelectDateWidget(years=get_date_year_range()),
+            help_text='Show relationships as they were on this date')
