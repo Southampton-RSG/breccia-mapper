@@ -23,7 +23,9 @@ class UserIsLinkedPersonMixin(UserPassesTestMixin):
             test_person = self.get_object()
 
             if not isinstance(test_person, models.Person):
-                raise AttributeError('View incorrectly configured: \'related_person_field\' must be defined.')
+                raise AttributeError(
+                    'View incorrectly configured: \'related_person_field\' must be defined.'
+                )
 
             return test_person
 
@@ -34,4 +36,5 @@ class UserIsLinkedPersonMixin(UserPassesTestMixin):
         Require that user is either staff or is the linked person.
         """
         user = self.request.user
-        return user.is_authenticated and (user.is_staff or self.get_test_person() == user.person)
+        return user.is_authenticated and (
+            user.is_staff or self.get_test_person() == user.person)

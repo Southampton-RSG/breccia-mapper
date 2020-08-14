@@ -19,7 +19,11 @@ from django.urls import include, path
 from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/',
+         admin.site.urls),
+
+    path('select2/',
+         include('django_select2.urls')),
 
     path('',
          include('django.contrib.auth.urls')),
@@ -36,4 +40,4 @@ urlpatterns = [
 
     path('',
          include('activities.urls')),
-]
+]  # yapf: disable

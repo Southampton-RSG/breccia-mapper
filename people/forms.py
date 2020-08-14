@@ -8,7 +8,7 @@ from django import forms
 from django.forms.widgets import SelectDateWidget
 from django.utils import timezone
 
-from django_select2.forms import Select2Widget, Select2MultipleWidget
+from django_select2.forms import ModelSelect2Widget, Select2Widget, Select2MultipleWidget
 
 from . import models
 
@@ -58,6 +58,12 @@ class PersonForm(forms.ModelForm):
 
         self.fields['organisation_started_date'].widget = SelectDateWidget(
             years=get_date_year_range())
+
+
+class RelationshipForm(forms.Form):
+    target = forms.ModelChoiceField(
+        models.Person.objects.all(),
+        widget=ModelSelect2Widget(search_fields=['name__icontains']))
 
 
 class DynamicAnswerSetBase(forms.Form):
