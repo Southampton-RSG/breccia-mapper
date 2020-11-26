@@ -58,11 +58,6 @@
                 <dd>{{ person.job_title }}</dd>
             {% endif %}
 
-            {% if person.role %}
-                <dt>Role</dt>
-                <dd>{{ person.role }}</dd>
-            {% endif %}
-
             {% if person.disciplines %}
                 <dt>Discipline(s)</dt>
                 <dd>{{ person.disciplines }}</dd>
@@ -78,6 +73,33 @@
             {% endif %}
         </dl>
     {% endif %}
+
+    {% with person.current_answers as answer_set %}
+        <table class="table table-borderless">
+            <thead>
+            <tr>
+                <th>Question</th>
+                <th>Answer</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for answer in answer_set.question_answers.all %}
+                <tr>
+                    <td>{{ answer.question }}</td>
+                    <td>{{ answer }}</td>
+                </tr>
+
+            {% empty %}
+                <tr>
+                    <td>No records</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <p>Last updated: {{ answer_set.timestamp }}</p>
+    {% endwith %}
 
     <a class="btn btn-success"
        href="{% url 'people:person.update' pk=person.pk %}">Update</a>

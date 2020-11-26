@@ -40,7 +40,6 @@ class PersonForm(forms.ModelForm):
             'organisation_started_date',
             'job_title',
             'disciplines',
-            'role',
             'themes',
         ]
         widgets = {

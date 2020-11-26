@@ -21,19 +21,34 @@ class OrganisationAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(models.Role)
-class RoleAdmin(admin.ModelAdmin):
-    pass
-
-
 @admin.register(models.Theme)
 class ThemeAdmin(admin.ModelAdmin):
     pass
 
 
+class PersonQuestionChoiceInline(admin.TabularInline):
+    model = models.PersonQuestionChoice
+
+
+@admin.register(models.PersonQuestion)
+class PersonQuestionAdmin(admin.ModelAdmin):
+    inlines = [
+        PersonQuestionChoiceInline,
+    ]
+
+
+class PersonAnswerSetInline(admin.TabularInline):
+    model = models.PersonAnswerSet
+    readonly_fields = [
+        'question_answers',
+    ]
+
+
 @admin.register(models.Person)
 class PersonAdmin(admin.ModelAdmin):
-    pass
+    inlines = [
+        PersonAnswerSetInline,
+    ]
 
 
 class RelationshipQuestionChoiceInline(admin.TabularInline):
