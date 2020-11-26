@@ -32,8 +32,6 @@ class PersonForm(forms.ModelForm):
         model = models.Person
         fields = [
             'name',
-            'gender',
-            'age_group',
             'nationality',
             'country_of_residence',
             'organisation',

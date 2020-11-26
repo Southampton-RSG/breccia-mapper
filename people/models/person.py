@@ -186,34 +186,6 @@ class Person(models.Model):
     ###############################################################
     # Data collected for analysis of community makeup and structure
 
-    class GenderChoices(TextChoices):
-        MALE = 'M', _('Male')
-        FEMALE = 'F', _('Female')
-        OTHER = 'O', _('Other')
-        PREFER_NOT_TO_SAY = 'N', _('Prefer not to say')
-
-    gender = models.CharField(max_length=1,
-                              choices=GenderChoices.choices,
-                              blank=True,
-                              null=False)
-
-    class AgeGroupChoices(TextChoices):
-        LTE_25 = '<=25', _('25 or under')
-        BETWEEN_26_30 = '26-30', _('26-30')
-        BETWEEN_31_35 = '31-35', _('31-35')
-        BETWEEN_36_40 = '36-40', _('36-40')
-        BETWEEN_41_45 = '41-45', _('41-45')
-        BETWEEN_46_50 = '46-50', _('46-50')
-        BETWEEN_51_55 = '51-55', _('51-55')
-        BETWEEN_56_60 = '56-60', _('56-60')
-        GTE_61 = '>=61', _('61 or older')
-        PREFER_NOT_TO_SAY = 'N', _('Prefer not to say')
-
-    age_group = models.CharField(max_length=5,
-                                 choices=AgeGroupChoices.choices,
-                                 blank=True,
-                                 null=False)
-
     nationality = CountryField(blank=True, null=True)
 
     country_of_residence = CountryField(blank=True, null=True)

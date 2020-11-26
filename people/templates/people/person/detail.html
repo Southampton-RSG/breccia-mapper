@@ -23,16 +23,6 @@
         {% endif %}
 
         <dl>
-            {% if person.gender %}
-                <dt>Gender</dt>
-                <dd>{{ person.get_gender_display }}</dd>
-            {% endif %}
-
-            {% if person.age_group %}
-                <dt>Age Group</dt>
-                <dd>{{ person.get_age_group_display }}</dd>
-            {% endif %}
-
             {% if person.nationality %}
                 <dt>Nationality</dt>
                 <dd>{{ person.nationality.name }}</dd>
