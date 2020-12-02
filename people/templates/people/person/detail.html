@@ -22,80 +22,80 @@
             </div>
         {% endif %}
 
-        <dl>
-            {% if person.nationality %}
-                <dt>Nationality</dt>
-                <dd>{{ person.nationality.name }}</dd>
-            {% endif %}
 
-            {% if person.country_of_residence %}
-                <dt>Country of Residence</dt>
-                <dd>{{ person.country_of_residence.name }}</dd>
-            {% endif %}
+        {% with person.current_answers as answer_set %}
+            <dl>
+            </dl>
 
-            {% if person.organisation %}
-                <dt>Organisation</dt>
-                <dd>{{ person.organisation }}</dd>
+            <table class="table table-borderless">
+                <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Answer</th>
+                </tr>
+                </thead>
 
-                {% if person.organisation_started_date %}
-                    <dt>Started Date</dt>
-                    <dd>{{ person.organisation_started_date }}</dd>
+                <tbody>
+                {% if answer_set.nationality %}
+                    <tr><td>Nationality</td><td>{{ answer_set.nationality.name }}</td>
                 {% endif %}
-            {% endif %}
 
-            {% if person.job_title %}
-                <dt>Job Title</dt>
-                <dd>{{ person.job_title }}</dd>
-            {% endif %}
+                {% if answer_set.country_of_residence %}
+                    <tr><td>Country of Residence</td><td>{{ answer_set.country_of_residence.name }}</td></tr>
+                {% endif %}
 
-            {% if person.disciplines %}
-                <dt>Discipline(s)</dt>
-                <dd>{{ person.disciplines }}</dd>
-            {% endif %}
+                {% if answer_set.organisation %}
+                    <tr><td>Organisation</td><td>{{ answer_set.organisation }}</td></tr>
+                {% endif %}
 
-            {% if person.themes.exists %}
-                <dt>Project Themes</dt>
-                <dd>
-                    {% for theme in person.themes.all %}
-                        {{ theme }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                </dd>
-            {% endif %}
-        </dl>
+                {% if answer_set.organisation_started_date %}
+                    <tr><td>Organisation Started Date</td><td>{{ answer_set.organisation_started_date }}</td></tr>
+                {% endif %}
+
+                {% if answer_set.job_title %}
+                    <tr><td>Job Title</td><td>{{ answer_set.job_title }}</td></tr>
+                {% endif %}
+
+                {% if answer_set.disciplines %}
+                    <tr><td>Discipline(s)</td><td>{{ answer_set.disciplines }}</td></tr>
+                {% endif %}
+
+                {% if answer_set.themes.exists %}
+                    <tr>
+                        <td>Project Themes</td>
+                        <td>
+                            {% for theme in answer_set.themes.all %}
+                                {{ theme }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endif %}
+
+                {% for answer in answer_set.question_answers.all %}
+                    <tr>
+                        <td>{{ answer.question }}</td>
+                        <td>{{ answer }}</td>
+                    </tr>
+
+                {% empty %}
+                    <tr>
+                        <td>No records</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <p>Last updated: {{ answer_set.timestamp }}</p>
+        {% endwith %}
+
+        <a class="btn btn-success"
+           href="{% url 'people:person.update' pk=person.pk %}">Update</a>
+
+        {% if person.user == request.user %}
+            <a class="btn btn-info"
+               href="{% url 'password_change' %}?next={{ person.get_absolute_url }}">Change Password</a>
+        {% endif %}
     {% endif %}
-
-    {% with person.current_answers as answer_set %}
-        <table class="table table-borderless">
-            <thead>
-            <tr>
-                <th>Question</th>
-                <th>Answer</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            {% for answer in answer_set.question_answers.all %}
-                <tr>
-                    <td>{{ answer.question }}</td>
-                    <td>{{ answer }}</td>
-                </tr>
-
-            {% empty %}
-                <tr>
-                    <td>No records</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-        <p>Last updated: {{ answer_set.timestamp }}</p>
-    {% endwith %}
-
-    <a class="btn btn-success"
-       href="{% url 'people:person.update' pk=person.pk %}">Update</a>
-
-    <a class="btn btn-info"
-       href="{% url 'password_change' %}?next={{ person.get_absolute_url }}">Change Password</a>
 
     <hr>
 
