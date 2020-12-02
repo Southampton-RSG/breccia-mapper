@@ -7,3 +7,10 @@ from . import (
     person,
     relationship
 )
+
+
+__all__ = [
+    'network',
+    'person',
+    'relationship',
+]
