@@ -32,13 +32,6 @@ class PersonForm(forms.ModelForm):
         model = models.Person
         fields = [
             'name',
-            'nationality',
-            'country_of_residence',
-            'organisation',
-            'organisation_started_date',
-            'job_title',
-            'disciplines',
-            'themes',
         ]
         widgets = {
             'nationality': Select2Widget(),
