@@ -13,8 +13,6 @@ from django_countries.fields import CountryField
 from django_settings_export import settings_export
 from post_office import mail
 
-from backports.db.models.enums import TextChoices
-
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 __all__ = [
@@ -180,11 +178,51 @@ class Person(models.Model):
         'self',
         related_name='relationship_sources',
         through='Relationship',
-        through_fields=('source', 'target'),
+        through_fields=('source', 'target_person'),
         symmetrical=False)
 
-    ###############################################################
-    # Data collected for analysis of community makeup and structure
+    @property
+    def relationships(self):
+        return self.relationships_as_source.all().union(
+            self.relationships_as_target.all())
+
+    @property
+    def current_answers(self) -> 'PersonAnswerSet':
+        return self.answer_sets.last()
+
+    def get_absolute_url(self):
+        return reverse('people:person.detail', kwargs={'pk': self.pk})
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class PersonAnswerSet(models.Model):
+    """The answers to the person questions at a particular point in time."""
+    class Meta:
+        ordering = [
+            'timestamp',
+        ]
+
+    #: Person to which this answer set belongs
+    person = models.ForeignKey(Person,
+                               on_delete=models.CASCADE,
+                               related_name='answer_sets',
+                               blank=False,
+                               null=False)
+
+    #: Answers to :class:`PersonQuestion`s
+    question_answers = models.ManyToManyField(PersonQuestionChoice)
+
+    #: When were these answers collected?
+    timestamp = models.DateTimeField(auto_now_add=True, editable=False)
+
+    replaced_timestamp = models.DateTimeField(blank=True,
+                                              null=True,
+                                              editable=False)
+
+    ##################
+    # Static questions
 
     nationality = CountryField(blank=True, null=True)
 
@@ -209,48 +247,6 @@ class Person(models.Model):
 
     #: Project themes within this person works
     themes = models.ManyToManyField(Theme, related_name='people', blank=True)
-
-    @property
-    def relationships(self):
-        return self.relationships_as_source.all().union(
-            self.relationships_as_target.all())
-
-    @property
-    def current_answers(self) -> 'PersonAnswerSet':
-        return self.answer_sets.last()
-
-    def get_absolute_url(self):
-        return reverse('people:person.detail', kwargs={'pk': self.pk})
-
-    def __str__(self) -> str:
-        return self.name
-
-
-class PersonAnswerSet(models.Model):
-    """
-    The answers to the person questions at a particular point in time.
-    """
-
-    class Meta:
-        ordering = [
-            'timestamp',
-        ]
-
-    #: Person to which this answer set belongs
-    person = models.ForeignKey(Person,
-                               on_delete=models.CASCADE,
-                               related_name='answer_sets',
-                               blank=False, null=False)
-
-    #: Answers to :class:`PersonQuestion`s
-    question_answers = models.ManyToManyField(PersonQuestionChoice)
-
-    #: When were these answers collected?
-    timestamp = models.DateTimeField(auto_now_add=True,
-                                     editable=False)
-
-    replaced_timestamp = models.DateTimeField(blank=True, null=True,
-                                              editable=False)
 
     def get_absolute_url(self):
         return self.person.get_absolute_url()

@@ -4,6 +4,7 @@ Models describing relationships between people.
 
 import typing
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
@@ -48,7 +49,7 @@ class RelationshipQuestion(models.Model):
         return [
             [choice.pk, str(choice)] for choice in self.answers.all()
         ]
-    
+
     @property
     def slug(self) -> str:
         return slugify(self.text)
@@ -93,6 +94,19 @@ class RelationshipQuestionChoice(models.Model):
         return self.text
 
 
+# class ExternalPerson(models.Model):
+#     """Model representing a person external to the project.
+
+#     These will never need to be linked to a :class:`User` as they
+#     will never log in to the system.
+#     """
+#     name = models.CharField(max_length=255,
+#                             blank=False, null=False)
+
+#     def __str__(self) -> str:
+#         return self.name
+
+
 class Relationship(models.Model):
     """
     A directional relationship between two people allowing linked questions.
@@ -100,7 +114,7 @@ class Relationship(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['source', 'target'],
+            models.UniqueConstraint(fields=['source', 'target_person'],
                                     name='unique_relationship'),
         ]
 
@@ -110,15 +124,33 @@ class Relationship(models.Model):
                                blank=False, null=False)
 
     #: Person with whom the relationship is reported
-    target = models.ForeignKey(Person, related_name='relationships_as_target',
-                               on_delete=models.CASCADE,
-                               blank=False, null=False)
-    
+    target_person = models.ForeignKey(Person,
+                                      related_name='relationships_as_target',
+                                      on_delete=models.CASCADE,
+                                      blank=False,
+                                      null=False)
+                                    #   blank=True,
+                                    #   null=True)
+
+    # target_external_person = models.ForeignKey(
+    #     ExternalPerson,
+    #     related_name='relationships_as_target',
+    #     on_delete=models.CASCADE,
+    #     blank=True,
+    #     null=True)
+
     #: When was this relationship defined?
     created = models.DateTimeField(auto_now_add=True)
-    
+
     #: When was this marked as expired?  Default None means it has not expired
     expired = models.DateTimeField(blank=True, null=True)
+
+    @property
+    def target(self) -> Person:
+        if self.target_person:
+            return self.target_person
+
+        raise ObjectDoesNotExist('Relationship has no target linked')
 
     @property
     def current_answers(self) -> 'RelationshipAnswerSet':
@@ -137,8 +169,8 @@ class Relationship(models.Model):
 
         @raise Relationship.DoesNotExist: When the reverse relationship is not known
         """
-        return type(self).objects.get(source=self.target,
-                                      target=self.source)
+        return type(self).objects.get(source=self.target_person,
+                                      target_person=self.source)
 
 
 class RelationshipAnswerSet(models.Model):
@@ -163,7 +195,7 @@ class RelationshipAnswerSet(models.Model):
     #: When were these answers collected?
     timestamp = models.DateTimeField(auto_now_add=True,
                                      editable=False)
-    
+
     replaced_timestamp = models.DateTimeField(blank=True, null=True,
                                               editable=False)
 
