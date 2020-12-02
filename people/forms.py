@@ -25,29 +25,12 @@ def get_date_year_range() -> typing.Iterable[int]:
 
 
 class PersonForm(forms.ModelForm):
-    """
-    Form for creating / updating an instance of :class:`Person`.
-    """
+    """Form for creating / updating an instance of :class:`Person`."""
     class Meta:
         model = models.Person
         fields = [
             'name',
         ]
-        widgets = {
-            'nationality': Select2Widget(),
-            'country_of_residence': Select2Widget(),
-            'themes': Select2MultipleWidget(),
-        }
-        help_texts = {
-            'organisation_started_date':
-            'If you don\'t know the exact date, an approximate date is okay.',
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['organisation_started_date'].widget = SelectDateWidget(
-            years=get_date_year_range())
 
 
 class RelationshipForm(forms.Form):
@@ -60,16 +43,58 @@ class DynamicAnswerSetBase(forms.Form):
     field_class = forms.ModelChoiceField
     field_widget = None
     field_required = True
+    question_model = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        for question in models.RelationshipQuestion.objects.all():
+        for question in self.question_model.objects.all():
             field = self.field_class(label=question,
                                      queryset=question.answers,
                                      widget=self.field_widget,
                                      required=self.field_required)
             self.fields['question_{}'.format(question.pk)] = field
+
+
+class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
+    """Form for variable person attributes.
+
+    Dynamic fields inspired by https://jacobian.org/2010/feb/28/dynamic-form-generation/
+    """
+    class Meta:
+        model = models.PersonAnswerSet
+        fields = [
+            'nationality',
+            'country_of_residence',
+            'organisation',
+            'organisation_started_date',
+            'job_title',
+            'disciplines',
+            'themes',
+        ]
+        widgets = {
+            'nationality': Select2Widget(),
+            'country_of_residence': Select2Widget(),
+            'themes': Select2MultipleWidget(),
+        }
+        help_texts = {
+            'organisation_started_date':
+            'If you don\'t know the exact date, an approximate date is okay.',
+        }
+
+    question_model = models.PersonQuestion
+
+    def save(self, commit=True) -> models.PersonAnswerSet:
+        # Save Relationship model
+        self.instance = super().save(commit=commit)
+
+        if commit:
+            # Save answers to relationship questions
+            for key, value in self.cleaned_data.items():
+                if key.startswith('question_') and value:
+                    self.instance.question_answers.add(value)
+
+        return self.instance
 
 
 class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
@@ -83,6 +108,8 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         fields = [
             'relationship',
         ]
+
+    question_model = models.RelationshipQuestion
 
     def save(self, commit=True) -> models.RelationshipAnswerSet:
         # Save Relationship model
@@ -104,6 +131,7 @@ class NetworkFilterForm(DynamicAnswerSetBase):
     field_class = forms.ModelMultipleChoiceField
     field_widget = Select2MultipleWidget
     field_required = False
+    question_model = models.RelationshipQuestion
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

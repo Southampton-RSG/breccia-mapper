@@ -3,6 +3,7 @@ Views for displaying or manipulating instances of :class:`Person`.
 """
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from people import forms, models, permissions
@@ -55,9 +56,40 @@ class ProfileView(permissions.UserIsLinkedPersonMixin, DetailView):
 
 
 class PersonUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
-    """
-    View for updating a :class:`Person` record.
-    """
-    model = models.Person
+    """View for updating a :class:`Person` record."""
+    model = models.PersonAnswerSet
     template_name = 'people/person/update.html'
-    form_class = forms.PersonForm
+    form_class = forms.PersonAnswerSetForm
+
+    def get_test_person(self) -> models.Person:
+        """Get the person instance which should be used for access control checks."""
+        return models.Person.objects.get(pk=self.kwargs.get('pk'))
+
+    def get(self, request, *args, **kwargs):
+        self.person = models.Person.objects.get(pk=self.kwargs.get('pk'))
+
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.person = models.Person.objects.get(pk=self.kwargs.get('pk'))
+
+        return super().post(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['person'] = self.person
+
+        return context
+
+    def form_valid(self, form):
+        """Mark any previous answer sets as replaced."""
+        response = super().form_valid(form)
+        now_date = timezone.now().date()
+
+        # Shouldn't be more than one after initial updates after migration
+        for answer_set in self.person.answer_sets.exclude(pk=self.object.pk):
+            answer_set.replaced_timestamp = now_date
+            answer_set.save()
+
+        return response
