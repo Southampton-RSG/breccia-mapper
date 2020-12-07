@@ -9,18 +9,4 @@ class Migration(migrations.Migration):
         ('people', '0024_remove_age_gender'),
     ]
 
-    operations = [
-        migrations.RemoveConstraint(
-            model_name='relationship',
-            name='unique_relationship',
-        ),
-        migrations.RenameField(
-            model_name='relationship',
-            old_name='target',
-            new_name='target_person',
-        ),
-        migrations.AddConstraint(
-            model_name='relationship',
-            constraint=models.UniqueConstraint(fields=('source', 'target_person'), name='unique_relationship'),
-        ),
-    ]
+    operations = []

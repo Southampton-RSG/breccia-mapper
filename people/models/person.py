@@ -119,7 +119,7 @@ class Person(models.Model):
         'self',
         related_name='relationship_sources',
         through='Relationship',
-        through_fields=('source', 'target_person'),
+        through_fields=('source', 'target'),
         symmetrical=False)
 
     @property

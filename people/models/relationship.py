@@ -52,7 +52,7 @@ class Relationship(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['source', 'target_person'],
+            models.UniqueConstraint(fields=['source', 'person'],
                                     name='unique_relationship'),
         ]
 
@@ -62,11 +62,11 @@ class Relationship(models.Model):
                                blank=False, null=False)
 
     #: Person with whom the relationship is reported
-    target_person = models.ForeignKey(Person,
-                                      related_name='relationships_as_target',
-                                      on_delete=models.CASCADE,
-                                      blank=False,
-                                      null=False)
+    target = models.ForeignKey(Person,
+                               related_name='relationships_as_target',
+                               on_delete=models.CASCADE,
+                               blank=False,
+                               null=False)
     #   blank=True,
     #   null=True)
 
@@ -82,13 +82,6 @@ class Relationship(models.Model):
 
     #: When was this marked as expired?  Default None means it has not expired
     expired = models.DateTimeField(blank=True, null=True)
-
-    @property
-    def target(self) -> Person:
-        if self.target_person:
-            return self.target_person
-
-        raise ObjectDoesNotExist('Relationship has no target linked')
 
     @property
     def current_answers(self) -> 'RelationshipAnswerSet':
@@ -107,8 +100,8 @@ class Relationship(models.Model):
 
         @raise Relationship.DoesNotExist: When the reverse relationship is not known
         """
-        return type(self).objects.get(source=self.target_person,
-                                      target_person=self.source)
+        return type(self).objects.get(source=self.target,
+                                      target=self.source)
 
 
 class RelationshipAnswerSet(AnswerSet):
