@@ -49,10 +49,17 @@ class DynamicAnswerSetBase(forms.Form):
         super().__init__(*args, **kwargs)
 
         for question in self.question_model.objects.all():
-            field = self.field_class(label=question,
-                                     queryset=question.answers,
-                                     widget=self.field_widget,
-                                     required=self.field_required)
+            field_class = self.field_class
+            field_widget = self.field_widget
+
+            if question.is_multiple_choice:
+                field_class = forms.ModelMultipleChoiceField
+                field_widget = Select2MultipleWidget
+
+            field = field_class(label=question,
+                                queryset=question.answers,
+                                widget=field_widget,
+                                required=self.field_required)
             self.fields['question_{}'.format(question.pk)] = field
 
 
@@ -92,7 +99,12 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             # Save answers to relationship questions
             for key, value in self.cleaned_data.items():
                 if key.startswith('question_') and value:
-                    self.instance.question_answers.add(value)
+                    try:
+                        self.instance.question_answers.add(value)
+
+                    except TypeError:
+                        # Value is a QuerySet - multiple choice question
+                        self.instance.question_answers.add(*value.all())
 
         return self.instance
 
@@ -119,7 +131,12 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             # Save answers to relationship questions
             for key, value in self.cleaned_data.items():
                 if key.startswith('question_') and value:
-                    self.instance.question_answers.add(value)
+                    try:
+                        self.instance.question_answers.add(value)
+
+                    except TypeError:
+                        # Value is a QuerySet - multiple choice question
+                        self.instance.question_answers.add(*value.all())
 
         return self.instance
 

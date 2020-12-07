@@ -22,6 +22,11 @@ class Question(models.Model):
     #: Text of question
     text = models.CharField(max_length=255, blank=False, null=False)
 
+    #: Should people be able to select multiple responses to this question?
+    is_multiple_choice = models.BooleanField(default=False,
+                                             blank=False,
+                                             null=False)
+
     #: Position of this question in the list
     order = models.SmallIntegerField(default=0, blank=False, null=False)
 
