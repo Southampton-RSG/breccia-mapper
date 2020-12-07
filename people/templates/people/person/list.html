@@ -11,10 +11,8 @@
 
     <hr>
 
-    {% if request.user.is_staff %}
-        <a class="btn btn-success"
-           href="{% url 'people:person.create' %}">New Person</a>
-    {% endif %}
+    <a class="btn btn-success"
+        href="{% url 'people:person.create' %}">New Person</a>
 
     <table class="table table-borderless">
         <thead>

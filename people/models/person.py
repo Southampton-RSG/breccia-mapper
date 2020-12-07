@@ -11,16 +11,18 @@ from django_countries.fields import CountryField
 from django_settings_export import settings_export
 from post_office import mail
 
-from backports.db.models.enums import TextChoices
+from .question import AnswerSet, Question, QuestionChoice
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 __all__ = [
     'User',
     'Organisation',
-    'Role',
     'Theme',
+    'PersonQuestion',
+    'PersonQuestionChoice',
     'Person',
+    'PersonAnswerSet',
 ]
 
 
@@ -36,7 +38,7 @@ class User(AbstractUser):
         """
         return hasattr(self, 'person')
 
-    def send_welcome_email(self):
+    def send_welcome_email(self) -> None:
         """Send a welcome email to a new user."""
         # Get exported data from settings.py first
         context = settings_export(None)
@@ -71,16 +73,6 @@ class Organisation(models.Model):
         return self.name
 
 
-class Role(models.Model):
-    """
-    Role which a :class:`Person` holds within the project.
-    """
-    name = models.CharField(max_length=255, blank=False, null=False)
-
-    def __str__(self) -> str:
-        return self.name
-
-
 class Theme(models.Model):
     """
     Project theme within which a :class:`Person` works.
@@ -89,6 +81,20 @@ class Theme(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class PersonQuestion(Question):
+    """Question which may be asked about a person."""
+
+
+class PersonQuestionChoice(QuestionChoice):
+    """Allowed answer to a :class:`PersonQuestion`."""
+    #: Question to which this answer belongs
+    question = models.ForeignKey(PersonQuestion,
+                                 related_name='answers',
+                                 on_delete=models.CASCADE,
+                                 blank=False,
+                                 null=False)
 
 
 class Person(models.Model):
@@ -113,39 +119,39 @@ class Person(models.Model):
         'self',
         related_name='relationship_sources',
         through='Relationship',
-        through_fields=('source', 'target'),
+        through_fields=('source', 'target_person'),
         symmetrical=False)
 
-    ###############################################################
-    # Data collected for analysis of community makeup and structure
+    @property
+    def relationships(self):
+        return self.relationships_as_source.all().union(
+            self.relationships_as_target.all())
 
-    class GenderChoices(TextChoices):
-        MALE = 'M', _('Male')
-        FEMALE = 'F', _('Female')
-        OTHER = 'O', _('Other')
-        PREFER_NOT_TO_SAY = 'N', _('Prefer not to say')
+    @property
+    def current_answers(self) -> 'PersonAnswerSet':
+        return self.answer_sets.last()
 
-    gender = models.CharField(max_length=1,
-                              choices=GenderChoices.choices,
-                              blank=True,
-                              null=False)
+    def get_absolute_url(self):
+        return reverse('people:person.detail', kwargs={'pk': self.pk})
 
-    class AgeGroupChoices(TextChoices):
-        LTE_25 = '<=25', _('25 or under')
-        BETWEEN_26_30 = '26-30', _('26-30')
-        BETWEEN_31_35 = '31-35', _('31-35')
-        BETWEEN_36_40 = '36-40', _('36-40')
-        BETWEEN_41_45 = '41-45', _('41-45')
-        BETWEEN_46_50 = '46-50', _('46-50')
-        BETWEEN_51_55 = '51-55', _('51-55')
-        BETWEEN_56_60 = '56-60', _('56-60')
-        GTE_61 = '>=61', _('61 or older')
-        PREFER_NOT_TO_SAY = 'N', _('Prefer not to say')
+    def __str__(self) -> str:
+        return self.name
 
-    age_group = models.CharField(max_length=5,
-                                 choices=AgeGroupChoices.choices,
-                                 blank=True,
-                                 null=False)
+
+class PersonAnswerSet(AnswerSet):
+    """The answers to the person questions at a particular point in time."""
+    #: Person to which this answer set belongs
+    person = models.ForeignKey(Person,
+                               on_delete=models.CASCADE,
+                               related_name='answer_sets',
+                               blank=False,
+                               null=False)
+
+    #: Answers to :class:`PersonQuestion`s
+    question_answers = models.ManyToManyField(PersonQuestionChoice)
+
+    ##################
+    # Static questions
 
     nationality = CountryField(blank=True, null=True)
 
@@ -168,23 +174,8 @@ class Person(models.Model):
     #: Discipline(s) within which this person works
     disciplines = models.CharField(max_length=255, blank=True, null=True)
 
-    #: Role this person holds within the project
-    role = models.ForeignKey(Role,
-                             on_delete=models.PROTECT,
-                             related_name='holders',
-                             blank=True,
-                             null=True)
-
     #: Project themes within this person works
     themes = models.ManyToManyField(Theme, related_name='people', blank=True)
 
-    @property
-    def relationships(self):
-        return self.relationships_as_source.all().union(
-            self.relationships_as_target.all())
-
     def get_absolute_url(self):
-        return reverse('people:person.detail', kwargs={'pk': self.pk})
-
-    def __str__(self) -> str:
-        return self.name
+        return self.person.get_absolute_url()

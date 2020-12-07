@@ -2,9 +2,11 @@
 Views for displaying or manipulating instances of :class:`Relationship`.
 """
 
+from django.db import IntegrityError
+from django.forms import ValidationError
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, FormView
 
 from people import forms, models, permissions
 
@@ -18,7 +20,7 @@ class RelationshipDetailView(permissions.UserIsLinkedPersonMixin, DetailView):
     related_person_field = 'source'
 
 
-class RelationshipCreateView(permissions.UserIsLinkedPersonMixin, CreateView):
+class RelationshipCreateView(permissions.UserIsLinkedPersonMixin, FormView):
     """
     View for creating a :class:`Relationship`.
 
@@ -26,53 +28,45 @@ class RelationshipCreateView(permissions.UserIsLinkedPersonMixin, CreateView):
     """
     model = models.Relationship
     template_name = 'people/relationship/create.html'
-    fields = [
-        'source',
-        'target',
-    ]
+    form_class = forms.RelationshipForm
 
-    def get_test_person(self) -> models.Person:
-        """
-        Get the person instance which should be used for access control checks.
-        """
-        if self.request.method == 'POST':
-            return models.Person.objects.get(pk=self.request.POST.get('source'))
-
+    def get_person(self) -> models.Person:
         return models.Person.objects.get(pk=self.kwargs.get('person_pk'))
 
-    def get(self, request, *args, **kwargs):
-        self.person = models.Person.objects.get(pk=self.kwargs.get('person_pk'))
+    def get_test_person(self) -> models.Person:
+        return self.get_person()
 
-        return super().get(request, *args, **kwargs)
+    def form_valid(self, form):
+        try:
+            self.object = models.Relationship.objects.create(
+                source=self.get_person(), target=form.cleaned_data['target'])
 
-    def post(self, request, *args, **kwargs):
-        self.person = models.Person.objects.get(pk=self.kwargs.get('person_pk'))
+        except IntegrityError:
+            form.add_error(
+                None,
+                ValidationError('This relationship already exists',
+                                code='already-exists'))
+            return self.form_invalid(form)
 
-        return super().post(request, *args, **kwargs)
-
-    def get_initial(self):
-        initial = super().get_initial()
-
-        initial['source'] = self.request.user.person
-        initial['target'] = self.person
-
-        return initial
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['person'] = self.person
+        context['person'] = self.get_person()
 
         return context
 
     def get_success_url(self):
-        return reverse('people:relationship.update', kwargs={'relationship_pk': self.object.pk})
+        return reverse('people:relationship.update',
+                       kwargs={'relationship_pk': self.object.pk})
 
 
 class RelationshipUpdateView(permissions.UserIsLinkedPersonMixin, CreateView):
     """
-    View for creating a :class:`Relationship`.
+    View for updating the details of a relationship.
 
+    Creates a new :class:`RelationshipAnswerSet` for the :class:`Relationship`.
     Displays / processes a form containing the :class:`RelationshipQuestion`s.
     """
     model = models.RelationshipAnswerSet
@@ -83,18 +77,21 @@ class RelationshipUpdateView(permissions.UserIsLinkedPersonMixin, CreateView):
         """
         Get the person instance which should be used for access control checks.
         """
-        relationship = models.Relationship.objects.get(pk=self.kwargs.get('relationship_pk'))
+        relationship = models.Relationship.objects.get(
+            pk=self.kwargs.get('relationship_pk'))
 
         return relationship.source
 
     def get(self, request, *args, **kwargs):
-        self.relationship = models.Relationship.objects.get(pk=self.kwargs.get('relationship_pk'))
+        self.relationship = models.Relationship.objects.get(
+            pk=self.kwargs.get('relationship_pk'))
         self.person = self.relationship.source
 
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        self.relationship = models.Relationship.objects.get(pk=self.kwargs.get('relationship_pk'))
+        self.relationship = models.Relationship.objects.get(
+            pk=self.kwargs.get('relationship_pk'))
         self.person = self.relationship.source
 
         return super().post(request, *args, **kwargs)
@@ -122,7 +119,8 @@ class RelationshipUpdateView(permissions.UserIsLinkedPersonMixin, CreateView):
         now_date = timezone.now().date()
 
         # Shouldn't be more than one after initial updates after migration
-        for answer_set in self.relationship.answer_sets.exclude(pk=self.object.pk):
+        for answer_set in self.relationship.answer_sets.exclude(
+                pk=self.object.pk):
             answer_set.replaced_timestamp = now_date
             answer_set.save()
 
