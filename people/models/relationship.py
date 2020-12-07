@@ -2,14 +2,12 @@
 Models describing relationships between people.
 """
 
-import typing
-
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.urls import reverse
-from django.utils.text import slugify
 
 from .person import Person
+from .question import AnswerSet, Question, QuestionChoice
 
 __all__ = [
     'RelationshipQuestion',
@@ -19,79 +17,19 @@ __all__ = [
 ]
 
 
-class RelationshipQuestion(models.Model):
-    """
-    Question which may be asked about a relationship.
-    """
-    class Meta:
-        ordering = [
-            'order',
-            'text',
-        ]
-
-    #: Version number of this question - to allow modification without invalidating existing data
-    version = models.PositiveSmallIntegerField(default=1,
-                                               blank=False, null=False)
-
-    #: Text of question
-    text = models.CharField(max_length=255,
-                            blank=False, null=False)
-
-    #: Position of this question in the list
-    order = models.SmallIntegerField(default=0,
-                                     blank=False, null=False)
-
-    @property
-    def choices(self) -> typing.List[typing.List[str]]:
-        """
-        Convert the :class:`RelationshipQuestionChoice`s for this question into Django choices.
-        """
-        return [
-            [choice.pk, str(choice)] for choice in self.answers.all()
-        ]
-
-    @property
-    def slug(self) -> str:
-        return slugify(self.text)
-
-    def __str__(self) -> str:
-        return self.text
+class RelationshipQuestion(Question):
+    """Question which may be asked about a relationship."""
 
 
-class RelationshipQuestionChoice(models.Model):
-    """
-    Allowed answer to a :class:`RelationshipQuestion`.
-    """
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['question', 'text'],
-                                    name='unique_question_answer')
-        ]
-        ordering = [
-            'question__order',
-            'order',
-            'text',
-        ]
+class RelationshipQuestionChoice(QuestionChoice):
+    """Allowed answer to a :class:`RelationshipQuestion`."""
 
     #: Question to which this answer belongs
-    question = models.ForeignKey(RelationshipQuestion, related_name='answers',
+    question = models.ForeignKey(RelationshipQuestion,
+                                 related_name='answers',
                                  on_delete=models.CASCADE,
-                                 blank=False, null=False)
-
-    #: Text of answer
-    text = models.CharField(max_length=255,
-                            blank=False, null=False)
-
-    #: Position of this answer in the list
-    order = models.SmallIntegerField(default=0,
-                                     blank=False, null=False)
-
-    @property
-    def slug(self) -> str:
-        return slugify(self.text)
-
-    def __str__(self) -> str:
-        return self.text
+                                 blank=False,
+                                 null=False)
 
 
 # class ExternalPerson(models.Model):
@@ -129,8 +67,8 @@ class Relationship(models.Model):
                                       on_delete=models.CASCADE,
                                       blank=False,
                                       null=False)
-                                    #   blank=True,
-                                    #   null=True)
+    #   blank=True,
+    #   null=True)
 
     # target_external_person = models.ForeignKey(
     #     ExternalPerson,
@@ -173,31 +111,18 @@ class Relationship(models.Model):
                                       target_person=self.source)
 
 
-class RelationshipAnswerSet(models.Model):
-    """
-    The answers to the relationship questions at a particular point in time.
-    """
-
-    class Meta:
-        ordering = [
-            'timestamp',
-        ]
+class RelationshipAnswerSet(AnswerSet):
+    """The answers to the relationship questions at a particular point in time."""
 
     #: Relationship to which this answer set belongs
     relationship = models.ForeignKey(Relationship,
                                      on_delete=models.CASCADE,
                                      related_name='answer_sets',
-                                     blank=False, null=False)
+                                     blank=False,
+                                     null=False)
 
     #: Answers to :class:`RelationshipQuestion`s
     question_answers = models.ManyToManyField(RelationshipQuestionChoice)
-
-    #: When were these answers collected?
-    timestamp = models.DateTimeField(auto_now_add=True,
-                                     editable=False)
-
-    replaced_timestamp = models.DateTimeField(blank=True, null=True,
-                                              editable=False)
 
     def get_absolute_url(self):
         return self.relationship.get_absolute_url()

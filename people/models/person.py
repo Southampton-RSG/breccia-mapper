@@ -1,17 +1,17 @@
 import logging
-import typing
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from django_countries.fields import CountryField
 from django_settings_export import settings_export
 from post_office import mail
+
+from .question import AnswerSet, Question, QuestionChoice
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -83,77 +83,18 @@ class Theme(models.Model):
         return self.name
 
 
-class PersonQuestion(models.Model):
+class PersonQuestion(Question):
     """Question which may be asked about a person."""
-    class Meta:
-        ordering = [
-            'order',
-            'text',
-        ]
-
-    #: Version number of this question - to allow modification without invalidating existing data
-    version = models.PositiveSmallIntegerField(default=1,
-                                               blank=False, null=False)
-
-    #: Text of question
-    text = models.CharField(max_length=255,
-                            blank=False, null=False)
-
-    #: Position of this question in the list
-    order = models.SmallIntegerField(default=0,
-                                     blank=False, null=False)
-
-    @property
-    def choices(self) -> typing.List[typing.List[str]]:
-        """
-        Convert the :class:`PersonQuestionChoice`s for this question into Django choices.
-        """
-        return [
-            [choice.pk, str(choice)] for choice in self.answers.all()
-        ]
-
-    @property
-    def slug(self) -> str:
-        return slugify(self.text)
-
-    def __str__(self) -> str:
-        return self.text
 
 
-class PersonQuestionChoice(models.Model):
-    """
-    Allowed answer to a :class:`PersonQuestion`.
-    """
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['question', 'text'],
-                                    name='unique_question_answer')
-        ]
-        ordering = [
-            'question__order',
-            'order',
-            'text',
-        ]
-
+class PersonQuestionChoice(QuestionChoice):
+    """Allowed answer to a :class:`PersonQuestion`."""
     #: Question to which this answer belongs
-    question = models.ForeignKey(PersonQuestion, related_name='answers',
+    question = models.ForeignKey(PersonQuestion,
+                                 related_name='answers',
                                  on_delete=models.CASCADE,
-                                 blank=False, null=False)
-
-    #: Text of answer
-    text = models.CharField(max_length=255,
-                            blank=False, null=False)
-
-    #: Position of this answer in the list
-    order = models.SmallIntegerField(default=0,
-                                     blank=False, null=False)
-
-    @property
-    def slug(self) -> str:
-        return slugify(self.text)
-
-    def __str__(self) -> str:
-        return self.text
+                                 blank=False,
+                                 null=False)
 
 
 class Person(models.Model):
@@ -197,13 +138,8 @@ class Person(models.Model):
         return self.name
 
 
-class PersonAnswerSet(models.Model):
+class PersonAnswerSet(AnswerSet):
     """The answers to the person questions at a particular point in time."""
-    class Meta:
-        ordering = [
-            'timestamp',
-        ]
-
     #: Person to which this answer set belongs
     person = models.ForeignKey(Person,
                                on_delete=models.CASCADE,
@@ -213,13 +149,6 @@ class PersonAnswerSet(models.Model):
 
     #: Answers to :class:`PersonQuestion`s
     question_answers = models.ManyToManyField(PersonQuestionChoice)
-
-    #: When were these answers collected?
-    timestamp = models.DateTimeField(auto_now_add=True, editable=False)
-
-    replaced_timestamp = models.DateTimeField(blank=True,
-                                              null=True,
-                                              editable=False)
 
     ##################
     # Static questions
