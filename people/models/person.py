@@ -177,5 +177,11 @@ class PersonAnswerSet(AnswerSet):
     #: Project themes within this person works
     themes = models.ManyToManyField(Theme, related_name='people', blank=True)
 
+    #: Latitude for displaying locaiton on a map
+    latitude = models.FloatField(blank=True, null=True)
+
+    #: Longitude for displaying locaiton on a map
+    longitude = models.FloatField(blank=True, null=True)
+
     def get_absolute_url(self):
         return self.person.get_absolute_url()

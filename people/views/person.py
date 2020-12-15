@@ -2,6 +2,8 @@
 Views for displaying or manipulating instances of :class:`Person`.
 """
 
+import typing
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
@@ -53,6 +55,14 @@ class ProfileView(permissions.UserIsLinkedPersonMixin, DetailView):
         except AttributeError:
             # pk was not provided in URL
             return self.request.user.person
+
+    def get_context_data(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        """Add current :class:`PersonAnswerSet` to context."""
+        context = super().get_context_data(**kwargs)
+
+        context['answer_set'] = self.object.current_answers
+
+        return context
 
 
 class PersonUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):

@@ -10,13 +10,9 @@ const marker_label_offset = 0.27 * marker_scale;
 const marker_edge_alpha = 1.0;
 const marker_edge_width = 1.0;
 
-const settings = {
-    zoom: 5
-}
-
 // The function called when Google Maps starts up
 function initMap() {
-    const centre_latlng = new google.maps.LatLng(0, 0);
+    const centre_latlng = new google.maps.LatLng(settings.centre_lat, settings.centre_lng);
     // The map, centered at Soton
     const map = new google.maps.Map(
         document.getElementById('map'), { zoom: settings.zoom, center: centre_latlng });

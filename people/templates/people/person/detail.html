@@ -4,8 +4,18 @@
     {% load staticfiles %}
     <script type="application/javascript">
         const data = [
-            {name: 'Test Person', lat: 0, lng: 0},
+            {
+                name: '{{ person.name }}',
+                lat: '{{ answer_set.latitude }}',
+                lng: '{{ answer_set.longitude }}'
+            },
         ]
+
+        const settings = {
+            zoom: 8,
+            centre_lat: '{{ answer_set.latitude }}',
+            centre_lng: '{{ answer_set.longitude }}',
+        }
     </script>
 
     <script src="{% static 'js/map.js' %}"></script>
@@ -37,9 +47,7 @@
         {% endif %}
 
 
-        {% with person.current_answers as answer_set %}
-            {% include 'people/person/includes/answer_set.html' %}
-        {% endwith %}
+        {% include 'people/person/includes/answer_set.html' %}
 
         <a class="btn btn-success"
            href="{% url 'people:person.update' pk=person.pk %}">Update</a>
