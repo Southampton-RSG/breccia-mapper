@@ -94,6 +94,10 @@ The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABAS
 - EMAIL_USE_SSL
   default: True if EMAIL_PORT == 465 else False
   Use SSL to communicate with SMTP server?  Usually on port 465
+
+- GOOGLE_MAPS_API_KEY
+  default: None
+  Google Maps API key to display maps of people's locations
 """
 
 import collections
@@ -113,6 +117,7 @@ SETTINGS_EXPORT = [
     'DEBUG',
     'PROJECT_LONG_NAME',
     'PROJECT_SHORT_NAME',
+    'GOOGLE_MAPS_API_KEY',
 ]
 
 PROJECT_LONG_NAME = config('PROJECT_LONG_NAME', default='Project Long Name')
@@ -393,3 +398,7 @@ except ImportError as exc:
     CUSTOMISATION_NAME = None
     TEMPLATE_NAME_INDEX = 'index.html'
     TEMPLATE_WELCOME_EMAIL_NAME = 'welcome-email'
+
+# Upstream API keys
+
+GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY', default=None)

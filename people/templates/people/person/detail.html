@@ -1,5 +1,19 @@
 {% extends 'base.html' %}
 
+{% block extra_head %}
+    {% load staticfiles %}
+    <script type="application/javascript">
+        const data = [
+            {name: 'Test Person', lat: 0, lng: 0},
+        ]
+    </script>
+
+    <script src="{% static 'js/map.js' %}"></script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ settings.GOOGLE_MAPS_API_KEY }}&callback=initMap"
+                        type="text/javascript"></script>
+{% endblock %}
+
 {% block content %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -24,68 +38,7 @@
 
 
         {% with person.current_answers as answer_set %}
-            <dl>
-            </dl>
-
-            <table class="table table-borderless">
-                <thead>
-                <tr>
-                    <th>Question</th>
-                    <th>Answer</th>
-                </tr>
-                </thead>
-
-                <tbody>
-                {% if answer_set.nationality %}
-                    <tr><td>Nationality</td><td>{{ answer_set.nationality.name }}</td>
-                {% endif %}
-
-                {% if answer_set.country_of_residence %}
-                    <tr><td>Country of Residence</td><td>{{ answer_set.country_of_residence.name }}</td></tr>
-                {% endif %}
-
-                {% if answer_set.organisation %}
-                    <tr><td>Organisation</td><td>{{ answer_set.organisation }}</td></tr>
-                {% endif %}
-
-                {% if answer_set.organisation_started_date %}
-                    <tr><td>Organisation Started Date</td><td>{{ answer_set.organisation_started_date }}</td></tr>
-                {% endif %}
-
-                {% if answer_set.job_title %}
-                    <tr><td>Job Title</td><td>{{ answer_set.job_title }}</td></tr>
-                {% endif %}
-
-                {% if answer_set.disciplines %}
-                    <tr><td>Discipline(s)</td><td>{{ answer_set.disciplines }}</td></tr>
-                {% endif %}
-
-                {% if answer_set.themes.exists %}
-                    <tr>
-                        <td>Project Themes</td>
-                        <td>
-                            {% for theme in answer_set.themes.all %}
-                                {{ theme }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        </td>
-                    </tr>
-                {% endif %}
-
-                {% for answer in answer_set.question_answers.all %}
-                    <tr>
-                        <td>{{ answer.question }}</td>
-                        <td>{{ answer }}</td>
-                    </tr>
-
-                {% empty %}
-                    <tr>
-                        <td>No records</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-
-            <p>Last updated: {{ answer_set.timestamp }}</p>
+            {% include 'people/person/includes/answer_set.html' %}
         {% endwith %}
 
         <a class="btn btn-success"
@@ -96,6 +49,10 @@
                href="{% url 'password_change' %}?next={{ person.get_absolute_url }}">Change Password</a>
         {% endif %}
     {% endif %}
+
+    <hr>
+
+    <div id="map" style="height: 800px; width: 100%"></div>
 
     <hr>
 
@@ -206,4 +163,7 @@
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+
+{% block extra_script %}
 {% endblock %}
