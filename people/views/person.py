@@ -5,6 +5,7 @@ Views for displaying or manipulating instances of :class:`Person`.
 import typing
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
@@ -61,6 +62,7 @@ class ProfileView(permissions.UserIsLinkedPersonMixin, DetailView):
         context = super().get_context_data(**kwargs)
 
         context['answer_set'] = self.object.current_answers
+        context['map_markers'] = [get_map_data(self.object)]
 
         return context
 
@@ -103,3 +105,38 @@ class PersonUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
             answer_set.save()
 
         return response
+
+
+def get_map_data(person: models.Person) -> typing.Dict[str, typing.Any]:
+    answer_set = person.current_answers
+    try:
+        latitude = answer_set.latitude or None
+        longitude = answer_set.longitude or None
+
+    except AttributeError:
+        latitude = None
+        longitude = None
+
+    return {
+        'name': person.name,
+        'lat': latitude,
+        'lng': longitude,
+        'url': reverse('people:person.detail', kwargs={'pk': person.pk})
+    }
+
+
+class PersonMapView(LoginRequiredMixin, ListView):
+    """
+    View displaying a map of :class:`Person` locations.
+    """
+    model = models.Person
+    template_name = 'people/person/map.html'
+
+    def get_context_data(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        context = super().get_context_data(**kwargs)
+
+        context['map_markers'] = [
+            get_map_data(person) for person in self.object_list
+        ]
+
+        return context

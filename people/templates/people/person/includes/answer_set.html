@@ -42,13 +42,6 @@
         </tr>
     {% endif %}
 
-    {% if answer_set.latitude and answer_set.longitude %}
-        <tr>
-            <td>Location</td>
-            <td>{{ answer_set.latitude }}, {{ answer_set.longitude }}</td>
-        </tr>
-    {% endif %}
-
     {% for answer in answer_set.question_answers.all %}
         <tr>
             <td>{{ answer.question }}</td>

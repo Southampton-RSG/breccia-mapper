@@ -1,23 +1,9 @@
 {% extends 'base.html' %}
 
 {% block extra_head %}
+    {{ map_markers|json_script:'map-markers' }}
+
     {% load staticfiles %}
-    <script type="application/javascript">
-        const data = [
-            {
-                name: '{{ person.name }}',
-                lat: '{{ answer_set.latitude }}',
-                lng: '{{ answer_set.longitude }}'
-            },
-        ]
-
-        const settings = {
-            zoom: 8,
-            centre_lat: '{{ answer_set.latitude }}',
-            centre_lng: '{{ answer_set.longitude }}',
-        }
-    </script>
-
     <script src="{% static 'js/map.js' %}"></script>
 
     <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ settings.GOOGLE_MAPS_API_KEY }}&callback=initMap"
