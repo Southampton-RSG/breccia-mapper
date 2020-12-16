@@ -38,6 +38,10 @@ urlpatterns = [
          views.relationship.RelationshipUpdateView.as_view(),
          name='relationship.update'),
 
+    path('map',
+         views.person.PersonMapView.as_view(),
+         name='person.map'),
+
     path('network',
          views.network.NetworkView.as_view(),
          name='network'),

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+    {{ map_markers|json_script:'map-markers' }}
+
+    {% load staticfiles %}
+    <script src="{% static 'js/map.js' %}"></script>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key={{ settings.GOOGLE_MAPS_API_KEY }}&callback=initMap"
+            type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'people:person.list' %}">People</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Map</li>
+        </ol>
+    </nav>
+
+    <h1>Map</h1>
+
+    <div id="map" style="height: 800px; width: 100%"></div>
+
+{% endblock %}

@@ -52,7 +52,7 @@ class Relationship(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['source', 'person'],
+            models.UniqueConstraint(fields=['source', 'target'],
                                     name='unique_relationship'),
         ]
 

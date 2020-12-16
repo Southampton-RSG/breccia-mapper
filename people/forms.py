@@ -78,6 +78,8 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             'job_title',
             'disciplines',
             'themes',
+            'latitude',
+            'longitude',
         ]
         widgets = {
             'nationality': Select2Widget(),
