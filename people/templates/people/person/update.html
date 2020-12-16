@@ -12,7 +12,7 @@
         ]
 
         const settings = {
-            zoom: 8,
+            zoom: 2,
             centre_lat: '{{ answer_set.latitude }}',
             centre_lng: '{{ answer_set.longitude }}',
         }
@@ -20,7 +20,7 @@
 
     <script src="{% static 'js/location_picker.js' %}"></script>
 
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ settings.GOOGLE_MAPS_API_KEY }}&callback=initMap"
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ settings.GOOGLE_MAPS_API_KEY }}&callback=initMap&libraries=places"
                         type="text/javascript"></script>
 {% endblock %}
 
@@ -58,6 +58,7 @@
 
     <hr>
 
+    <input id="location-search" class="controls" type="text" placeholder="Location Search"/>
     <div id="map" style="height: 800px; width: 100%"></div>
 
     <hr>
