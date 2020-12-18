@@ -95,7 +95,10 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
 
     def save(self, commit=True) -> models.PersonAnswerSet:
         # Save Relationship model
-        self.instance = super().save(commit=commit)
+        self.instance = super().save(commit=False)
+        self.instance.person_id = self.initial['person_id']
+        if commit:
+            self.instance.save()
 
         if commit:
             # Save answers to relationship questions

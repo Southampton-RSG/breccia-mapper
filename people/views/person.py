@@ -69,38 +69,32 @@ class ProfileView(permissions.UserIsLinkedPersonMixin, DetailView):
 
 class PersonUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
     """View for updating a :class:`Person` record."""
-    model = models.PersonAnswerSet
+    model = models.Person
+    context_object_name = 'person'
     template_name = 'people/person/update.html'
     form_class = forms.PersonAnswerSetForm
 
-    def get_test_person(self) -> models.Person:
-        """Get the person instance which should be used for access control checks."""
-        return models.Person.objects.get(pk=self.kwargs.get('pk'))
+    def get_initial(self) -> typing.Dict[str, typing.Any]:
+        return {
+            'person_id': self.object.id,
+        }
 
-    def get(self, request, *args, **kwargs):
-        self.person = models.Person.objects.get(pk=self.kwargs.get('pk'))
+    def get_form_kwargs(self) -> typing.Dict[str, typing.Any]:
+        """Remove instance from form kwargs as it's a person, but expects a PersonAnswerSet."""
+        kwargs = super().get_form_kwargs()
+        kwargs.pop('instance')
 
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.person = models.Person.objects.get(pk=self.kwargs.get('pk'))
-
-        return super().post(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['person'] = self.person
-
-        return context
+        return kwargs
 
     def form_valid(self, form):
         """Mark any previous answer sets as replaced."""
         response = super().form_valid(form)
         now_date = timezone.now().date()
 
+        # Saving the form made self.object a PersonAnswerSet - so go up, then back down
         # Shouldn't be more than one after initial updates after migration
-        for answer_set in self.person.answer_sets.exclude(pk=self.object.pk):
+        for answer_set in self.object.person.answer_sets.exclude(
+                pk=self.object.pk):
             answer_set.replaced_timestamp = now_date
             answer_set.save()
 
