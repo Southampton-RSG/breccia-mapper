@@ -379,17 +379,28 @@ else:
                            default=(EMAIL_PORT == 465),
                            cast=bool)
 
+
+# Upstream API keys
+
+GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY', default=None)
+
+
 # Import customisation app settings if present
 
 try:
     from custom.settings import (
         CUSTOMISATION_NAME,
         TEMPLATE_NAME_INDEX,
-        TEMPLATE_WELCOME_EMAIL_NAME
-    )
-    logger.info("Loaded customisation app: %s", CUSTOMISATION_NAME)
+        TEMPLATE_WELCOME_EMAIL_NAME,
+        CONSTANCE_CONFIG as constance_config_custom,
+        CONSTANCE_CONFIG_FIELDSETS as constance_config_fieldsets_custom
+    )  # yapf: disable
+
+    CONSTANCE_CONFIG.update(constance_config_custom)
+    CONSTANCE_CONFIG_FIELDSETS.update(constance_config_fieldsets_custom)
 
     INSTALLED_APPS.append('custom')
+    logger.info("Loaded customisation app: %s", CUSTOMISATION_NAME)
 
 except ImportError as exc:
     logger.info("No customisation app loaded: %s", exc)
@@ -398,7 +409,3 @@ except ImportError as exc:
     CUSTOMISATION_NAME = None
     TEMPLATE_NAME_INDEX = 'index.html'
     TEMPLATE_WELCOME_EMAIL_NAME = 'welcome-email'
-
-# Upstream API keys
-
-GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY', default=None)
