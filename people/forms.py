@@ -85,6 +85,8 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             'nationality': Select2Widget(),
             'country_of_residence': Select2Widget(),
             'themes': Select2MultipleWidget(),
+            'latitude': forms.HiddenInput,
+            'longitude': forms.HiddenInput,
         }
         help_texts = {
             'organisation_started_date':
