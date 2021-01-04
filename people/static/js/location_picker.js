@@ -1,6 +1,6 @@
 const marker_fill_alpha = 1.0;
 const marker_edge_colour = 'white';
-const marker_fill_colour =  'gray';
+const marker_fill_colour = 'gray';
 
 // Size of the arrow markers used on the map
 const marker_scale = 9;
@@ -11,6 +11,7 @@ const marker_edge_alpha = 1.0;
 const marker_edge_width = 1.0;
 
 let marker = null;
+let map = null;
 
 /**
  * Position a map marker at the clicked location and update lat/long form fields.
@@ -47,7 +48,7 @@ function selectLocation(event) {
  */
 function initMap() {
     const centre_latlng = new google.maps.LatLng(settings.centre_lat | 0, settings.centre_lng | 0);
-    const map = new google.maps.Map(
+    map = new google.maps.Map(
         document.getElementById('map'), { zoom: settings.zoom, center: centre_latlng });
 
     const search_input = document.getElementById('location-search')
