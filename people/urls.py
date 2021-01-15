@@ -6,6 +6,22 @@ from . import views
 app_name = 'people'
 
 urlpatterns = [
+    path('organisations/create',
+         views.organisation.OrganisationCreateView.as_view(),
+         name='organisation.create'),
+
+    path('organisations',
+         views.organisation.OrganisationListView.as_view(),
+         name='organisation.list'),
+
+    path('organisations/<int:pk>',
+         views.organisation.OrganisationDetailView.as_view(),
+         name='organisation.detail'),
+
+    path('organisations/<int:pk>/update',
+         views.organisation.OrganisationUpdateView.as_view(),
+         name='organisation.update'),
+
     path('profile/',
          views.person.ProfileView.as_view(),
          name='person.profile'),

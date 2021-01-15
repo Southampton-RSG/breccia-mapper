@@ -24,6 +24,17 @@ def get_date_year_range() -> typing.Iterable[int]:
     return range(this_year, this_year - num_years_display, -1)
 
 
+class OrganisationForm(forms.ModelForm):
+    """Form for creating / updating an instance of :class:`Organisation`."""
+    class Meta:
+        model = models.Organisation
+        fields = [
+            'name',
+            'latitude',
+            'longitude'
+        ]
+
+
 class PersonForm(forms.ModelForm):
     """Form for creating / updating an instance of :class:`Person`."""
     class Meta:

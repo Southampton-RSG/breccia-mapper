@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Organisation</li>
+        </ol>
+    </nav>
+
+    <h1>People</h1>
+
+    <hr>
+
+    <a class="btn btn-success"
+        href="{% url 'people:organisation.create' %}">New Organisation</a>
+
+    <table class="table table-borderless">
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for organisation in organisation_list.all %}
+                <tr>
+                    <td>{{ organisation }}</td>
+                    <td>
+                        <a class="btn btn-sm btn-info"
+                           href="{% url 'people:organisation.detail' pk=organisation.pk %}">Details</a>
+                    </td>
+                </tr>
+
+            {% empty %}
+                <tr>
+                    <td>No records</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

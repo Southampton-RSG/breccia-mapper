@@ -4,6 +4,7 @@ Views for displaying or manipulating models within the `people` app.
 
 from . import (
     network,
+    organisation,
     person,
     relationship
 )
@@ -11,6 +12,7 @@ from . import (
 
 __all__ = [
     'network',
+    'organisation',
     'person',
     'relationship',
 ]

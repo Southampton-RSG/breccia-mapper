@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+    {% load staticfiles %}
+    <script type="application/javascript">
+        const data = [
+            {
+                name: '{{ organisation.name }}',
+                lat: '{{ organisation.latitude }}',
+                lng: '{{ organisation.longitude }}'
+            },
+        ]
+
+        const settings = {
+            zoom: 2,
+            centre_lat: '{{ organisation.latitude }}',
+            centre_lng: '{{ organisation.longitude }}',
+        }
+    </script>
+
+    <!-- {{ map_markers|json_script:'map-markers' }} -->
+
+    <script src="{% static 'js/location_picker.js' %}"></script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ settings.GOOGLE_MAPS_API_KEY }}&callback=initMap&libraries=places"
+                        type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'people:organisation.list' %}">Organisations</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'people:organisation.detail' pk=organisation.pk %}">{{ organisation }}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Update</li>
+        </ol>
+    </nav>
+
+    <h1>{{ organisation.name }}</h1>
+
+    <hr>
+
+    <form class="form"
+          method="POST">
+        {% csrf_token %}
+
+        {% load bootstrap4 %}
+        {% bootstrap_form form exclude='latitude,longitude' %}
+
+        {% bootstrap_field form.latitude %}
+        {% bootstrap_field form.longitude %}
+
+        {% buttons %}
+            <button class="btn btn-success" type="submit">Submit</button>
+        {% endbuttons %}
+    </form>
+
+    <hr>
+
+    <input id="location-search" class="controls" type="text" placeholder="Location Search"/>
+    <div id="map" style="height: 800px; width: 100%"></div>
+
+    <hr>
+
+{% endblock %}

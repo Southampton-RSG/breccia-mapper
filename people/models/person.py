@@ -64,9 +64,7 @@ class User(AbstractUser):
 
 
 class Organisation(models.Model):
-    """
-    Organisation to which a :class:`Person` belongs.
-    """
+    """Organisation to which a :class:`Person` belongs."""
     name = models.CharField(max_length=255, blank=False, null=False)
 
     #: Latitude for displaying location on a map
@@ -77,6 +75,9 @@ class Organisation(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('people:organisation.detail', kwargs={'pk': self.pk})
 
 
 class Theme(models.Model):
