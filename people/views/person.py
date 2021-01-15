@@ -102,33 +102,30 @@ class PersonUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
 
 
 def get_map_data(person: models.Person) -> typing.Dict[str, typing.Any]:
+    """Prepare data to mark people on a map."""
     answer_set = person.current_answers
+    organisation = getattr(answer_set, 'organisation', None)
+
     try:
-        latitude = answer_set.latitude or None
-        longitude = answer_set.longitude or None
-        organisation = answer_set.organisation.name or None
-        country = answer_set.country_of_residence.name or None
+        country = answer_set.country_of_residence.name
 
     except AttributeError:
-        latitude = None
-        longitude = None
-        organisation = None
         country = None
 
     return {
         'name': person.name,
-        'lat': latitude,
-        'lng': longitude,
-        'organisation': organisation,
+        'lat': getattr(answer_set, 'latitude', None),
+        'lng': getattr(answer_set, 'longitude', None),
+        'organisation': getattr(organisation, 'name', None),
+        'org_lat': getattr(organisation, 'latitude', None),
+        'org_lng': getattr(organisation, 'longitude', None),
         'country': country,
         'url': reverse('people:person.detail', kwargs={'pk': person.pk})
     }
 
 
 class PersonMapView(LoginRequiredMixin, ListView):
-    """
-    View displaying a map of :class:`Person` locations.
-    """
+    """View displaying a map of :class:`Person` locations."""
     model = models.Person
     template_name = 'people/person/map.html'
 

@@ -15,7 +15,16 @@ let selected_marker_info = null;
 
 function createMarker(map, marker_data) {
     // Get the lat-long position from the data
-    const lat_lng = new google.maps.LatLng(marker_data.lat, marker_data.lng);
+    let lat_lng;
+    if (marker_data.lat != null && marker_data.lng != null) {
+        lat_lng = new google.maps.LatLng(marker_data.lat, marker_data.lng);
+
+    } else if (marker_data.org_lat != null && marker_data.org_lng != null) {
+        lat_lng = new google.maps.LatLng(marker_data.org_lat, marker_data.org_lng);
+
+    } else {
+        throw new Error(`No lat/lng set for marker '${marker_data.name}'`)
+    }
 
     const marker = new google.maps.Marker({
         position: lat_lng,
@@ -52,36 +61,6 @@ function createMarker(map, marker_data) {
     return marker;
 }
 
-function search_missing_locations(map, markers_data) {
-    service = new google.maps.places.PlacesService(map)
-
-    for (let data of markers_data) {
-        if (data.organisation !== null && (data.lat === null || data.lng === null)) {
-            let query = data.organisation;
-            if (data.country !== null) {
-                query += ' ' + data.country;
-            }
-
-            const request = {
-                query: query,
-                fields: ['name', 'geometry'],
-            };
-
-            service.findPlaceFromQuery(request, (results, status) => {
-                if (status === google.maps.places.PlacesServiceStatus.OK) {
-                    for (let i = 0; i < results.length; i++) {
-                        // createMarker(results[i]);
-                        console.log(results[i])
-                    }
-                    map.setCenter(results[0].geometry.location);
-                }
-            });
-
-            break;
-        }
-    }
-}
-
 // The function called when Google Maps starts up
 function initMap() {
     map = new google.maps.Map(
@@ -91,12 +70,16 @@ function initMap() {
     const bounds = new google.maps.LatLngBounds()
     const markers_data = JSON.parse(
         document.getElementById('map-markers').textContent)
-    search_missing_locations(map, markers_data);
 
     // For each data entry in the json...
     for (const marker_data of markers_data) {
-        const marker = createMarker(map, marker_data);
-        bounds.extend(marker.position)
+        try {
+            const marker = createMarker(map, marker_data);
+            bounds.extend(marker.position);
+
+        } catch (exc) {
+            // Just skip and move on to next
+        }
     }
 
     map.fitBounds(bounds)

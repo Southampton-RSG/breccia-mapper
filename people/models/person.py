@@ -69,6 +69,12 @@ class Organisation(models.Model):
     """
     name = models.CharField(max_length=255, blank=False, null=False)
 
+    #: Latitude for displaying location on a map
+    latitude = models.FloatField(blank=True, null=True)
+
+    #: Longitude for displaying location on a map
+    longitude = models.FloatField(blank=True, null=True)
+
     def __str__(self) -> str:
         return self.name
 
@@ -177,10 +183,10 @@ class PersonAnswerSet(AnswerSet):
     #: Project themes within this person works
     themes = models.ManyToManyField(Theme, related_name='people', blank=True)
 
-    #: Latitude for displaying locaiton on a map
+    #: Latitude for displaying location on a map
     latitude = models.FloatField(blank=True, null=True)
 
-    #: Longitude for displaying locaiton on a map
+    #: Longitude for displaying location on a map
     longitude = models.FloatField(blank=True, null=True)
 
     def get_absolute_url(self):
