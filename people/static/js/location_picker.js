@@ -1,17 +1,6 @@
-const marker_fill_alpha = 1.0;
-const marker_edge_colour = 'white';
-const marker_fill_colour = 'gray';
-
-// Size of the arrow markers used on the map
-const marker_scale = 9;
-// Offset for the place type icon (multiplier for marker scale)
-const marker_label_offset = 0.27 * marker_scale;
-// Width and transparency for the edges of the markers
-const marker_edge_alpha = 1.0;
-const marker_edge_width = 1.0;
 
 let marker = null;
-let map = null;
+let search_markers = []
 
 /**
  * Position a map marker at the clicked location and update lat/long form fields.
@@ -43,13 +32,50 @@ function selectLocation(event) {
     document.getElementById('id_longitude').value = pos.lng();
 }
 
+function displaySearchResults() {
+    const places = search_box.getPlaces()
+
+    if (places.length === 0) return
+
+    for (const marker of markers) marker.setMap(null)
+    search_markers = []
+
+    const bounds = new google.maps.LatLngBounds()
+    for (const place of places) {
+        if (!place.geometry) {
+            console.error('Place contains no geometry')
+            continue
+        }
+
+        const icon = {
+            size: new google.maps.Size(71, 71),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(17, 34),
+            scaledSize: new google.maps.Size(25, 25),
+        }
+
+        search_markers.push(
+            new google.maps.Marker({
+                map, icon, title: place.name, position: place.geometry.location
+            })
+        )
+
+        if (place.geometry.viewport) {
+            bounds.union(place.geometry.viewport)
+        } else {
+            bounds.extend(place.geometry.location)
+        }
+
+    }
+
+    map.fitBounds(bounds)
+}
+
 /**
- * Initialise Google Maps element after library is loaded.
+ * Initialise Google Maps element as a location picker.
  */
-function initMap() {
-    const centre_latlng = new google.maps.LatLng(settings.centre_lat | 0, settings.centre_lng | 0);
-    map = new google.maps.Map(
-        document.getElementById('map'), { zoom: settings.zoom, center: centre_latlng });
+function initPicker() {
+    map = initMap()
 
     const search_input = document.getElementById('location-search')
     const search_box = new google.maps.places.SearchBox(search_input)
@@ -59,46 +85,7 @@ function initMap() {
         search_box.setBounds(map.getBounds())
     })
 
-    let markers = []
-
-    search_box.addListener('places_changed', () => {
-        const places = search_box.getPlaces()
-
-        if (places.length === 0) return
-
-        for (const marker of markers) marker.setMap(null)
-        markers = []
-
-        const bounds = new google.maps.LatLngBounds()
-        for (const place of places) {
-            if (!place.geometry) {
-                console.error('Place contains no geometry')
-                continue
-            }
-
-            const icon = {
-                size: new google.maps.Size(71, 71),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(17, 34),
-                scaledSize: new google.maps.Size(25, 25),
-            }
-
-            markers.push(
-                new google.maps.Marker({
-                    map, icon, title: place.name, position: place.geometry.location
-                })
-            )
-
-            if (place.geometry.viewport) {
-                bounds.union(place.geometry.viewport)
-            } else {
-                bounds.extend(place.geometry.location)
-            }
-
-        }
-
-        map.fitBounds(bounds)
-    })
+    search_box.addListener('places_changed', displaySearchResults)
 
     map.addListener('click', selectLocation)
 }

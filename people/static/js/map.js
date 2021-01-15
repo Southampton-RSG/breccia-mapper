@@ -64,7 +64,6 @@ function createMarker(map, marker_data) {
 // The function called when Google Maps starts up
 function initMap() {
     map = new google.maps.Map(
-        // document.getElementById('map'), { zoom: settings.zoom, center: centre_latlng });
         document.getElementById('map'));
 
     const bounds = new google.maps.LatLngBounds()
@@ -89,6 +88,8 @@ function initMap() {
     }
 
     setTimeout(setMaxZoom, 100)
+
+    return map
 }
 
 /**
