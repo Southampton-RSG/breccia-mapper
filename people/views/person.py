@@ -84,9 +84,17 @@ class PersonUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
         return context
 
     def get_initial(self) -> typing.Dict[str, typing.Any]:
-        return {
+        try:
+            previous_answers = self.object.current_answers.as_dict()
+
+        except AttributeError:
+            previous_answers = {}
+
+        previous_answers.update({
             'person_id': self.object.id,
-        }
+        })
+
+        return previous_answers
 
     def get_form_kwargs(self) -> typing.Dict[str, typing.Any]:
         """Remove instance from form kwargs as it's a person, but expects a PersonAnswerSet."""
