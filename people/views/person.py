@@ -106,15 +106,21 @@ def get_map_data(person: models.Person) -> typing.Dict[str, typing.Any]:
     try:
         latitude = answer_set.latitude or None
         longitude = answer_set.longitude or None
+        organisation = answer_set.organisation.name or None
+        country = answer_set.country_of_residence.name or None
 
     except AttributeError:
         latitude = None
         longitude = None
+        organisation = None
+        country = None
 
     return {
         'name': person.name,
         'lat': latitude,
         'lng': longitude,
+        'organisation': organisation,
+        'country': country,
         'url': reverse('people:person.detail', kwargs={'pk': person.pk})
     }
 
