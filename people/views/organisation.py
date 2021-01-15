@@ -45,3 +45,16 @@ class OrganisationUpdateView(LoginRequiredMixin, UpdateView):
     context_object_name = 'organisation'
     template_name = 'people/organisation/update.html'
     form_class = forms.OrganisationForm
+
+    def get_context_data(self,
+                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        """Add map marker to context."""
+        context = super().get_context_data(**kwargs)
+
+        context['map_markers'] = [{
+            'name': self.object.name,
+            'lat': self.object.latitude,
+            'lng': self.object.longitude,
+        }]
+
+        return context

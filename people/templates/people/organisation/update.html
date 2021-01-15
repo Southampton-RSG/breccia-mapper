@@ -2,27 +2,12 @@
 
 {% block extra_head %}
     {% load staticfiles %}
-    <script type="application/javascript">
-        const data = [
-            {
-                name: '{{ organisation.name }}',
-                lat: '{{ organisation.latitude }}',
-                lng: '{{ organisation.longitude }}'
-            },
-        ]
+    {{ map_markers|json_script:'map-markers' }}
 
-        const settings = {
-            zoom: 2,
-            centre_lat: '{{ organisation.latitude }}',
-            centre_lng: '{{ organisation.longitude }}',
-        }
-    </script>
-
-    <!-- {{ map_markers|json_script:'map-markers' }} -->
-
+    <script src="{% static 'js/map.js' %}"></script>
     <script src="{% static 'js/location_picker.js' %}"></script>
 
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ settings.GOOGLE_MAPS_API_KEY }}&callback=initMap&libraries=places"
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ settings.GOOGLE_MAPS_API_KEY }}&callback=initPicker&libraries=places"
                         type="text/javascript"></script>
 {% endblock %}
 

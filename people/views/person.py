@@ -57,7 +57,8 @@ class ProfileView(permissions.UserIsLinkedPersonMixin, DetailView):
             # pk was not provided in URL
             return self.request.user.person
 
-    def get_context_data(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+    def get_context_data(self,
+                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         """Add current :class:`PersonAnswerSet` to context."""
         context = super().get_context_data(**kwargs)
 
@@ -73,6 +74,14 @@ class PersonUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
     context_object_name = 'person'
     template_name = 'people/person/update.html'
     form_class = forms.PersonAnswerSetForm
+
+    def get_context_data(self,
+                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        context = super().get_context_data(**kwargs)
+
+        context['map_markers'] = [get_map_data(self.object)]
+
+        return context
 
     def get_initial(self) -> typing.Dict[str, typing.Any]:
         return {
@@ -129,7 +138,8 @@ class PersonMapView(LoginRequiredMixin, ListView):
     model = models.Person
     template_name = 'people/person/map.html'
 
-    def get_context_data(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+    def get_context_data(self,
+                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         context = super().get_context_data(**kwargs)
 
         context['map_markers'] = [
