@@ -209,13 +209,13 @@ class PersonAnswerSet(AnswerSet):
             if isinstance(field, models.ManyToManyField):
                 return [obj.pk for obj in attr_val.all()]
 
-            if isinstance(field, models.ForeignKey):
-                return attr_val.pk
+            # But foreign key fields are a PK already so no extra work
 
             return attr_val
 
         answers = {
-            field.attname: field_value_repr(field)
+            # Foreign key fields have _id at end in model _meta but don't in forms
+            field.attname.rstrip('_id'): field_value_repr(field)
             for field in self._meta.get_fields()
             if field.attname not in exclude_fields
         }
