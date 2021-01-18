@@ -94,6 +94,10 @@ The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABAS
 - EMAIL_USE_SSL
   default: True if EMAIL_PORT == 465 else False
   Use SSL to communicate with SMTP server?  Usually on port 465
+
+- GOOGLE_MAPS_API_KEY
+  default: None
+  Google Maps API key to display maps of people's locations
 """
 
 import collections
@@ -113,6 +117,7 @@ SETTINGS_EXPORT = [
     'DEBUG',
     'PROJECT_LONG_NAME',
     'PROJECT_SHORT_NAME',
+    'GOOGLE_MAPS_API_KEY',
 ]
 
 PROJECT_LONG_NAME = config('PROJECT_LONG_NAME', default='Project Long Name')
@@ -374,17 +379,28 @@ else:
                            default=(EMAIL_PORT == 465),
                            cast=bool)
 
+
+# Upstream API keys
+
+GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY', default=None)
+
+
 # Import customisation app settings if present
 
 try:
     from custom.settings import (
         CUSTOMISATION_NAME,
         TEMPLATE_NAME_INDEX,
-        TEMPLATE_WELCOME_EMAIL_NAME
-    )
-    logger.info("Loaded customisation app: %s", CUSTOMISATION_NAME)
+        TEMPLATE_WELCOME_EMAIL_NAME,
+        CONSTANCE_CONFIG as constance_config_custom,
+        CONSTANCE_CONFIG_FIELDSETS as constance_config_fieldsets_custom
+    )  # yapf: disable
+
+    CONSTANCE_CONFIG.update(constance_config_custom)
+    CONSTANCE_CONFIG_FIELDSETS.update(constance_config_fieldsets_custom)
 
     INSTALLED_APPS.append('custom')
+    logger.info("Loaded customisation app: %s", CUSTOMISATION_NAME)
 
 except ImportError as exc:
     logger.info("No customisation app loaded: %s", exc)

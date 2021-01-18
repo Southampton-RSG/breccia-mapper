@@ -1,6 +1,4 @@
-"""
-Forms for creating / updating models belonging to the 'people' app.
-"""
+"""Forms for creating / updating models belonging to the 'people' app."""
 
 import typing
 
@@ -22,6 +20,13 @@ def get_date_year_range() -> typing.Iterable[int]:
     num_years_display = 60
     this_year = timezone.datetime.now().year
     return range(this_year, this_year - num_years_display, -1)
+
+
+class OrganisationForm(forms.ModelForm):
+    """Form for creating / updating an instance of :class:`Organisation`."""
+    class Meta:
+        model = models.Organisation
+        fields = ['name', 'latitude', 'longitude']
 
 
 class PersonForm(forms.ModelForm):
@@ -48,6 +53,8 @@ class DynamicAnswerSetBase(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        initial = kwargs.get('initial', {})
+
         for question in self.question_model.objects.all():
             field_class = self.field_class
             field_widget = self.field_widget
@@ -56,11 +63,14 @@ class DynamicAnswerSetBase(forms.Form):
                 field_class = forms.ModelMultipleChoiceField
                 field_widget = Select2MultipleWidget
 
+            field_name = f'question_{question.pk}'
+
             field = field_class(label=question,
                                 queryset=question.answers,
                                 widget=field_widget,
-                                required=self.field_required)
-            self.fields['question_{}'.format(question.pk)] = field
+                                required=self.field_required,
+                                initial=initial.get(field_name, None))
+            self.fields[field_name] = field
 
 
 class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
@@ -78,11 +88,15 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             'job_title',
             'disciplines',
             'themes',
+            'latitude',
+            'longitude',
         ]
         widgets = {
             'nationality': Select2Widget(),
             'country_of_residence': Select2Widget(),
             'themes': Select2MultipleWidget(),
+            'latitude': forms.HiddenInput,
+            'longitude': forms.HiddenInput,
         }
         help_texts = {
             'organisation_started_date':
@@ -93,7 +107,10 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
 
     def save(self, commit=True) -> models.PersonAnswerSet:
         # Save Relationship model
-        self.instance = super().save(commit=commit)
+        self.instance = super().save(commit=False)
+        self.instance.person_id = self.initial['person_id']
+        if commit:
+            self.instance.save()
 
         if commit:
             # Save answers to relationship questions

@@ -1,0 +1,59 @@
+<table class="table table-borderless">
+    <thead>
+    <tr>
+        <th>Question</th>
+        <th>Answer</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% if answer_set.nationality %}
+        <tr><td>Nationality</td><td>{{ answer_set.nationality.name }}</td>
+    {% endif %}
+
+    {% if answer_set.country_of_residence %}
+        <tr><td>Country of Residence</td><td>{{ answer_set.country_of_residence.name }}</td></tr>
+    {% endif %}
+
+    {% if answer_set.organisation %}
+        <tr><td>Organisation</td><td>{{ answer_set.organisation }}</td></tr>
+    {% endif %}
+
+    {% if answer_set.organisation_started_date %}
+        <tr><td>Organisation Started Date</td><td>{{ answer_set.organisation_started_date }}</td></tr>
+    {% endif %}
+
+    {% if answer_set.job_title %}
+        <tr><td>Job Title</td><td>{{ answer_set.job_title }}</td></tr>
+    {% endif %}
+
+    {% if answer_set.disciplines %}
+        <tr><td>Discipline(s)</td><td>{{ answer_set.disciplines }}</td></tr>
+    {% endif %}
+
+    {% if answer_set.themes.exists %}
+        <tr>
+            <td>Project Themes</td>
+            <td>
+                {% for theme in answer_set.themes.all %}
+                    {{ theme }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+    {% endif %}
+
+    {% for answer in answer_set.question_answers.all %}
+        <tr>
+            <td>{{ answer.question }}</td>
+            <td>{{ answer }}</td>
+        </tr>
+
+    {% empty %}
+        <tr>
+            <td>No records</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p>Last updated: {{ answer_set.timestamp }}</p>

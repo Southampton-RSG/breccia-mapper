@@ -2,7 +2,10 @@
 Views for displaying or manipulating instances of :class:`Person`.
 """
 
+import typing
+
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
@@ -54,42 +57,101 @@ class ProfileView(permissions.UserIsLinkedPersonMixin, DetailView):
             # pk was not provided in URL
             return self.request.user.person
 
+    def get_context_data(self,
+                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        """Add current :class:`PersonAnswerSet` to context."""
+        context = super().get_context_data(**kwargs)
+
+        context['answer_set'] = self.object.current_answers
+        context['map_markers'] = [get_map_data(self.object)]
+
+        return context
+
 
 class PersonUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
     """View for updating a :class:`Person` record."""
-    model = models.PersonAnswerSet
+    model = models.Person
+    context_object_name = 'person'
     template_name = 'people/person/update.html'
     form_class = forms.PersonAnswerSetForm
 
-    def get_test_person(self) -> models.Person:
-        """Get the person instance which should be used for access control checks."""
-        return models.Person.objects.get(pk=self.kwargs.get('pk'))
-
-    def get(self, request, *args, **kwargs):
-        self.person = models.Person.objects.get(pk=self.kwargs.get('pk'))
-
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.person = models.Person.objects.get(pk=self.kwargs.get('pk'))
-
-        return super().post(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
+    def get_context_data(self,
+                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         context = super().get_context_data(**kwargs)
 
-        context['person'] = self.person
+        context['map_markers'] = [get_map_data(self.object)]
 
         return context
+
+    def get_initial(self) -> typing.Dict[str, typing.Any]:
+        try:
+            previous_answers = self.object.current_answers.as_dict()
+
+        except AttributeError:
+            previous_answers = {}
+
+        previous_answers.update({
+            'person_id': self.object.id,
+        })
+
+        return previous_answers
+
+    def get_form_kwargs(self) -> typing.Dict[str, typing.Any]:
+        """Remove instance from form kwargs as it's a person, but expects a PersonAnswerSet."""
+        kwargs = super().get_form_kwargs()
+        kwargs.pop('instance')
+
+        return kwargs
 
     def form_valid(self, form):
         """Mark any previous answer sets as replaced."""
         response = super().form_valid(form)
         now_date = timezone.now().date()
 
+        # Saving the form made self.object a PersonAnswerSet - so go up, then back down
         # Shouldn't be more than one after initial updates after migration
-        for answer_set in self.person.answer_sets.exclude(pk=self.object.pk):
+        for answer_set in self.object.person.answer_sets.exclude(
+                pk=self.object.pk):
             answer_set.replaced_timestamp = now_date
             answer_set.save()
 
         return response
+
+
+def get_map_data(person: models.Person) -> typing.Dict[str, typing.Any]:
+    """Prepare data to mark people on a map."""
+    answer_set = person.current_answers
+    organisation = getattr(answer_set, 'organisation', None)
+
+    try:
+        country = answer_set.country_of_residence.name
+
+    except AttributeError:
+        country = None
+
+    return {
+        'name': person.name,
+        'lat': getattr(answer_set, 'latitude', None),
+        'lng': getattr(answer_set, 'longitude', None),
+        'organisation': getattr(organisation, 'name', None),
+        'org_lat': getattr(organisation, 'latitude', None),
+        'org_lng': getattr(organisation, 'longitude', None),
+        'country': country,
+        'url': reverse('people:person.detail', kwargs={'pk': person.pk})
+    }
+
+
+class PersonMapView(LoginRequiredMixin, ListView):
+    """View displaying a map of :class:`Person` locations."""
+    model = models.Person
+    template_name = 'people/person/map.html'
+
+    def get_context_data(self,
+                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        context = super().get_context_data(**kwargs)
+
+        context['map_markers'] = [
+            get_map_data(person) for person in self.object_list
+        ]
+
+        return context

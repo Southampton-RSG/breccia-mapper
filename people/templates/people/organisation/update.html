@@ -15,16 +15,16 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{% url 'people:person.list' %}">People</a>
+                <a href="{% url 'people:organisation.list' %}">Organisations</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'people:person.detail' pk=person.pk %}">{{ person }}</a>
+                <a href="{% url 'people:organisation.detail' pk=organisation.pk %}">{{ organisation }}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">Update</li>
         </ol>
     </nav>
 
-    <h1>{{ person.name }}</h1>
+    <h1>{{ organisation.name }}</h1>
 
     <hr>
 

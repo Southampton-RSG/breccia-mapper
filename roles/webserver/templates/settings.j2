@@ -23,3 +23,7 @@ DEFAULT_FROM_EMAIL={{ default_from_email }}
 {% if email_port is defined %}
 EMAIL_PORT={{ email_port }}
 {% endif %}
+
+{% if google_maps_api_key is defined %}
+GOOGLE_MAPS_API_KEY={{ google_maps_api_key }}
+{% endif %}

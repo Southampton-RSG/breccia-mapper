@@ -64,13 +64,20 @@ class User(AbstractUser):
 
 
 class Organisation(models.Model):
-    """
-    Organisation to which a :class:`Person` belongs.
-    """
+    """Organisation to which a :class:`Person` belongs."""
     name = models.CharField(max_length=255, blank=False, null=False)
+
+    #: Latitude for displaying location on a map
+    latitude = models.FloatField(blank=True, null=True)
+
+    #: Longitude for displaying location on a map
+    longitude = models.FloatField(blank=True, null=True)
 
     def __str__(self) -> str:
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('people:organisation.detail', kwargs={'pk': self.pk})
 
 
 class Theme(models.Model):
@@ -176,6 +183,57 @@ class PersonAnswerSet(AnswerSet):
 
     #: Project themes within this person works
     themes = models.ManyToManyField(Theme, related_name='people', blank=True)
+
+    #: Latitude for displaying location on a map
+    latitude = models.FloatField(blank=True, null=True)
+
+    #: Longitude for displaying location on a map
+    longitude = models.FloatField(blank=True, null=True)
+
+    def as_dict(self):
+        """Get the answers from this set as a dictionary for use in Form.initial."""
+        exclude_fields = {
+            'id',
+            'timestemp',
+            'replaced_timestamp',
+            'person_id',
+            'question_answers',
+            'themes',
+        }
+
+        def field_value_repr(field):
+            """Get the representation of a field's value as required by Form.initial."""
+            attr_val = getattr(self, field.attname)
+
+            # Relation fields need to return PKs
+            if isinstance(field, models.ManyToManyField):
+                return [obj.pk for obj in attr_val.all()]
+
+            # But foreign key fields are a PK already so no extra work
+
+            return attr_val
+
+        answers = {
+            # Foreign key fields have _id at end in model _meta but don't in forms
+            field.attname.rstrip('_id'): field_value_repr(field)
+            for field in self._meta.get_fields()
+            if field.attname not in exclude_fields
+        }
+
+        for answer in self.question_answers.all():
+            question = answer.question
+            field_name = f'question_{question.pk}'
+
+            if question.is_multiple_choice:
+                if field_name not in answers:
+                    answers[field_name] = []
+
+                answers[field_name].append(answer.pk)
+
+            else:
+                answers[field_name] = answer.pk
+
+        return answers
 
     def get_absolute_url(self):
         return self.person.get_absolute_url()
