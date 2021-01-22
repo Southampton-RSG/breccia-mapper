@@ -46,9 +46,10 @@ class RelationshipForm(forms.Form):
 
 class DynamicAnswerSetBase(forms.Form):
     field_class = forms.ModelChoiceField
-    field_widget = None
     field_required = True
-    question_model = None
+    field_widget: typing.Optional[typing.Type[forms.Widget]] = None
+    question_model: typing.Type[models.Question]
+    answer_model: typing.Type[models.QuestionChoice]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -71,6 +72,11 @@ class DynamicAnswerSetBase(forms.Form):
                                 required=self.field_required,
                                 initial=initial.get(field_name, None))
             self.fields[field_name] = field
+
+            if question.allow_free_text:
+                free_field = forms.CharField(label=f'{question} free text',
+                                             required=False)
+                self.fields[f'{field_name}_free'] = free_field
 
 
 class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
@@ -104,6 +110,7 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         }
 
     question_model = models.PersonQuestion
+    answer_model = models.PersonQuestionChoice
 
     def save(self, commit=True) -> models.PersonAnswerSet:
         # Save Relationship model
@@ -116,6 +123,13 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             # Save answers to relationship questions
             for key, value in self.cleaned_data.items():
                 if key.startswith('question_') and value:
+                    if key.endswith('_free'):
+                        # Create new answer from free text
+                        value, _ = self.answer_model.objects.get_or_create(
+                            text=value,
+                            question=self.question_model.objects.get(
+                                pk=key.split('_')[1]))
+
                     try:
                         self.instance.question_answers.add(value)
 
@@ -139,6 +153,7 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         ]
 
     question_model = models.RelationshipQuestion
+    answer_model = models.RelationshipQuestionChoice
 
     def save(self, commit=True) -> models.RelationshipAnswerSet:
         # Save Relationship model
@@ -148,6 +163,13 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             # Save answers to relationship questions
             for key, value in self.cleaned_data.items():
                 if key.startswith('question_') and value:
+                    if key.endswith('_free'):
+                        # Create new answer from free text
+                        value, _ = self.answer_model.objects.get_or_create(
+                            text=value,
+                            question=self.question_model.objects.get(
+                                pk=key.split('_')[1]))
+
                     try:
                         self.instance.question_answers.add(value)
 
@@ -166,6 +188,7 @@ class NetworkFilterForm(DynamicAnswerSetBase):
     field_widget = Select2MultipleWidget
     field_required = False
     question_model = models.RelationshipQuestion
+    answer_model = models.RelationshipQuestionChoice
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
