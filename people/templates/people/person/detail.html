@@ -50,84 +50,44 @@
 
     <hr>
 
-    <div class="row">
-        <div class="col-md-6">
-            <h2>Relationships As Source</h2>
+    <h2>People I've Answered Questions About</h2>
 
-            <table class="table table-borderless">
-                <thead>
-                <tr>
-                    <th>Contact Name</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-                </thead>
+    <table class="table table-borderless">
+        <thead>
+        <tr>
+            <th>Contact Name</th>
+            <th></th>
+        </tr>
+        </thead>
 
-                <tbody>
-                {% for relationship in person.relationships_as_source.all %}
-                    <tr>
-                        <td>{{ relationship.target }}</td>
-                        <td>
-                            <a class="btn btn-sm btn-info"
-                               href="{% url 'people:person.detail' pk=relationship.target.pk %}">Profile</a>
-                        </td>
-                        <td>
-                            <a class="btn btn-sm btn-info"
-                               href="{% url 'people:relationship.detail' pk=relationship.pk %}">Relationship Detail</a>
-                        </td>
-                    </tr>
+        <tbody>
+        {% for relationship in person.relationships_as_source.all %}
+            <tr>
+                <td>{{ relationship.target }}</td>
+                <td>
+                    <a class="btn btn-sm btn-info"
+                        href="{% url 'people:person.detail' pk=relationship.target.pk %}">Profile</a>
+                    <a class="btn btn-sm btn-info"
+                        href="{% url 'people:relationship.detail' pk=relationship.pk %}">Relationship Detail</a>
+                    {% if person.user == request.user or request.user.is_superuser %}
+                        <a class="btn btn-sm btn-success"
+                            href="{% url 'people:relationship.update' relationship_pk=relationship.pk %}">Update</a>
+                    {% endif %}
+                </td>
+            </tr>
 
-                {% empty %}
-                    <tr>
-                        <td colspan="2">No known relationships</td>
-                    </tr>
+        {% empty %}
+            <tr>
+                <td colspan="2">No known relationships</td>
+            </tr>
 
-                {% endfor %}
-                </tbody>
-            </table>
+        {% endfor %}
+        </tbody>
+    </table>
 
-            <a class="btn btn-success btn-block"
-               href="{% url 'people:person.relationship.create' person_pk=person.pk %}">New Relationship
-            </a>
-        </div>
-
-        <div class="col-md-6">
-            <h2>Relationships As Target</h2>
-
-            <table class="table table-borderless">
-                <thead>
-                <tr>
-                    <th>Contact Name</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-                </thead>
-
-                <tbody>
-                {% for relationship in person.relationships_as_target.all %}
-                    <tr>
-                        <td>{{ relationship.source }}</td>
-                        <td>
-                            <a class="btn btn-sm btn-info"
-                               href="{% url 'people:person.detail' pk=relationship.source.pk %}">Profile</a>
-                        </td>
-                        <td>
-                            <a class="btn btn-sm btn-info"
-                               href="{% url 'people:relationship.detail' pk=relationship.pk %}">Relationship Detail</a>
-                        </td>
-                    </tr>
-
-                {% empty %}
-                    <tr>
-                        <td colspan="2">No known relationships</td>
-                    </tr>
-
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-
+    <a class="btn btn-success"
+        href="{% url 'people:person.relationship.create' person_pk=person.pk %}">New Relationship
+        </a>
 
     <hr>
 
