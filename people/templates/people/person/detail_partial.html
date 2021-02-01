@@ -22,8 +22,11 @@
 
     <h1>{{ person.name }}</h1>
 
-    <hr>
+    <a class="btn btn-success"
+        href="{% url 'people:person.relationship.create' person_pk=person.pk %}">New Relationship
+        </a>
 
+    <hr>
 
     {% include 'people/person/includes/answer_set_partial.html' %}
 

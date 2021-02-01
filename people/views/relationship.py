@@ -1,12 +1,11 @@
-"""
-Views for displaying or manipulating instances of :class:`Relationship`.
-"""
+"""Views for displaying or manipulating instances of :class:`Relationship`."""
 
-from django.db import IntegrityError
-from django.forms import ValidationError
+import typing
+
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import CreateView, DetailView, FormView
+from django.views.generic import CreateView, DetailView, RedirectView
 
 from people import forms, models, permissions
 
@@ -20,46 +19,18 @@ class RelationshipDetailView(permissions.UserIsLinkedPersonMixin, DetailView):
     related_person_field = 'source'
 
 
-class RelationshipCreateView(permissions.UserIsLinkedPersonMixin, FormView):
+class RelationshipCreateView(LoginRequiredMixin, RedirectView):
+    """View for creating a :class:`Relationship`.
+
+    Redirects to a form containing the :class:`RelationshipQuestion`s.
     """
-    View for creating a :class:`Relationship`.
+    def get_redirect_url(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Optional[str]:
+        target = models.Person.objects.get(pk=self.kwargs.get('person_pk'))
+        relationship, _ = models.Relationship.objects.get_or_create(
+            source=self.request.user.person, target=target)
 
-    Displays / processes a form containing the :class:`RelationshipQuestion`s.
-    """
-    model = models.Relationship
-    template_name = 'people/relationship/create.html'
-    form_class = forms.RelationshipForm
-
-    def get_person(self) -> models.Person:
-        return models.Person.objects.get(pk=self.kwargs.get('person_pk'))
-
-    def get_test_person(self) -> models.Person:
-        return self.get_person()
-
-    def form_valid(self, form):
-        try:
-            self.object = models.Relationship.objects.create(
-                source=self.get_person(), target=form.cleaned_data['target'])
-
-        except IntegrityError:
-            form.add_error(
-                None,
-                ValidationError('This relationship already exists',
-                                code='already-exists'))
-            return self.form_invalid(form)
-
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['person'] = self.get_person()
-
-        return context
-
-    def get_success_url(self):
         return reverse('people:relationship.update',
-                       kwargs={'relationship_pk': self.object.pk})
+                       kwargs={'relationship_pk': relationship.pk})
 
 
 class RelationshipUpdateView(permissions.UserIsLinkedPersonMixin, CreateView):
