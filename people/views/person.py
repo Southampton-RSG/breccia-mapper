@@ -30,11 +30,19 @@ class PersonCreateView(LoginRequiredMixin, CreateView):
 
 
 class PersonListView(LoginRequiredMixin, ListView):
-    """
-    View displaying a list of :class:`Person` objects - searchable.
-    """
+    """View displaying a list of :class:`Person` objects - searchable."""
     model = models.Person
     template_name = 'people/person/list.html'
+
+    def get_context_data(self,
+                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        context = super().get_context_data(**kwargs)
+
+        context['existing_relationships'] = set(
+            self.request.user.person.relationship_targets.values_list(
+                'pk', flat=True))
+
+        return context
 
 
 class ProfileView(LoginRequiredMixin, DetailView):
@@ -45,7 +53,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
     def get_template_names(self) -> typing.List[str]:
         """Return template depending on level of access."""
-        if (self.object.user == self.request.user): # or self.request.user.is_superuser:
+        if (self.object.user == self.request.user) or self.request.user.is_superuser:
             return ['people/person/detail_full.html']
 
         return ['people/person/detail_partial.html']
