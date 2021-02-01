@@ -157,6 +157,7 @@ THIRD_PARTY_APPS = [
     'django_select2',
     'rest_framework',
     'post_office',
+    'bootstrap_datepicker_plus',
 ]
 
 FIRST_PARTY_APPS = [
