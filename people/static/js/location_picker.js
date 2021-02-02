@@ -1,5 +1,4 @@
 
-let marker = null;
 let search_markers = []
 
 /**
@@ -7,9 +6,9 @@ let search_markers = []
  * @param {Event} event - Click event from a Google Map.
  */
 function selectLocation(event) {
-    if (marker === null) {
+    if (selected_marker === null) {
         // Generate a new marker
-        marker = new google.maps.Marker({
+        selected_marker = new google.maps.Marker({
             position: event.latLng,
             map: map,
             icon: {
@@ -24,10 +23,10 @@ function selectLocation(event) {
             },
         });
     } else {
-        marker.setPosition(event.latLng);
+        selected_marker.setPosition(event.latLng);
     }
 
-    const pos = marker.getPosition();
+    const pos = selected_marker.getPosition();
     document.getElementById('id_latitude').value = pos.lat();
     document.getElementById('id_longitude').value = pos.lng();
 }

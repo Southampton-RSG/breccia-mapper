@@ -11,6 +11,7 @@ const marker_edge_alpha = 1.0;
 const marker_edge_width = 1.0;
 
 let map = null;
+let selected_marker = null;
 let selected_marker_info = null;
 
 function createMarker(map, marker_data) {
@@ -75,6 +76,9 @@ function initMap() {
         try {
             const marker = createMarker(map, marker_data);
             bounds.extend(marker.position);
+            if (markers_data.length === 1) {
+                selected_marker = marker;
+            }
 
         } catch (exc) {
             // Just skip and move on to next
