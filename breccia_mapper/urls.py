@@ -32,6 +32,10 @@ urlpatterns = [
          views.IndexView.as_view(),
          name='index'),
 
+    path('consent',
+         views.ConsentTextView.as_view(),
+         name='consent'),
+
     path('',
          include('export.urls')),
 

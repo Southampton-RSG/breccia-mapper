@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+    {{ map_markers|json_script:'map-markers' }}
+
+    {% load staticfiles %}
+    <script src="{% static 'js/map.js' %}"></script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ settings.GOOGLE_MAPS_API_KEY }}&callback=initMap"
+                        type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'people:person.list' %}">People</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ object }}</li>
+        </ol>
+    </nav>
+
+    <h1>{{ person.name }}</h1>
+
+    <hr>
+
+    {% if person.user != request.user and request.user.is_superuser %}
+        <div class="alert alert-warning">
+            <strong>NB:</strong> You are able to see the details of this person because you are an admin.
+            Regular users are not able to see this information for people other than themselves.
+        </div>
+    {% endif %}
+
+
+    {% include 'people/person/includes/answer_set_full.html' %}
+
+    <a class="btn btn-success"
+        href="{% url 'people:person.update' pk=person.pk %}">Update</a>
+
+    {% if person.user == request.user %}
+        <a class="btn btn-info"
+            href="{% url 'password_change' %}?next={{ person.get_absolute_url }}">Change Password</a>
+    {% endif %}
+
+    <hr>
+
+    <div id="map" style="height: 800px; width: 100%"></div>
+
+    <hr>
+
+    {% include 'people/person/includes/relationships_full.html' %}
+
+    <hr>
+
+    {% include 'people/person/includes/activities_full.html' %}
+
+    <hr>
+
+{% endblock %}

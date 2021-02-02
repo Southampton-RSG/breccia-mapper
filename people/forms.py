@@ -3,23 +3,11 @@
 import typing
 
 from django import forms
-from django.forms.widgets import SelectDateWidget
-from django.utils import timezone
 
+from bootstrap_datepicker_plus import DatePickerInput
 from django_select2.forms import ModelSelect2Widget, Select2Widget, Select2MultipleWidget
 
 from . import models
-
-
-def get_date_year_range() -> typing.Iterable[int]:
-    """
-    Get sensible year range for SelectDateWidgets in the past.
-
-    By default these widgets show 10 years in the future.
-    """
-    num_years_display = 60
-    this_year = timezone.datetime.now().year
-    return range(this_year, this_year - num_years_display, -1)
 
 
 class OrganisationForm(forms.ModelForm):
@@ -46,9 +34,10 @@ class RelationshipForm(forms.Form):
 
 class DynamicAnswerSetBase(forms.Form):
     field_class = forms.ModelChoiceField
-    field_widget = None
     field_required = True
-    question_model = None
+    field_widget: typing.Optional[typing.Type[forms.Widget]] = None
+    question_model: typing.Type[models.Question]
+    answer_model: typing.Type[models.QuestionChoice]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -72,6 +61,11 @@ class DynamicAnswerSetBase(forms.Form):
                                 initial=initial.get(field_name, None))
             self.fields[field_name] = field
 
+            if question.allow_free_text:
+                free_field = forms.CharField(label=f'{question} free text',
+                                             required=False)
+                self.fields[f'{field_name}_free'] = free_field
+
 
 class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
     """Form for variable person attributes.
@@ -94,6 +88,7 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         widgets = {
             'nationality': Select2Widget(),
             'country_of_residence': Select2Widget(),
+            'organisation_started_date': DatePickerInput(format='%Y-%m-%d'),
             'themes': Select2MultipleWidget(),
             'latitude': forms.HiddenInput,
             'longitude': forms.HiddenInput,
@@ -104,6 +99,7 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         }
 
     question_model = models.PersonQuestion
+    answer_model = models.PersonQuestionChoice
 
     def save(self, commit=True) -> models.PersonAnswerSet:
         # Save Relationship model
@@ -116,6 +112,13 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             # Save answers to relationship questions
             for key, value in self.cleaned_data.items():
                 if key.startswith('question_') and value:
+                    if key.endswith('_free'):
+                        # Create new answer from free text
+                        value, _ = self.answer_model.objects.get_or_create(
+                            text=value,
+                            question=self.question_model.objects.get(
+                                pk=key.split('_')[1]))
+
                     try:
                         self.instance.question_answers.add(value)
 
@@ -139,6 +142,7 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         ]
 
     question_model = models.RelationshipQuestion
+    answer_model = models.RelationshipQuestionChoice
 
     def save(self, commit=True) -> models.RelationshipAnswerSet:
         # Save Relationship model
@@ -148,6 +152,13 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             # Save answers to relationship questions
             for key, value in self.cleaned_data.items():
                 if key.startswith('question_') and value:
+                    if key.endswith('_free'):
+                        # Create new answer from free text
+                        value, _ = self.answer_model.objects.get_or_create(
+                            text=value,
+                            question=self.question_model.objects.get(
+                                pk=key.split('_')[1]))
+
                     try:
                         self.instance.question_answers.add(value)
 
@@ -166,6 +177,7 @@ class NetworkFilterForm(DynamicAnswerSetBase):
     field_widget = Select2MultipleWidget
     field_required = False
     question_model = models.RelationshipQuestion
+    answer_model = models.RelationshipQuestionChoice
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -173,5 +185,5 @@ class NetworkFilterForm(DynamicAnswerSetBase):
         # Add date field to select relationships at a particular point in time
         self.fields['date'] = forms.DateField(
             required=False,
-            widget=SelectDateWidget(years=get_date_year_range()),
+            widget=DatePickerInput(format='%Y-%m-%d'),
             help_text='Show relationships as they were on this date')

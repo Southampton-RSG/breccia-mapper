@@ -32,6 +32,9 @@ class User(AbstractUser):
     """
     email = models.EmailField(_('email address'), blank=False, null=False)
 
+    #: Have they given consent to collect and store their data?
+    consent_given = models.BooleanField(default=False)
+
     def has_person(self) -> bool:
         """
         Does this user have a linked :class:`Person` record?

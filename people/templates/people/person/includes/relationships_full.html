@@ -1,0 +1,36 @@
+<h2>People I've Answered Questions About</h2>
+
+<table class="table table-borderless">
+    <thead>
+    <tr>
+        <th>Contact Name</th>
+        <th></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for relationship in person.relationships_as_source.all %}
+        <tr>
+            <td>{{ relationship.target }}</td>
+            <td>
+                <a class="btn btn-sm btn-info"
+                    href="{% url 'people:person.detail' pk=relationship.target.pk %}">Profile</a>
+                <a class="btn btn-sm btn-info"
+                    href="{% url 'people:relationship.detail' pk=relationship.pk %}">Relationship Detail</a>
+                <a class="btn btn-sm btn-success"
+                    href="{% url 'people:relationship.update' relationship_pk=relationship.pk %}">Update</a>
+            </td>
+        </tr>
+
+    {% empty %}
+        <tr>
+            <td colspan="2">No known relationships</td>
+        </tr>
+
+    {% endfor %}
+    </tbody>
+</table>
+
+<a class="btn btn-success"
+    href="{% url 'people:person.relationship.create' person_pk=person.pk %}">New Relationship
+    </a>

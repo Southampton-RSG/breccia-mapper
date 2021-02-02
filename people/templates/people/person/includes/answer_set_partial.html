@@ -1,0 +1,32 @@
+<table class="table table-borderless">
+    <thead>
+    <tr>
+        <th>Question</th>
+        <th>Answer</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% if answer_set.country_of_residence %}
+        <tr><td>Country of Residence</td><td>{{ answer_set.country_of_residence.name }}</td></tr>
+    {% endif %}
+
+    {% if answer_set.organisation %}
+        <tr><td>Organisation</td><td>{{ answer_set.organisation }}</td></tr>
+    {% endif %}
+
+    {% for answer in answer_set.question_answers.all %}
+        <tr>
+            <td>{{ answer.question }}</td>
+            <td>{{ answer }}</td>
+        </tr>
+
+    {% empty %}
+        <tr>
+            <td>No records</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p>Last updated: {{ answer_set.timestamp }}</p>

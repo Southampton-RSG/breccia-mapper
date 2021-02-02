@@ -157,6 +157,7 @@ THIRD_PARTY_APPS = [
     'django_select2',
     'rest_framework',
     'post_office',
+    'bootstrap_datepicker_plus',
 ]
 
 FIRST_PARTY_APPS = [
@@ -327,7 +328,7 @@ LOGGING = {
 
 LOGGING_CONFIG = None
 logging.config.dictConfig(LOGGING)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 # Admin panel variables
 
@@ -337,10 +338,17 @@ CONSTANCE_CONFIG = collections.OrderedDict([
       'Text to be displayed in a notice banner at the top of every page.')),
     ('NOTICE_CLASS', ('alert-warning',
                       'CSS class to use for background of notice banner.')),
+    ('CONSENT_TEXT',
+     ('This is template consent text and should have been replaced. Please contact an admin.',
+      'Text to be displayed to ask for consent for data collection.'))
 ])
 
 CONSTANCE_CONFIG_FIELDSETS = {
-    'Notice Banner': ('NOTICE_TEXT', 'NOTICE_CLASS'),
+    'Notice Banner': (
+        'NOTICE_TEXT',
+        'NOTICE_CLASS',
+    ),
+    'Data Collection': ('CONSENT_TEXT', ),
 }
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
@@ -379,11 +387,9 @@ else:
                            default=(EMAIL_PORT == 465),
                            cast=bool)
 
-
 # Upstream API keys
 
 GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY', default=None)
-
 
 # Import customisation app settings if present
 

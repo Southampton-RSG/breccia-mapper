@@ -4,6 +4,11 @@ import typing
 from django.db import models
 from django.utils.text import slugify
 
+__all__ = [
+    'Question',
+    'QuestionChoice',
+]
+
 
 class Question(models.Model):
     """Questions from which a survey form can be created."""
@@ -26,6 +31,11 @@ class Question(models.Model):
     is_multiple_choice = models.BooleanField(default=False,
                                              blank=False,
                                              null=False)
+
+    #: Should people be able to add their own answers?
+    allow_free_text = models.BooleanField(default=False,
+                                          blank=False,
+                                          null=False)
 
     #: Position of this question in the list
     order = models.SmallIntegerField(default=0, blank=False, null=False)

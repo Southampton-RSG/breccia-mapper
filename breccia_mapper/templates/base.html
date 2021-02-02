@@ -156,6 +156,15 @@
             </div>
         {% endif %}
 
+        {% if request.user.is_authenticated and not request.user.consent_given %}
+            <div class="alert alert-warning rounded-0" role="alert">
+                <p class="text-center mb-0">
+                    You have not yet given consent for your data to be collected and processed.
+                    Please read and accept the <a href="{% url 'consent' %}">consent text</a>.
+                </p>
+            </div>
+        {% endif %}
+
         {% block before_content %}{% endblock %}
 
         <main class="container">

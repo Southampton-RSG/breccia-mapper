@@ -1,0 +1,26 @@
+<h2>Activities</h2>
+
+<table class="table table-borderless">
+    <thead>
+    <tr>
+        <th>Name</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for activity in person.activities.all %}
+        <tr>
+            <td>{{ activity }}</td>
+            <td>
+                <a class="btn btn-sm btn-info"
+                    href="{% url 'activities:activity.detail' pk=activity.pk %}">Details</a>
+            </td>
+        </tr>
+
+    {% empty %}
+        <tr>
+            <td>No records</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
