@@ -8,6 +8,10 @@ class PersonExportView(base.CsvExportView):
     model = models.person.Person
     serializer_class = serializers.people.PersonSerializer
 
+class PersonAnswerSetExportView(base.CsvExportView):
+    model = models.person.PersonAnswerSet
+    serializer_class = serializers.people.PersonAnswerSetSerializer
+
 
 class RelationshipExportView(base.CsvExportView):
     model = models.relationship.Relationship

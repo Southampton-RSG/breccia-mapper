@@ -27,7 +27,7 @@ class ActivityMediumSerializer(serializers.ModelSerializer):
 class ActivitySeriesSerializer(serializers.ModelSerializer):
     type = ActivityTypeSerializer()
     medium = ActivityMediumSerializer()
-    
+
     class Meta:
         model = models.ActivitySeries
         fields = [
@@ -52,8 +52,8 @@ class ActivitySerializer(base.FlattenedModelSerializer):
             'type',
             'medium',
         ]
-        
-        
+
+
 class SimpleActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Activity
@@ -65,8 +65,8 @@ class SimpleActivitySerializer(serializers.ModelSerializer):
 
 class ActivityAttendanceSerializer(base.FlattenedModelSerializer):
     activity = SimpleActivitySerializer()
-    person = people_serializers.SimplePersonSerializer()
-    
+    person = people_serializers.PersonSerializer()
+
     class Meta:
         model = models.Activity.attendance_list.through
         fields = [

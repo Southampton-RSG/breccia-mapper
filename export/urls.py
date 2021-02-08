@@ -14,10 +14,14 @@ urlpatterns = [
          views.people.PersonExportView.as_view(),
          name='person'),
 
+    path('export/person-answer-sets',
+         views.people.PersonAnswerSetExportView.as_view(),
+         name='person-answer-set'),
+
     path('export/relationships',
          views.people.RelationshipExportView.as_view(),
          name='relationship'),
-    
+
     path('export/relationship-answer-sets',
          views.people.RelationshipAnswerSetExportView.as_view(),
          name='relationship-answer-set'),
