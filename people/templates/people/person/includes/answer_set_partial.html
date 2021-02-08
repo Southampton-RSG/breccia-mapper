@@ -15,7 +15,7 @@
         <tr><td>Organisation</td><td>{{ answer_set.organisation }}</td></tr>
     {% endif %}
 
-    {% for answer in answer_set.question_answers.all %}
+    {% for answer in answer_set.public_answers.all %}
         <tr>
             <td>{{ answer.question }}</td>
             <td>{{ answer }}</td>

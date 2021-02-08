@@ -95,6 +95,12 @@ class Theme(models.Model):
 
 class PersonQuestion(Question):
     """Question which may be asked about a person."""
+    #: Should answers to this question be displayed on public profiles?
+    answer_is_public = models.BooleanField(
+        help_text='Should answers to this question be displayed on profiles?',
+        default=True,
+        blank=False,
+        null=False)
 
 
 class PersonQuestionChoice(QuestionChoice):
@@ -192,6 +198,10 @@ class PersonAnswerSet(AnswerSet):
 
     #: Longitude for displaying location on a map
     longitude = models.FloatField(blank=True, null=True)
+
+    def public_answers(self) -> models.QuerySet:
+        """Get answers to questions which are public."""
+        return self.question_answers.filter(question__answer_is_public=True)
 
     def as_dict(self):
         """Get the answers from this set as a dictionary for use in Form.initial."""
