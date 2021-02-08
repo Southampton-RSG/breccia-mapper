@@ -119,6 +119,9 @@ class Person(models.Model):
     """
     class Meta:
         verbose_name_plural = 'people'
+        ordering = [
+            'name',
+        ]
 
     #: User account belonging to this person
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
