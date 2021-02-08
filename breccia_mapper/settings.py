@@ -158,6 +158,8 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'post_office',
     'bootstrap_datepicker_plus',
+    'hijack',
+    'compat',
 ]
 
 FIRST_PARTY_APPS = [
@@ -265,7 +267,7 @@ AUTH_USER_MODEL = 'people.User'
 
 LOGIN_URL = reverse_lazy('login')
 
-LOGIN_REDIRECT_URL = reverse_lazy('index')
+LOGIN_REDIRECT_URL = reverse_lazy('people:person.profile')
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -352,6 +354,13 @@ CONSTANCE_CONFIG_FIELDSETS = {
 }
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+
+# Django Hijack settings
+# See https://django-hijack.readthedocs.io/en/stable/
+
+HIJACK_USE_BOOTSTRAP = True
+
 
 # Bootstrap settings
 # See https://django-bootstrap4.readthedocs.io/en/latest/settings.html

@@ -25,6 +25,9 @@ urlpatterns = [
     path('select2/',
          include('django_select2.urls')),
 
+    path('hijack/',
+         include('hijack.urls', namespace='hijack')),
+
     path('',
          include('django.contrib.auth.urls')),
 
