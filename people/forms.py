@@ -107,6 +107,8 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         self.instance.person_id = self.initial['person_id']
         if commit:
             self.instance.save()
+            # Need to call same_m2m manually since we use commit=False above
+            self.save_m2m()
 
         if commit:
             # Save answers to relationship questions

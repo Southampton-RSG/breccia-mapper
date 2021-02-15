@@ -214,7 +214,6 @@ class PersonAnswerSet(AnswerSet):
             'replaced_timestamp',
             'person_id',
             'question_answers',
-            'themes',
         }
 
         def field_value_repr(field):
