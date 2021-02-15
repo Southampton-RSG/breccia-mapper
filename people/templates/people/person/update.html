@@ -55,14 +55,14 @@
         function hasOption(select, option) {
             var exists = false;
             for (var i = 0; i < select.options.length; i++) {
-                if (select.options[i].text === option) return true;
+                if (select.options[i].text.toLowerCase().startsWith(option)) return true;
             }
 
             return false;
         }
 
         function setFreeTextState(select, freeTextField) {
-            if (select.selectedOptions[0].text === 'Other') {
+            if (select.selectedOptions[0].text.toLowerCase().startsWith('other')) {
                 freeTextField.show();
             } else {
                 freeTextField.hide();
@@ -71,7 +71,7 @@
 
         $(document).ready(function(){
             $('select').each(function(index, element) {
-                if (hasOption(element, 'Other')) {
+                if (hasOption(element, 'other')) {
                     var freeTextField = $('#' + element.id + '_free').parent();
                     setFreeTextState(element, freeTextField);
 
