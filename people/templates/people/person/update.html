@@ -48,6 +48,38 @@
     <input id="location-search" class="controls" type="text" placeholder="Location Search"/>
     <div id="map" style="height: 800px; width: 100%"></div>
 
-    <hr>
+{% endblock %}
 
+{% block extra_script %}
+    <script>
+        function hasOption(select, option) {
+            var exists = false;
+            for (var i = 0; i < select.options.length; i++) {
+                if (select.options[i].text === option) return true;
+            }
+
+            return false;
+        }
+
+        function setFreeTextState(select, freeTextField) {
+            if (select.selectedOptions[0].text === 'Other') {
+                freeTextField.show();
+            } else {
+                freeTextField.hide();
+            }
+        }
+
+        $(document).ready(function(){
+            $('select').each(function(index, element) {
+                if (hasOption(element, 'Other')) {
+                    var freeTextField = $('#' + element.id + '_free').parent();
+                    setFreeTextState(element, freeTextField);
+
+                    $('#' + element.id).on('change', function(event) {
+                        setFreeTextState(event.target, freeTextField);
+                    });
+                }
+            })
+        });
+    </script>
 {% endblock %}
