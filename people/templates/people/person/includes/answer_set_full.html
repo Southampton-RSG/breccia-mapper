@@ -27,10 +27,6 @@
         <tr><td>Job Title</td><td>{{ answer_set.job_title }}</td></tr>
     {% endif %}
 
-    {% if answer_set.disciplines %}
-        <tr><td>Discipline(s)</td><td>{{ answer_set.disciplines }}</td></tr>
-    {% endif %}
-
     {% if answer_set.themes.exists %}
         <tr>
             <td>Project Themes</td>

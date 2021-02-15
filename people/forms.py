@@ -80,7 +80,6 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             'organisation',
             'organisation_started_date',
             'job_title',
-            'disciplines',
             'themes',
             'latitude',
             'longitude',

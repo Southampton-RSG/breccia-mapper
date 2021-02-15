@@ -190,9 +190,6 @@ class PersonAnswerSet(AnswerSet):
     #: Job title this person holds within their organisation
     job_title = models.CharField(max_length=255, blank=True, null=False)
 
-    #: Discipline(s) within which this person works
-    disciplines = models.CharField(max_length=255, blank=True, null=True)
-
     #: Project themes within this person works
     themes = models.ManyToManyField(Theme, related_name='people', blank=True)
 
