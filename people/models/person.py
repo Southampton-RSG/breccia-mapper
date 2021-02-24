@@ -93,12 +93,6 @@ class Organisation(models.Model):
     """Organisation to which a :class:`Person` belongs."""
     name = models.CharField(max_length=255, blank=False, null=False)
 
-    #: Latitude for displaying location on a map
-    latitude = models.FloatField(blank=True, null=True)
-
-    #: Longitude for displaying location on a map
-    longitude = models.FloatField(blank=True, null=True)
-
     def __str__(self) -> str:
         return self.name
 
@@ -119,6 +113,12 @@ class OrganisationAnswerSet(AnswerSet):
                                      blank=False,
                                      null=False)
 
+    #: Latitude for displaying location on a map
+    latitude = models.FloatField(blank=True, null=True)
+
+    #: Longitude for displaying location on a map
+    longitude = models.FloatField(blank=True, null=True)
+
     #: Answers to :class:`OrganisationQuestion`s
     question_answers = models.ManyToManyField(OrganisationQuestionChoice)
 
@@ -130,7 +130,7 @@ class OrganisationAnswerSet(AnswerSet):
         """Get the answers from this set as a dictionary for use in Form.initial."""
         exclude_fields = {
             'id',
-            'timestemp',
+            'timestamp',
             'replaced_timestamp',
             'organisation_id',
             'question_answers',
@@ -298,7 +298,7 @@ class PersonAnswerSet(AnswerSet):
         """Get the answers from this set as a dictionary for use in Form.initial."""
         exclude_fields = {
             'id',
-            'timestemp',
+            'timestamp',
             'replaced_timestamp',
             'person_id',
             'question_answers',

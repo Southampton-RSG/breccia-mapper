@@ -14,7 +14,9 @@ class OrganisationForm(forms.ModelForm):
     """Form for creating / updating an instance of :class:`Organisation`."""
     class Meta:
         model = models.Organisation
-        fields = ['name', 'latitude', 'longitude']
+        fields = [
+            'name'
+        ]
 
 
 class PersonForm(forms.ModelForm):
@@ -74,7 +76,14 @@ class OrganisationAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
     """
     class Meta:
         model = models.OrganisationAnswerSet
-        fields = []
+        fields = [
+            'latitude',
+            'longitude',
+        ]
+        widgets = {
+            'latitude': forms.HiddenInput,
+            'longitude': forms.HiddenInput,
+        }
 
     question_model = models.OrganisationQuestion
     answer_model = models.OrganisationQuestionChoice

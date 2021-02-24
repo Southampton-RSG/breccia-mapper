@@ -31,11 +31,12 @@ class OrganisationDetailView(LoginRequiredMixin, DetailView):
         """Add map marker to context."""
         context = super().get_context_data(**kwargs)
 
-        context['answer_set'] = self.object.current_answers
+        answerset = self.object.current_answers
+        context['answer_set'] = answerset
         context['map_markers'] = [{
             'name': self.object.name,
-            'lat': self.object.latitude,
-            'lng': self.object.longitude,
+            'lat': getattr(answerset, 'latitude', None),
+            'lng': getattr(answerset, 'longitude', None),
         }]
 
         return context
@@ -53,10 +54,11 @@ class OrganisationUpdateView(LoginRequiredMixin, UpdateView):
         """Add map marker to context."""
         context = super().get_context_data(**kwargs)
 
+        answerset = self.object.current_answers
         context['map_markers'] = [{
             'name': self.object.name,
-            'lat': self.object.latitude,
-            'lng': self.object.longitude,
+            'lat': getattr(answerset, 'latitude', None),
+            'lng': getattr(answerset, 'longitude', None),
         }]
 
         return context

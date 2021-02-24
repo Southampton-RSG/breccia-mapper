@@ -33,7 +33,10 @@
         {% csrf_token %}
 
         {% load bootstrap4 %}
-        {% bootstrap_form form %}
+        {% bootstrap_form form exclude='latitude,longitude' %}
+
+        {% bootstrap_field form.latitude %}
+        {% bootstrap_field form.longitude %}
 
         {% buttons %}
             <button class="btn btn-success" type="submit">Submit</button>
