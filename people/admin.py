@@ -16,9 +16,29 @@ class CustomUserAdmin(UserAdmin):
     )  # yapf: disable
 
 
+class OrganisationQuestionChoiceInline(admin.TabularInline):
+    model = models.OrganisationQuestionChoice
+
+
+@admin.register(models.OrganisationQuestion)
+class OrganisationQuestionAdmin(admin.ModelAdmin):
+    inlines = [
+        OrganisationQuestionChoiceInline,
+    ]
+
+
+class OrganisationAnswerSetInline(admin.TabularInline):
+    model = models.OrganisationAnswerSet
+    readonly_fields = [
+        'question_answers',
+    ]
+
+
 @admin.register(models.Organisation)
 class OrganisationAdmin(admin.ModelAdmin):
-    pass
+    inlines = [
+        OrganisationAnswerSetInline,
+    ]
 
 
 @admin.register(models.Theme)
