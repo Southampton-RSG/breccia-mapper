@@ -57,7 +57,7 @@ class DynamicAnswerSetBase(forms.Form):
             field = field_class(label=question,
                                 queryset=question.answers,
                                 widget=field_widget,
-                                required=self.field_required,
+                                required=self.field_required and not question.allow_free_text,
                                 initial=initial.get(field_name, None))
             self.fields[field_name] = field
 
@@ -65,6 +65,48 @@ class DynamicAnswerSetBase(forms.Form):
                 free_field = forms.CharField(label=f'{question} free text',
                                              required=False)
                 self.fields[f'{field_name}_free'] = free_field
+
+
+class OrganisationAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
+    """Form for variable organisation attributes.
+
+    Dynamic fields inspired by https://jacobian.org/2010/feb/28/dynamic-form-generation/
+    """
+    class Meta:
+        model = models.OrganisationAnswerSet
+        fields = []
+
+    question_model = models.OrganisationQuestion
+    answer_model = models.OrganisationQuestionChoice
+
+    def save(self, commit=True) -> models.OrganisationAnswerSet:
+        # Save model
+        self.instance = super().save(commit=False)
+        self.instance.organisation_id = self.initial['organisation_id']
+        if commit:
+            self.instance.save()
+            # Need to call same_m2m manually since we use commit=False above
+            self.save_m2m()
+
+        if commit:
+            # Save answers to questions
+            for key, value in self.cleaned_data.items():
+                if key.startswith('question_') and value:
+                    if key.endswith('_free'):
+                        # Create new answer from free text
+                        value, _ = self.answer_model.objects.get_or_create(
+                            text=value,
+                            question=self.question_model.objects.get(
+                                pk=key.split('_')[1]))
+
+                    try:
+                        self.instance.question_answers.add(value)
+
+                    except TypeError:
+                        # Value is a QuerySet - multiple choice question
+                        self.instance.question_answers.add(*value.all())
+
+        return self.instance
 
 
 class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
@@ -101,7 +143,7 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
     answer_model = models.PersonQuestionChoice
 
     def save(self, commit=True) -> models.PersonAnswerSet:
-        # Save Relationship model
+        # Save model
         self.instance = super().save(commit=False)
         self.instance.person_id = self.initial['person_id']
         if commit:
@@ -110,7 +152,7 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             self.save_m2m()
 
         if commit:
-            # Save answers to relationship questions
+            # Save answers to questions
             for key, value in self.cleaned_data.items():
                 if key.startswith('question_') and value:
                     if key.endswith('_free'):
@@ -146,11 +188,11 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
     answer_model = models.RelationshipQuestionChoice
 
     def save(self, commit=True) -> models.RelationshipAnswerSet:
-        # Save Relationship model
+        # Save model
         self.instance = super().save(commit=commit)
 
         if commit:
-            # Save answers to relationship questions
+            # Save answers to questions
             for key, value in self.cleaned_data.items():
                 if key.startswith('question_') and value:
                     if key.endswith('_free'):
