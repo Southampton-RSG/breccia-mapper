@@ -192,6 +192,9 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         fields = [
             'relationship',
         ]
+        widgets = {
+            'relationship': forms.HiddenInput,
+        }
 
     question_model = models.RelationshipQuestion
     answer_model = models.RelationshipQuestionChoice
