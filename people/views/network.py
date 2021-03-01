@@ -75,6 +75,9 @@ class NetworkView(LoginRequiredMixin, FormView):
         context['person_set'] = serializers.PersonSerializer(
             models.Person.objects.all(), many=True).data
 
+        context['organisation_set'] = serializers.OrganisationSerializer(
+            models.Organisation.objects.all(), many=True).data
+
         context['relationship_set'] = serializers.RelationshipSerializer(
             models.Relationship.objects.filter(
                 pk__in=relationship_answerset_set.values_list('relationship',

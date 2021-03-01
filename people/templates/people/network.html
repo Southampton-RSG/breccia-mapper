@@ -53,6 +53,8 @@
     -->
     {{ person_set|json_script:'person-set-data' }}
 
+    {{ organisation_set|json_script:'organisation-set-data' }}
+
     {{ relationship_set|json_script:'relationship-set-data' }}
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.14.0/cytoscape.min.js"
@@ -98,6 +100,22 @@
                     data: {
                         id: 'person-' + person.pk.toString(),
                         name: person.name
+                    }
+                })
+            }
+
+            // Load organisations and add to graph
+            var organisation_set = JSON.parse(document.getElementById('organisation-set-data').textContent);
+
+            for (var item of organisation_set) {
+                cy.add({
+                    group: 'nodes',
+                    data: {
+                        id: 'organisation-' + item.pk.toString(),
+                        name: item.name
+                    },
+                    style: {
+                        shape: 'rectangle'
                     }
                 })
             }
