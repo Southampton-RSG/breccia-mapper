@@ -24,8 +24,22 @@ class Question(models.Model):
                                                blank=False,
                                                null=False)
 
-    #: Text of question
+    #: Text of question - 1st person
     text = models.CharField(max_length=255, blank=False, null=False)
+
+    #: Text to be displayed in network filters - 3rd person
+    filter_text = models.CharField(
+        max_length=255,
+        blank=True,
+        null=False,
+        help_text='Text to be displayed in network filters - 3rd person')
+
+    #: Should answers to this question be considered public?
+    answer_is_public = models.BooleanField(
+        help_text='Should answers to this question be considered public?',
+        default=True,
+        blank=False,
+        null=False)
 
     #: Should people be able to select multiple responses to this question?
     is_multiple_choice = models.BooleanField(default=False,

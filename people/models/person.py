@@ -186,12 +186,6 @@ class Theme(models.Model):
 
 class PersonQuestion(Question):
     """Question which may be asked about a person."""
-    #: Should answers to this question be displayed on public profiles?
-    answer_is_public = models.BooleanField(
-        help_text='Should answers to this question be displayed on profiles?',
-        default=True,
-        blank=False,
-        null=False)
 
 
 class PersonQuestionChoice(QuestionChoice):

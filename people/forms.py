@@ -15,7 +15,7 @@ class OrganisationForm(forms.ModelForm):
     class Meta:
         model = models.Organisation
         fields = [
-            'name'
+            'name',
         ]
 
 
@@ -41,12 +41,15 @@ class DynamicAnswerSetBase(forms.Form):
     question_model: typing.Type[models.Question]
     answer_model: typing.Type[models.QuestionChoice]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, as_filters: bool = False, **kwargs):
         super().__init__(*args, **kwargs)
 
         initial = kwargs.get('initial', {})
 
         for question in self.question_model.objects.all():
+            if as_filters and not question.answer_is_public:
+                continue
+
             field_class = self.field_class
             field_widget = self.field_widget
 
@@ -56,10 +59,16 @@ class DynamicAnswerSetBase(forms.Form):
 
             field_name = f'question_{question.pk}'
 
-            field = field_class(label=question,
+            # If being used as a filter - do we have alternate text?
+            field_label = question.text
+            if as_filters and question.filter_text:
+                field_label = question.filter_text
+
+            field = field_class(label=field_label,
                                 queryset=question.answers,
                                 widget=field_widget,
-                                required=self.field_required and not question.allow_free_text,
+                                required=(self.field_required
+                                          and not question.allow_free_text),
                                 initial=initial.get(field_name, None))
             self.fields[field_name] = field
 
@@ -235,7 +244,7 @@ class NetworkFilterForm(DynamicAnswerSetBase):
     answer_model = models.RelationshipQuestionChoice
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, as_filters=True, **kwargs)
 
         # Add date field to select relationships at a particular point in time
         self.fields['date'] = forms.DateField(
