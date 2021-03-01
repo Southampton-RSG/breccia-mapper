@@ -272,6 +272,9 @@ class PersonAnswerSet(AnswerSet):
     organisation_started_date = models.DateField(
         'Date started at this organisation', blank=False, null=True)
 
+    #: When did this person join the project?
+    project_started_date = models.DateField(blank=False, null=True)
+
     #: Job title this person holds within their organisation
     job_title = models.CharField(max_length=255, blank=True, null=False)
 

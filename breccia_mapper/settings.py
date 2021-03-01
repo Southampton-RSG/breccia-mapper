@@ -16,6 +16,10 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 Many configuration settings are input from `settings.ini`.
 The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABASE_URL, PROJECT_*_NAME, EMAIL_*
 
+- PARENT_PROJECT_NAME
+  default: Parent Project Name
+  Displayed in templates where the name of the parent project should be used
+
 - PROJECT_LONG_NAME
   default: Project Long Name
   Displayed in templates where the full name of the project should be used
@@ -115,11 +119,13 @@ import dj_database_url
 
 SETTINGS_EXPORT = [
     'DEBUG',
+    'PARENT_PROJECT_NAME',
     'PROJECT_LONG_NAME',
     'PROJECT_SHORT_NAME',
     'GOOGLE_MAPS_API_KEY',
 ]
 
+PARENT_PROJECT_NAME = config('PARENT_PROJECT_NAME', default='Parent Project Name')
 PROJECT_LONG_NAME = config('PROJECT_LONG_NAME', default='Project Long Name')
 PROJECT_SHORT_NAME = config('PROJECT_SHORT_NAME', default='shortname')
 

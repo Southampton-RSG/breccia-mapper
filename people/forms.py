@@ -3,6 +3,7 @@
 import typing
 
 from django import forms
+from django.conf import settings
 
 from bootstrap_datepicker_plus import DatePickerInput
 from django_select2.forms import ModelSelect2Widget, Select2Widget, Select2MultipleWidget
@@ -139,6 +140,7 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             'country_of_residence',
             'organisation',
             'organisation_started_date',
+            'project_started_date',
             'job_title',
             'themes',
             'latitude',
@@ -148,6 +150,7 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             'nationality': Select2Widget(),
             'country_of_residence': Select2Widget(),
             'organisation_started_date': DatePickerInput(format='%Y-%m-%d'),
+            'project_started_date': DatePickerInput(format='%Y-%m-%d'),
             'themes': Select2MultipleWidget(),
             'latitude': forms.HiddenInput,
             'longitude': forms.HiddenInput,
@@ -155,6 +158,9 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         help_texts = {
             'organisation_started_date':
             'If you don\'t know the exact date, an approximate date is okay.',
+            'project_started_date':
+            (f'Date you started on the {settings.PARENT_PROJECT_NAME} project. '
+            'If you don\'t know the exact date, an approximate date is okay.'),
         }
 
     question_model = models.PersonQuestion

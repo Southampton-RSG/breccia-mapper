@@ -23,6 +23,10 @@
         <tr><td>Organisation Started Date</td><td>{{ answer_set.organisation_started_date }}</td></tr>
     {% endif %}
 
+    {% if answer_set.project_started_date %}
+        <tr><td>{{ settings.PARENT_PROJECT_NAME }} Started Date</td><td>{{ answer_set.project_started_date }}</td></tr>
+    {% endif %}
+
     {% if answer_set.job_title %}
         <tr><td>Job Title</td><td>{{ answer_set.job_title }}</td></tr>
     {% endif %}
