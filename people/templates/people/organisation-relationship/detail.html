@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'people:person.list' %}">People</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'people:person.detail' pk=relationship.source.pk %}">{{ relationship.source }}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ relationship.target }}</li>
+        </ol>
+    </nav>
+
+    <h1>Organisation Relationship</h1>
+
+    <hr>
+
+    <div class="row align-content-center align-items-center">
+        <div class="col-md-5 text-center">
+            <h2>Source</h2>
+            <p>{{ relationship.source }}</p>
+
+            <a class="btn btn-sm btn-info"
+               href="{% url 'people:person.detail' pk=relationship.source.pk %}">Profile</a>
+        </div>
+
+        <div class="col-md-2 text-center"></div>
+
+        <div class="col-md-5 text-center">
+            <h2>Target</h2>
+            <p>{{ relationship.target }}</p>
+
+            <a class="btn btn-sm btn-info"
+               href="{% url 'people:organisation.detail' pk=relationship.target.pk %}">Profile</a>
+        </div>
+    </div>
+
+    <hr>
+
+    <a class="btn btn-success"
+       href="{% url 'people:organisation.relationship.update' relationship_pk=relationship.pk %}">Update</a>
+
+    {% with relationship.current_answers as answer_set %}
+        <table class="table table-borderless">
+            <thead>
+            <tr>
+                <th>Question</th>
+                <th>Answer</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for answer in answer_set.question_answers.all %}
+                <tr>
+                    <td>{{ answer.question }}</td>
+                    <td>{{ answer }}</td>
+                </tr>
+
+            {% empty %}
+                <tr>
+                    <td>No records</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        Last updated: {{ answer_set.timestamp }}
+    {% endwith %}
+
+{% endblock %}

@@ -19,6 +19,16 @@ class OrganisationListView(LoginRequiredMixin, ListView):
     model = models.Organisation
     template_name = 'people/organisation/list.html'
 
+    def get_context_data(self,
+                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        context = super().get_context_data(**kwargs)
+
+        context['existing_relationships'] = set(
+            self.request.user.person.organisation_relationship_targets.
+            values_list('pk', flat=True))
+
+        return context
+
 
 class OrganisationDetailView(LoginRequiredMixin, DetailView):
     """View displaying details of a :class:`Organisation`."""

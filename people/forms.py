@@ -239,6 +239,48 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         return self.instance
 
 
+class OrganisationRelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
+    """Form to allow users to describe a relationship with an organisation.
+
+    Dynamic fields inspired by https://jacobian.org/2010/feb/28/dynamic-form-generation/
+    """
+    class Meta:
+        model = models.OrganisationRelationshipAnswerSet
+        fields = [
+            'relationship',
+        ]
+        widgets = {
+            'relationship': forms.HiddenInput,
+        }
+
+    question_model = models.OrganisationRelationshipQuestion
+    answer_model = models.OrganisationRelationshipQuestionChoice
+
+    def save(self, commit=True) -> models.OrganisationRelationshipAnswerSet:
+        # Save model
+        self.instance = super().save(commit=commit)
+
+        if commit:
+            # Save answers to questions
+            for key, value in self.cleaned_data.items():
+                if key.startswith('question_') and value:
+                    if key.endswith('_free'):
+                        # Create new answer from free text
+                        value, _ = self.answer_model.objects.get_or_create(
+                            text=value,
+                            question=self.question_model.objects.get(
+                                pk=key.split('_')[1]))
+
+                    try:
+                        self.instance.question_answers.add(value)
+
+                    except TypeError:
+                        # Value is a QuerySet - multiple choice question
+                        self.instance.question_answers.add(*value.all())
+
+        return self.instance
+
+
 class NetworkFilterForm(DynamicAnswerSetBase):
     """
     Form to provide filtering on the network view.

@@ -226,6 +226,13 @@ class Person(models.Model):
         through_fields=('source', 'target'),
         symmetrical=False)
 
+    #: Organisations with whom this person has relationship - via intermediate :class:`OrganisationRelationship` model
+    organisation_relationship_targets = models.ManyToManyField(
+        Organisation,
+        related_name='relationship_sources',
+        through='OrganisationRelationship',
+        through_fields=('source', 'target'))
+
     @property
     def relationships(self):
         return self.relationships_as_source.all().union(

@@ -85,3 +85,19 @@ class RelationshipQuestionAdmin(admin.ModelAdmin):
 @admin.register(models.Relationship)
 class RelationshipAdmin(admin.ModelAdmin):
     pass
+
+
+class OrganisationRelationshipQuestionChoiceInline(admin.TabularInline):
+    model = models.OrganisationRelationshipQuestionChoice
+
+
+@admin.register(models.OrganisationRelationshipQuestion)
+class OrganisationRelationshipQuestionAdmin(admin.ModelAdmin):
+    inlines = [
+        OrganisationRelationshipQuestionChoiceInline,
+    ]
+
+
+@admin.register(models.OrganisationRelationship)
+class OrganisationRelationshipAdmin(admin.ModelAdmin):
+    pass

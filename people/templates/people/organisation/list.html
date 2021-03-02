@@ -28,6 +28,19 @@
                     <td>
                         <a class="btn btn-sm btn-info"
                            href="{% url 'people:organisation.detail' pk=organisation.pk %}">Details</a>
+
+                        {% if organisation.pk in existing_relationships %}
+                            <a class="btn btn-sm btn-warning"
+                                style="width: 10rem"
+                                href="{% url 'people:organisation.relationship.create' organisation_pk=organisation.pk %}">Update Relationship
+                                </a>
+
+                        {% else %}
+                            <a class="btn btn-sm btn-success"
+                                style="width: 10rem"
+                                href="{% url 'people:organisation.relationship.create' organisation_pk=organisation.pk %}">New Relationship
+                                </a>
+                        {% endif %}
                     </td>
                 </tr>
 
