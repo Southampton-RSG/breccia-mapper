@@ -1,7 +1,5 @@
 import typing
 
-from rest_framework import serializers
-
 from people import models
 
 from . import base
