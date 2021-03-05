@@ -87,10 +87,16 @@ class OrganisationAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
     class Meta:
         model = models.OrganisationAnswerSet
         fields = [
+            'name',
+            'website',
+            'countries',
+            'hq_country',
             'latitude',
             'longitude',
         ]
         widgets = {
+            'countries': Select2MultipleWidget(),
+            'hq_country': Select2Widget(),
             'latitude': forms.HiddenInput,
             'longitude': forms.HiddenInput,
         }

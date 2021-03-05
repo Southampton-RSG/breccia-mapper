@@ -29,7 +29,53 @@
 
     <hr>
 
-    {% include 'people/person/includes/answer_set_full.html' %}
+    <table class="table table-borderless">
+        <thead>
+        <tr>
+            <th>Question</th>
+            <th>Answer</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% if answer_set.website %}
+            <tr><td>Website</td><td>
+                <a href="{{ answer_set.website }}">{{ answer_set.website }}</a>
+            </td></tr>
+        {% endif %}
+
+        {% if answer_set.countries %}
+            <tr><td>Countries</td><td>
+                {% for country in answer_set.countries %}
+                    {{ country.name }}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            </td></tr>
+        {% endif %}
+
+        {% if answer_set.hq_country %}
+            <tr><td>HQ Country</td><td>{{ answer_set.hq_country.name }}</td></tr>
+        {% endif %}
+
+        {% if request.user.is_superuser %}
+            {% for answer in answer_set.question_answers.all %}
+                <tr>
+                    <td>{{ answer.question }}</td>
+                    <td>{{ answer }}</td>
+                </tr>
+            {% endfor %}
+
+        {% else %}
+            {% for answer in answer_set.public_answers.all %}
+                <tr>
+                    <td>{{ answer.question }}</td>
+                    <td>{{ answer }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+
+    <p>Last updated: {{ answer_set.timestamp }}</p>
 
     <hr>
 

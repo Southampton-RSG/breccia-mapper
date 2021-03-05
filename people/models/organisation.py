@@ -3,6 +3,7 @@ import logging
 from django.db import models
 from django.urls import reverse
 
+from django_countries.fields import CountryField
 
 from .question import AnswerSet, Question, QuestionChoice
 
@@ -60,10 +61,28 @@ class OrganisationAnswerSet(AnswerSet):
                                      blank=False,
                                      null=False)
 
-    #: Latitude for displaying location on a map
+    name = models.CharField(max_length=255, blank=True, null=False)
+
+    website = models.URLField(max_length=255, blank=True, null=False)
+
+    #: Which countries does this organisation operate in?
+    countries = CountryField(
+        multiple=True,
+        blank=True,
+        null=False,
+        help_text=(
+            'Geographical spread - in which countries does this organisation '
+            'have offices? Select all that apply'))
+
+    #: Which country is this organisation based in?
+    hq_country = CountryField(
+        blank=True,
+        null=False,
+        help_text=(
+            'In which country does this organisation have its main location?'))
+
     latitude = models.FloatField(blank=True, null=True)
 
-    #: Longitude for displaying location on a map
     longitude = models.FloatField(blank=True, null=True)
 
     #: Answers to :class:`OrganisationQuestion`s
