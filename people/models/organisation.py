@@ -42,7 +42,8 @@ class Organisation(models.Model):
     name = models.CharField(max_length=255, blank=False, null=False)
 
     def __str__(self) -> str:
-        return self.name
+        # Prefer name as in latest OrganisationAnswerSet
+        return self.current_answers.name or self.name
 
     @property
     def current_answers(self) -> 'OrganisationAnswerSet':
