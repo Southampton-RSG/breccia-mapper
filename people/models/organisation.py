@@ -43,7 +43,13 @@ class Organisation(models.Model):
 
     def __str__(self) -> str:
         # Prefer name as in latest OrganisationAnswerSet
-        return self.current_answers.name or self.name
+        try:
+            name = self.current_answers.name
+
+        except AttributeError:
+            name = ''
+
+        return name or self.name
 
     @property
     def current_answers(self) -> 'OrganisationAnswerSet':
