@@ -175,7 +175,10 @@ class PersonAnswerSet(AnswerSet):
     project_started_date = models.DateField(blank=False, null=True)
 
     #: Job title this person holds within their organisation
-    job_title = models.CharField(max_length=255, blank=True, null=False)
+    job_title = models.CharField(help_text='Contractual job title',
+                                 max_length=255,
+                                 blank=True,
+                                 null=False)
 
     #: Project themes within this person works
     themes = models.ManyToManyField(Theme, related_name='people', blank=True)

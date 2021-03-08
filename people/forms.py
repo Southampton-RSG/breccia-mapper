@@ -46,9 +46,15 @@ class DynamicAnswerSetBase(forms.Form):
         super().__init__(*args, **kwargs)
 
         initial = kwargs.get('initial', {})
+        field_order = []
 
         for question in self.question_model.objects.all():
             if as_filters and not question.answer_is_public:
+                continue
+
+            # Placeholder question for sorting hardcoded questions
+            if question.is_hardcoded and (question.text in self.Meta.fields):
+                field_order.append(question.text)
                 continue
 
             field_class = self.field_class
@@ -72,11 +78,15 @@ class DynamicAnswerSetBase(forms.Form):
                                           and not question.allow_free_text),
                                 initial=initial.get(field_name, None))
             self.fields[field_name] = field
+            field_order.append(field_name)
 
             if question.allow_free_text:
                 free_field = forms.CharField(label=f'{question} free text',
                                              required=False)
                 self.fields[f'{field_name}_free'] = free_field
+                field_order.append(f'{field_name}_free')
+
+        self.order_fields(field_order)
 
 
 class OrganisationAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
@@ -161,12 +171,15 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             'latitude': forms.HiddenInput,
             'longitude': forms.HiddenInput,
         }
+        labels = {
+            'project_started_date':
+            f'Date started on the {settings.PARENT_PROJECT_NAME} project',
+        }
         help_texts = {
             'organisation_started_date':
             'If you don\'t know the exact date, an approximate date is okay.',
             'project_started_date':
-            (f'Date you started on the {settings.PARENT_PROJECT_NAME} project. '
-            'If you don\'t know the exact date, an approximate date is okay.'),
+            'If you don\'t know the exact date, an approximate date is okay.',
         }
 
     question_model = models.PersonQuestion
@@ -245,7 +258,8 @@ class RelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         return self.instance
 
 
-class OrganisationRelationshipAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
+class OrganisationRelationshipAnswerSetForm(forms.ModelForm,
+                                            DynamicAnswerSetBase):
     """Form to allow users to describe a relationship with an organisation.
 
     Dynamic fields inspired by https://jacobian.org/2010/feb/28/dynamic-form-generation/

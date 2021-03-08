@@ -46,6 +46,13 @@ class Question(models.Model):
                                              blank=False,
                                              null=False)
 
+    #: Is this question hardcoded in an AnswerSet?
+    is_hardcoded = models.BooleanField(
+        help_text='Only the order field has any effect for a hardcoded question.',
+        default=False,
+        blank=False,
+        null=False)
+
     #: Should people be able to add their own answers?
     allow_free_text = models.BooleanField(default=False,
                                           blank=False,
