@@ -24,7 +24,6 @@
                 {% for organisation in country.list %}
                     <tr>
                         <td>{{ organisation }}</td>
-                        {% comment %}
                         <td>
                             <a class="btn btn-sm btn-info"
                             href="{% url 'people:organisation.detail' pk=organisation.pk %}">Details</a>
@@ -42,7 +41,6 @@
                                     </a>
                             {% endif %}
                         </td>
-                        {% endcomment %}
                     </tr>
                 {% endfor %}
             {% endfor %}
