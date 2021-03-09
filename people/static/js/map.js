@@ -3,7 +3,7 @@ const marker_edge_colour = 'white';
 const marker_fill_colour = 'gray';
 
 // Size of the arrow markers used on the map
-const marker_scale = 9;
+const marker_scale = 7;
 // Offset for the place type icon (multiplier for marker scale)
 const marker_label_offset = 0.27 * marker_scale;
 // Width and transparency for the edges of the markers
@@ -13,6 +13,7 @@ const marker_edge_width = 1.0;
 let map = null;
 let selected_marker = null;
 let selected_marker_info = null;
+let markers = [];
 
 function createMarker(map, marker_data) {
     // Get the lat-long position from the data
@@ -75,7 +76,11 @@ function initMap() {
     for (const marker_data of markers_data) {
         try {
             const marker = createMarker(map, marker_data);
+            marker.type =  marker_data.type;
+            markers.push(marker);
+
             bounds.extend(marker.position);
+
             if (markers_data.length === 1) {
                 selected_marker = marker;
             }

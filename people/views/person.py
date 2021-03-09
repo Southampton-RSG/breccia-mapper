@@ -5,11 +5,11 @@ Views for displaying or manipulating instances of :class:`Person`.
 import typing
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from people import forms, models, permissions
+from .map import get_map_data
 
 
 class PersonCreateView(LoginRequiredMixin, CreateView):
@@ -130,42 +130,3 @@ class PersonUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
             answer_set.save()
 
         return response
-
-
-def get_map_data(person: models.Person) -> typing.Dict[str, typing.Any]:
-    """Prepare data to mark people on a map."""
-    answer_set = person.current_answers
-    organisation = getattr(answer_set, 'organisation', None)
-
-    try:
-        country = answer_set.country_of_residence.name
-
-    except AttributeError:
-        country = None
-
-    return {
-        'name': person.name,
-        'lat': getattr(answer_set, 'latitude', None),
-        'lng': getattr(answer_set, 'longitude', None),
-        'organisation': getattr(organisation, 'name', None),
-        'org_lat': getattr(organisation, 'latitude', None),
-        'org_lng': getattr(organisation, 'longitude', None),
-        'country': country,
-        'url': reverse('people:person.detail', kwargs={'pk': person.pk})
-    }
-
-
-class PersonMapView(LoginRequiredMixin, ListView):
-    """View displaying a map of :class:`Person` locations."""
-    model = models.Person
-    template_name = 'people/person/map.html'
-
-    def get_context_data(self,
-                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        context = super().get_context_data(**kwargs)
-
-        context['map_markers'] = [
-            get_map_data(person) for person in self.object_list
-        ]
-
-        return context

@@ -77,8 +77,8 @@ urlpatterns = [
     ############
     # Data views
     path('map',
-         views.person.PersonMapView.as_view(),
-         name='person.map'),
+         views.map.MapView.as_view(),
+         name='map'),
 
     path('network',
          views.network.NetworkView.as_view(),
