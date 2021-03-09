@@ -83,6 +83,7 @@ class OrganisationListView(LoginRequiredMixin, ListView):
 
             except AttributeError:
                 # Organisation has no AnswerSet - country is 'Unknown'
+                pass
 
             orgs = orgs_by_country.get(country, [])
             orgs.append(organisation)
