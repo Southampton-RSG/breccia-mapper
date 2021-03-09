@@ -101,9 +101,14 @@ class OrganisationAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             'website',
             'countries',
             'hq_country',
+            'is_partner_organisation',
             'latitude',
             'longitude',
         ]
+        labels = {
+            'is_partner_organisation':
+            f'Is this organisation a {settings.PARENT_PROJECT_NAME} partner organisation?'
+        }
         widgets = {
             'countries': Select2MultipleWidget(),
             'hq_country': Select2Widget(),

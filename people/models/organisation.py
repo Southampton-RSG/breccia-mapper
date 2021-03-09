@@ -88,6 +88,10 @@ class OrganisationAnswerSet(AnswerSet):
         help_text=(
             'In which country does this organisation have its main location?'))
 
+    is_partner_organisation = models.BooleanField(default=False,
+                                                  blank=False,
+                                                  null=False)
+
     latitude = models.FloatField(blank=True, null=True)
 
     longitude = models.FloatField(blank=True, null=True)

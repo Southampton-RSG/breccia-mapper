@@ -1,5 +1,6 @@
 import typing
 
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
@@ -14,14 +15,78 @@ class OrganisationCreateView(LoginRequiredMixin, CreateView):
     form_class = forms.OrganisationForm
 
 
+def try_copy_by_key(src_dict: typing.Mapping[str, typing.Any],
+                    dest_dict: typing.MutableMapping[str, typing.Any],
+                    key: str) -> None:
+    """Copy a value by key from one dictionary to another.
+
+    If the key does not exist, skip it.
+    """
+    value = src_dict.get(key, None)
+    if value is not None:
+        dest_dict[key] = value
+
+
 class OrganisationListView(LoginRequiredMixin, ListView):
     """View displaying a list of :class:`organisation` objects."""
     model = models.Organisation
     template_name = 'people/organisation/list.html'
 
+    @staticmethod
+    def sort_organisation_countries(
+        orgs_by_country: typing.MutableMapping[str, typing.Any]
+    ) -> typing.Dict[str, typing.Any]:
+        """Sort dictionary of organisations by country.
+
+        Sort order:
+        - Project partners
+        - International organisations
+        - Organisations by country alphabetically
+        - Organisations with unknown country
+        """
+        orgs_sorted = {}
+
+        try_copy_by_key(orgs_by_country, orgs_sorted,
+                        f'{settings.PARENT_PROJECT_NAME} partners')
+        try_copy_by_key(orgs_by_country, orgs_sorted, 'International')
+
+        special = {
+            f'{settings.PARENT_PROJECT_NAME} partners', 'International',
+            'Unknown'
+        }
+        for country in sorted(k for k in orgs_by_country.keys()
+                              if k not in special):
+            orgs_sorted[country] = orgs_by_country[country]
+
+        try_copy_by_key(orgs_by_country, orgs_sorted, 'Unknown')
+
+        return orgs_sorted
+
     def get_context_data(self,
                          **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         context = super().get_context_data(**kwargs)
+
+        orgs_by_country = {}
+        for organisation in self.get_queryset().all():
+            answers = organisation.current_answers
+
+            country = 'Unknown'
+            if len(answers.countries) == 1:
+                country = answers.countries[0].name
+
+            elif len(answers.countries) > 1:
+                country = 'International'
+
+            if answers.is_partner_organisation:
+                country = f'{settings.PARENT_PROJECT_NAME} partners'
+
+            orgs = orgs_by_country.get(country, [])
+            orgs.append(organisation)
+            orgs_by_country[country] = orgs
+
+        # Sort into meaningful order
+        context['orgs_by_country'] = self.sort_organisation_countries(
+            orgs_by_country)
 
         context['existing_relationships'] = set(
             self.request.user.person.organisation_relationship_targets.

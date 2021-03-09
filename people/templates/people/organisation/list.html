@@ -15,13 +15,11 @@
         href="{% url 'people:organisation.create' %}">New Organisation</a>
 
     <table class="table table-borderless">
-        {% regroup organisation_list.all by current_answers.hq_country as countries %}
-
         <tbody>
-            {% for country in countries %}
-                <tr><th>{{ country.grouper.name|default:"Unknown" }}</th></tr>
+            {% for country, organisations in orgs_by_country.items %}
+                <tr><th>{{ country }}</th></tr>
 
-                {% for organisation in country.list %}
+                {% for organisation in organisations %}
                     <tr>
                         <td>{{ organisation }}</td>
                         <td>
