@@ -71,14 +71,18 @@ class OrganisationListView(LoginRequiredMixin, ListView):
             answers = organisation.current_answers
 
             country = 'Unknown'
-            if len(answers.countries) == 1:
-                country = answers.countries[0].name
+            try:
+                if len(answers.countries) == 1:
+                    country = answers.countries[0].name
 
-            elif len(answers.countries) > 1:
-                country = 'International'
+                elif len(answers.countries) > 1:
+                    country = 'International'
 
-            if answers.is_partner_organisation:
-                country = f'{settings.PARENT_PROJECT_NAME} partners'
+                if answers.is_partner_organisation:
+                    country = f'{settings.PARENT_PROJECT_NAME} partners'
+
+            except AttributeError:
+                # Organisation has no AnswerSet - country is 'Unknown'
 
             orgs = orgs_by_country.get(country, [])
             orgs.append(organisation)
