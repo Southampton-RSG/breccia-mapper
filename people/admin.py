@@ -41,11 +41,6 @@ class OrganisationAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(models.Theme)
-class ThemeAdmin(admin.ModelAdmin):
-    pass
-
-
 class PersonQuestionChoiceInline(admin.TabularInline):
     model = models.PersonQuestionChoice
 

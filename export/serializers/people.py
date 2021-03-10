@@ -30,7 +30,6 @@ class PersonAnswerSetSerializer(base.FlattenedModelSerializer):
             'organisation',
             'organisation_started_date',
             'job_title',
-            'themes',
             'latitude',
             'longitude',
         ]

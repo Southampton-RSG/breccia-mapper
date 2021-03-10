@@ -18,7 +18,6 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 __all__ = [
     'User',
-    'Theme',
     'PersonQuestion',
     'PersonQuestionChoice',
     'Person',
@@ -64,16 +63,6 @@ class User(AbstractUser):
             logger.error(
                 'Sending welcome mail failed, invalid email for user \'%s\'',
                 self.username)
-
-
-class Theme(models.Model):
-    """
-    Project theme within which a :class:`Person` works.
-    """
-    name = models.CharField(max_length=255, blank=False, null=False)
-
-    def __str__(self) -> str:
-        return self.name
 
 
 class PersonQuestion(Question):
@@ -179,9 +168,6 @@ class PersonAnswerSet(AnswerSet):
                                  max_length=255,
                                  blank=True,
                                  null=False)
-
-    #: Project themes within this person works
-    themes = models.ManyToManyField(Theme, related_name='people', blank=True)
 
     #: Latitude for displaying location on a map
     latitude = models.FloatField(blank=True, null=True)

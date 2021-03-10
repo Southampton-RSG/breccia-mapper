@@ -31,17 +31,6 @@
         <tr><td>Job Title</td><td>{{ answer_set.job_title }}</td></tr>
     {% endif %}
 
-    {% if answer_set.themes.exists %}
-        <tr>
-            <td>Project Themes</td>
-            <td>
-                {% for theme in answer_set.themes.all %}
-                    {{ theme }}{% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </td>
-        </tr>
-    {% endif %}
-
     {% for answer in answer_set.question_answers.all %}
         <tr>
             <td>{{ answer.question }}</td>

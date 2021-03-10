@@ -163,7 +163,6 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             'organisation_started_date',
             'project_started_date',
             'job_title',
-            'themes',
             'latitude',
             'longitude',
         ]
@@ -172,7 +171,6 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             'country_of_residence': Select2Widget(),
             'organisation_started_date': DatePickerInput(format='%Y-%m-%d'),
             'project_started_date': DatePickerInput(format='%Y-%m-%d'),
-            'themes': Select2MultipleWidget(),
             'latitude': forms.HiddenInput,
             'longitude': forms.HiddenInput,
         }
