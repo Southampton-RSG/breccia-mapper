@@ -31,6 +31,10 @@
         <tr><td>Job Title</td><td>{{ answer_set.job_title }}</td></tr>
     {% endif %}
 
+    {% if answer_set.external_organisations %}
+        <tr><td>External Organisations Worked With</td><td>{{ answer_set.external_organisations }}</td></tr>
+    {% endif %}
+
     {% for answer in answer_set.question_answers.all %}
         <tr>
             <td>{{ answer.question }}</td>
