@@ -169,11 +169,6 @@ class PersonAnswerSet(AnswerSet):
                                  blank=True,
                                  null=False)
 
-    #: External organisations this person has worked with
-    external_organisations = models.CharField(max_length=1023,
-                                              blank=True,
-                                              null=False)
-
     #: Latitude for displaying location on a map
     latitude = models.FloatField(blank=True, null=True)
 
