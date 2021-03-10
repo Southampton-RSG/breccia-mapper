@@ -74,12 +74,12 @@ class ProfileView(LoginRequiredMixin, DetailView):
     def build_question_answers(self, answer_set: models.PersonAnswerSet) -> typing.Dict[str, str]:
         """Collect answers to dynamic questions and join with commas."""
         show_all = (self.object.user == self.request.user) or self.request.user.is_superuser
-        questions = models.PersonQuestion.objects.all()
+        questions = models.PersonQuestion.objects.filter(is_hardcoded=False)
         if not show_all:
             questions = questions.filter(answer_is_public=True)
 
         question_answers = {}
-        for question in models.PersonQuestion.objects.all():
+        for question in questions:
             answers = answer_set.question_answers.filter(question=question)
             question_answers[str(question)] = ', '.join(map(str, answers))
 
