@@ -76,7 +76,8 @@ class DynamicAnswerSetBase(forms.Form):
                                 widget=field_widget,
                                 required=(self.field_required
                                           and not question.allow_free_text),
-                                initial=initial.get(field_name, None))
+                                initial=initial.get(field_name, None),
+                                help_text=question.help_text if not as_filters else '')
             self.fields[field_name] = field
             field_order.append(field_name)
 

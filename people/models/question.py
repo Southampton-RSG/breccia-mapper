@@ -27,12 +27,19 @@ class Question(models.Model):
     #: Text of question - 1st person
     text = models.CharField(max_length=255, blank=False, null=False)
 
-    #: Text to be displayed in network filters - 3rd person
+    #: Alternative text to be displayed in network filters - 3rd person
     filter_text = models.CharField(
         max_length=255,
         blank=True,
         null=False,
-        help_text='Text to be displayed in network filters - 3rd person')
+        help_text='Alternative text to be displayed in network filters - 3rd person')
+
+    help_text = models.CharField(
+        help_text='Additional hint text to be displayed with the question',
+        max_length=255,
+        blank=True,
+        null=False
+    )
 
     #: Should answers to this question be considered public?
     answer_is_public = models.BooleanField(
