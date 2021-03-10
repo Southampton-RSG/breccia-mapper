@@ -5,6 +5,9 @@ Views for displaying or manipulating instances of :class:`Person`.
 import typing
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
@@ -50,6 +53,14 @@ class ProfileView(LoginRequiredMixin, DetailView):
     View displaying the profile of a :class:`Person` - who may be a user.
     """
     model = models.Person
+
+    def get(self, request: HttpRequest, *args: typing.Any, **kwargs: typing.Any) -> HttpResponse:
+        try:
+            return super().get(request, *args, **kwargs)
+
+        except ObjectDoesNotExist:
+            # User has no linked Person yet
+            return redirect('index')
 
     def get_template_names(self) -> typing.List[str]:
         """Return template depending on level of access."""
