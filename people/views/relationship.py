@@ -116,8 +116,7 @@ class OrganisationRelationshipCreateView(LoginRequiredMixin, RedirectView):
                        kwargs={'pk': relationship.pk})
 
 
-class OrganisationRelationshipUpdateView(permissions.UserIsLinkedPersonMixin,
-                                         UpdateView):
+class OrganisationRelationshipUpdateView(RelationshipUpdateView):
     """View for updating the details of a Organisationrelationship.
 
     Creates a new :class:`OrganisationRelationshipAnswerSet` for the :class:`OrganisationRelationship`.
@@ -127,47 +126,3 @@ class OrganisationRelationshipUpdateView(permissions.UserIsLinkedPersonMixin,
     context_object_name = 'relationship'
     template_name = 'people/relationship/update.html'
     form_class = forms.OrganisationRelationshipAnswerSetForm
-
-    def get_test_person(self) -> models.Person:
-        """Get the person instance which should be used for access control checks."""
-        return self.object.source
-
-    def get_initial(self):
-        try:
-            previous_answers = self.object.current_answers.as_dict()
-
-        except AttributeError:
-            previous_answers = {}
-
-        previous_answers.update({
-            'relationship': self.object,
-        })
-
-        return previous_answers
-
-    def get_form_kwargs(self) -> typing.Dict[str, typing.Any]:
-        """Remove instance from form kwargs as it's a person, but expects a PersonAnswerSet."""
-        kwargs = super().get_form_kwargs()
-        kwargs.pop('instance')
-
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['person'] = self.object.source
-        return context
-
-    def form_valid(self, form):
-        """
-        Mark any previous answer sets as replaced.
-        """
-        response = super().form_valid(form)
-        now_date = timezone.now().date()
-
-        # Shouldn't be more than one after initial updates after migration
-        for answer_set in self.object.relationship.answer_sets.exclude(
-                pk=self.object.pk):
-            answer_set.replaced_timestamp = now_date
-            answer_set.save()
-
-        return response
