@@ -37,6 +37,12 @@
             <td>{{ answers }}</td>
         </tr>
     {% endfor %}
+
+    {% if answer_set is None %}
+        <tr>
+            <td colspan="2">No answers</td>
+        </tr>
+    {% endif %}
     </tbody>
 </table>
 

@@ -79,9 +79,14 @@ class ProfileView(LoginRequiredMixin, DetailView):
             questions = questions.filter(answer_is_public=True)
 
         question_answers = {}
-        for question in questions:
-            answers = answer_set.question_answers.filter(question=question)
-            question_answers[str(question)] = ', '.join(map(str, answers))
+        try:
+            for question in questions:
+                answers = answer_set.question_answers.filter(question=question)
+                question_answers[str(question)] = ', '.join(map(str, answers))
+
+        except AttributeError:
+            # No AnswerSet yet
+            pass
 
         return question_answers
 
