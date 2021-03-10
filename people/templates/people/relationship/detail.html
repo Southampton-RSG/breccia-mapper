@@ -46,7 +46,7 @@
     <hr>
 
     <a class="btn btn-success"
-       href="{% url 'people:relationship.update' relationship_pk=relationship.pk %}">Update</a>
+       href="{% url 'people:relationship.update' pk=relationship.pk %}">Update</a>
 
     {% with relationship.current_answers as answer_set %}
         <table class="table table-borderless">

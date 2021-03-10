@@ -208,20 +208,8 @@ class PersonAnswerSet(AnswerSet):
             if field.attname not in exclude_fields
         }
 
-        for answer in self.question_answers.all():
-            question = answer.question
-            field_name = f'question_{question.pk}'
-
-            if question.is_multiple_choice:
-                if field_name not in answers:
-                    answers[field_name] = []
-
-                answers[field_name].append(answer.pk)
-
-            else:
-                answers[field_name] = answer.pk
-
-        return answers
+        # Add answers to dynamic questions
+        return super().as_dict(answers=answers)
 
     def get_absolute_url(self):
         return self.person.get_absolute_url()

@@ -20,7 +20,7 @@
                         <a class="btn btn-sm btn-info"
                             href="{% url 'people:relationship.detail' pk=relationship.pk %}">Relationship Detail</a>
                         <a class="btn btn-sm btn-success"
-                            href="{% url 'people:relationship.update' relationship_pk=relationship.pk %}">Update</a>
+                            href="{% url 'people:relationship.update' pk=relationship.pk %}">Update</a>
                     </td>
                 </tr>
 
@@ -55,7 +55,7 @@
                         <a class="btn btn-sm btn-info"
                             href="{% url 'people:organisation.relationship.detail' pk=relationship.pk %}">Relationship Detail</a>
                         <a class="btn btn-sm btn-success"
-                            href="{% url 'people:organisation.relationship.update' relationship_pk=relationship.pk %}">Update</a>
+                            href="{% url 'people:organisation.relationship.update' pk=relationship.pk %}">Update</a>
                     </td>
                 </tr>
 

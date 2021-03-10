@@ -56,7 +56,7 @@ urlpatterns = [
          views.relationship.RelationshipDetailView.as_view(),
          name='relationship.detail'),
 
-    path('relationships/<int:relationship_pk>/update',
+    path('relationships/<int:pk>/update',
          views.relationship.RelationshipUpdateView.as_view(),
          name='relationship.update'),
 
@@ -70,7 +70,7 @@ urlpatterns = [
          views.relationship.OrganisationRelationshipDetailView.as_view(),
          name='organisation.relationship.detail'),
 
-    path('organisation-relationships/<int:relationship_pk>/update',
+    path('organisation-relationships/<int:pk>/update',
          views.relationship.OrganisationRelationshipUpdateView.as_view(),
          name='organisation.relationship.update'),
 

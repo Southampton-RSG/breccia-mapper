@@ -5,7 +5,7 @@ import typing
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import CreateView, DetailView, RedirectView
+from django.views.generic import DetailView, RedirectView, UpdateView
 
 from people import forms, models, permissions
 
@@ -31,72 +31,64 @@ class RelationshipCreateView(LoginRequiredMixin, RedirectView):
             source=self.request.user.person, target=target)
 
         return reverse('people:relationship.update',
-                       kwargs={'relationship_pk': relationship.pk})
+                       kwargs={'pk': relationship.pk})
 
 
-class RelationshipUpdateView(permissions.UserIsLinkedPersonMixin, CreateView):
-    """
-    View for updating the details of a relationship.
+class RelationshipUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
+    """View for updating the details of a relationship.
 
     Creates a new :class:`RelationshipAnswerSet` for the :class:`Relationship`.
     Displays / processes a form containing the :class:`RelationshipQuestion`s.
     """
-    model = models.RelationshipAnswerSet
+    model = models.Relationship
+    context_object_name = 'relationship'
     template_name = 'people/relationship/update.html'
     form_class = forms.RelationshipAnswerSetForm
 
     def get_test_person(self) -> models.Person:
-        """
-        Get the person instance which should be used for access control checks.
-        """
-        relationship = models.Relationship.objects.get(
-            pk=self.kwargs.get('relationship_pk'))
-
-        return relationship.source
-
-    def get(self, request, *args, **kwargs):
-        self.relationship = models.Relationship.objects.get(
-            pk=self.kwargs.get('relationship_pk'))
-        self.person = self.relationship.source
-
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.relationship = models.Relationship.objects.get(
-            pk=self.kwargs.get('relationship_pk'))
-        self.person = self.relationship.source
-
-        return super().post(request, *args, **kwargs)
+        """Get the person instance which should be used for access control checks."""
+        return self.object.source
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        context['person'] = self.person
-        context['relationship'] = self.relationship
-
+        context['person'] = self.object.source
         return context
 
     def get_initial(self):
-        initial = super().get_initial()
+        try:
+            previous_answers = self.object.current_answers.as_dict()
 
-        initial['relationship'] = self.relationship
+        except AttributeError:
+            previous_answers = {}
 
-        return initial
+        previous_answers.update({
+            'relationship': self.object,
+        })
+
+        return previous_answers
+
+    def get_form_kwargs(self) -> typing.Dict[str, typing.Any]:
+        """Remove instance from form kwargs as it's a person, but expects a PersonAnswerSet."""
+        kwargs = super().get_form_kwargs()
+        kwargs.pop('instance')
+
+        return kwargs
 
     def form_valid(self, form):
-        """
-        Mark any previous answer sets as replaced.
-        """
+        """Mark any previous answer sets as replaced."""
         response = super().form_valid(form)
         now_date = timezone.now().date()
 
         # Shouldn't be more than one after initial updates after migration
-        for answer_set in self.relationship.answer_sets.exclude(
+        for answer_set in self.object.relationship.answer_sets.exclude(
                 pk=self.object.pk):
             answer_set.replaced_timestamp = now_date
             answer_set.save()
 
         return response
+
+    def get_success_url(self) -> str:
+        return self.object.get_absolute_url()
 
 
 class OrganisationRelationshipDetailView(permissions.UserIsLinkedPersonMixin,
@@ -121,58 +113,49 @@ class OrganisationRelationshipCreateView(LoginRequiredMixin, RedirectView):
             source=self.request.user.person, target=target)
 
         return reverse('people:organisation.relationship.update',
-                       kwargs={'relationship_pk': relationship.pk})
+                       kwargs={'pk': relationship.pk})
 
 
 class OrganisationRelationshipUpdateView(permissions.UserIsLinkedPersonMixin,
-                                         CreateView):
-    """
-    View for updating the details of a Organisationrelationship.
+                                         UpdateView):
+    """View for updating the details of a Organisationrelationship.
 
     Creates a new :class:`OrganisationRelationshipAnswerSet` for the :class:`OrganisationRelationship`.
     Displays / processes a form containing the :class:`OrganisationRelationshipQuestion`s.
     """
-    model = models.OrganisationRelationshipAnswerSet
+    model = models.OrganisationRelationship
+    context_object_name = 'relationship'
     template_name = 'people/relationship/update.html'
     form_class = forms.OrganisationRelationshipAnswerSetForm
 
     def get_test_person(self) -> models.Person:
-        """
-        Get the person instance which should be used for access control checks.
-        """
-        relationship = models.OrganisationRelationship.objects.get(
-            pk=self.kwargs.get('relationship_pk'))
+        """Get the person instance which should be used for access control checks."""
+        return self.object.source
 
-        return relationship.source
+    def get_initial(self):
+        try:
+            previous_answers = self.object.current_answers.as_dict()
 
-    def get(self, request, *args, **kwargs):
-        self.relationship = models.OrganisationRelationship.objects.get(
-            pk=self.kwargs.get('relationship_pk'))
-        self.person = self.relationship.source
+        except AttributeError:
+            previous_answers = {}
 
-        return super().get(request, *args, **kwargs)
+        previous_answers.update({
+            'relationship': self.object,
+        })
 
-    def post(self, request, *args, **kwargs):
-        self.relationship = models.OrganisationRelationship.objects.get(
-            pk=self.kwargs.get('relationship_pk'))
-        self.person = self.relationship.source
+        return previous_answers
 
-        return super().post(request, *args, **kwargs)
+    def get_form_kwargs(self) -> typing.Dict[str, typing.Any]:
+        """Remove instance from form kwargs as it's a person, but expects a PersonAnswerSet."""
+        kwargs = super().get_form_kwargs()
+        kwargs.pop('instance')
+
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        context['person'] = self.person
-        context['relationship'] = self.relationship
-
+        context['person'] = self.object.source
         return context
-
-    def get_initial(self):
-        initial = super().get_initial()
-
-        initial['relationship'] = self.relationship
-
-        return initial
 
     def form_valid(self, form):
         """
@@ -182,7 +165,7 @@ class OrganisationRelationshipUpdateView(permissions.UserIsLinkedPersonMixin,
         now_date = timezone.now().date()
 
         # Shouldn't be more than one after initial updates after migration
-        for answer_set in self.relationship.answer_sets.exclude(
+        for answer_set in self.object.relationship.answer_sets.exclude(
                 pk=self.object.pk):
             answer_set.replaced_timestamp = now_date
             answer_set.save()

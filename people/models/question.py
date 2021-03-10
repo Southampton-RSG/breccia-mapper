@@ -144,3 +144,23 @@ class AnswerSet(models.Model):
     replaced_timestamp = models.DateTimeField(blank=True,
                                               null=True,
                                               editable=False)
+
+    def as_dict(self, answers: typing.Optional[typing.Dict[str, typing.Any]] = None):
+        """Get the answers from this set as a dictionary for use in Form.initial."""
+        if answers is None:
+            answers = {}
+
+        for answer in self.question_answers.all():
+            question = answer.question
+            field_name = f'question_{question.pk}'
+
+            if question.is_multiple_choice:
+                if field_name not in answers:
+                    answers[field_name] = []
+
+                answers[field_name].append(answer.pk)
+
+            else:
+                answers[field_name] = answer.pk
+
+        return answers
