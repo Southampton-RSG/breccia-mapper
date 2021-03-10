@@ -56,22 +56,12 @@
             <tr><td>HQ Country</td><td>{{ answer_set.hq_country.name }}</td></tr>
         {% endif %}
 
-        {% if request.user.is_superuser %}
-            {% for answer in answer_set.question_answers.all %}
-                <tr>
-                    <td>{{ answer.question }}</td>
-                    <td>{{ answer }}</td>
-                </tr>
-            {% endfor %}
-
-        {% else %}
-            {% for answer in answer_set.public_answers.all %}
-                <tr>
-                    <td>{{ answer.question }}</td>
-                    <td>{{ answer }}</td>
-                </tr>
-            {% endfor %}
-        {% endif %}
+        {% for question, answers in question_answers.items %}
+            <tr>
+                <td>{{ question }}</td>
+                <td>{{ answers }}</td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 

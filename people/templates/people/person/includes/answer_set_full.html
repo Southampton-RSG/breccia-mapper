@@ -31,15 +31,10 @@
         <tr><td>Job Title</td><td>{{ answer_set.job_title }}</td></tr>
     {% endif %}
 
-    {% for answer in answer_set.question_answers.all %}
+    {% for question, answers in question_answers.items %}
         <tr>
-            <td>{{ answer.question }}</td>
-            <td>{{ answer }}</td>
-        </tr>
-
-    {% empty %}
-        <tr>
-            <td>No records</td>
+            <td>{{ question }}</td>
+            <td>{{ answers }}</td>
         </tr>
     {% endfor %}
     </tbody>

@@ -106,6 +106,20 @@ class OrganisationDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'organisation'
     template_name = 'people/organisation/detail.html'
 
+    def build_question_answers(self, answer_set: models.OrganisationAnswerSet) -> typing.Dict[str, str]:
+        """Collect answers to dynamic questions and join with commas."""
+        show_all = self.request.user.is_superuser
+        questions = models.OrganisationQuestion.objects.all()
+        if not show_all:
+            questions = questions.filter(answer_is_public=True)
+
+        question_answers = {}
+        for question in models.OrganisationQuestion.objects.all():
+            answers = answer_set.question_answers.filter(question=question)
+            question_answers[str(question)] = ', '.join(map(str, answers))
+
+        return question_answers
+
     def get_context_data(self,
                          **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         """Add map marker to context."""
@@ -113,6 +127,7 @@ class OrganisationDetailView(LoginRequiredMixin, DetailView):
 
         answerset = self.object.current_answers
         context['answer_set'] = answerset
+        context['question_answers'] = self.build_question_answers(answerset)
         context['map_markers'] = [{
             'name': self.object.name,
             'lat': getattr(answerset, 'latitude', None),

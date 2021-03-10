@@ -71,12 +71,28 @@ class ProfileView(LoginRequiredMixin, DetailView):
             # pk was not provided in URL
             return self.request.user.person
 
+    def build_question_answers(self, answer_set: models.PersonAnswerSet) -> typing.Dict[str, str]:
+        """Collect answers to dynamic questions and join with commas."""
+        show_all = (self.object.user == self.request.user) or self.request.user.is_superuser
+        questions = models.PersonQuestion.objects.all()
+        if not show_all:
+            questions = questions.filter(answer_is_public=True)
+
+        question_answers = {}
+        for question in models.PersonQuestion.objects.all():
+            answers = answer_set.question_answers.filter(question=question)
+            question_answers[str(question)] = ', '.join(map(str, answers))
+
+        return question_answers
+
     def get_context_data(self,
                          **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         """Add current :class:`PersonAnswerSet` to context."""
         context = super().get_context_data(**kwargs)
 
-        context['answer_set'] = self.object.current_answers
+        answer_set = self.object.current_answers
+        context['answer_set'] = answer_set
+        context['question_answers'] = self.build_question_answers(answer_set)
         context['map_markers'] = [get_map_data(self.object)]
 
         return context
