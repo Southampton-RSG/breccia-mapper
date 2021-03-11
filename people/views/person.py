@@ -41,9 +41,17 @@ class PersonListView(LoginRequiredMixin, ListView):
                          **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         context = super().get_context_data(**kwargs)
 
-        context['existing_relationships'] = set(
-            self.request.user.person.relationship_targets.values_list(
-                'pk', flat=True))
+        existing_relationships = set()
+        try:
+            existing_relationships = set(
+                self.request.user.person.relationship_targets.values_list(
+                    'pk', flat=True))
+
+        except ObjectDoesNotExist:
+            # No linked Person yet
+            pass
+
+        context['existing_relationships'] = existing_relationships
 
         return context
 
@@ -54,7 +62,8 @@ class ProfileView(LoginRequiredMixin, DetailView):
     """
     model = models.Person
 
-    def get(self, request: HttpRequest, *args: typing.Any, **kwargs: typing.Any) -> HttpResponse:
+    def get(self, request: HttpRequest, *args: typing.Any,
+            **kwargs: typing.Any) -> HttpResponse:
         try:
             return super().get(request, *args, **kwargs)
 
@@ -64,7 +73,8 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
     def get_template_names(self) -> typing.List[str]:
         """Return template depending on level of access."""
-        if (self.object.user == self.request.user) or self.request.user.is_superuser:
+        if (self.object.user
+                == self.request.user) or self.request.user.is_superuser:
             return ['people/person/detail_full.html']
 
         return ['people/person/detail_partial.html']
@@ -82,9 +92,11 @@ class ProfileView(LoginRequiredMixin, DetailView):
             # pk was not provided in URL
             return self.request.user.person
 
-    def build_question_answers(self, answer_set: models.PersonAnswerSet) -> typing.Dict[str, str]:
+    def build_question_answers(
+            self, answer_set: models.PersonAnswerSet) -> typing.Dict[str, str]:
         """Collect answers to dynamic questions and join with commas."""
-        show_all = (self.object.user == self.request.user) or self.request.user.is_superuser
+        show_all = (self.object.user
+                    == self.request.user) or self.request.user.is_superuser
         questions = models.PersonQuestion.objects.filter(is_hardcoded=False)
         if not show_all:
             questions = questions.filter(answer_is_public=True)

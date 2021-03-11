@@ -47,7 +47,7 @@ class RelationshipUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
 
     def get_test_person(self) -> models.Person:
         """Get the person instance which should be used for access control checks."""
-        return self.object.source
+        return self.get_object().source
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
