@@ -169,6 +169,17 @@ class PersonAnswerSet(AnswerSet):
                                  blank=True,
                                  null=False)
 
+    disciplinary_background = models.CharField(
+        help_text='Research discipline(s) you feel most affiliated with',
+        max_length=255,
+        blank=True,
+        null=False)
+
+    #: Organisations worked with which aren't in the Organisations list
+    external_organisations = models.CharField(max_length=1023,
+                                              blank=True,
+                                              null=False)
+
     #: Latitude for displaying location on a map
     latitude = models.FloatField(blank=True, null=True)
 
@@ -203,7 +214,8 @@ class PersonAnswerSet(AnswerSet):
 
         answers = {
             # Foreign key fields have _id at end in model _meta but don't in forms
-            field.attname.rstrip('_id'): field_value_repr(field)
+            # str.rstrip strips a set of characters, not a suffix, so doesn't work here
+            field.attname.rsplit('_id')[0]: field_value_repr(field)
             for field in self._meta.get_fields()
             if field.attname not in exclude_fields
         }

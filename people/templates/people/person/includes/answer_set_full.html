@@ -31,6 +31,14 @@
         <tr><td>Job Title</td><td>{{ answer_set.job_title }}</td></tr>
     {% endif %}
 
+    {% if answer_set.disciplinary_background %}
+        <tr><td>Disciplinary Background</td><td>{{ answer_set.disciplinary_background }}</td></tr>
+    {% endif %}
+
+    {% if answer_set.external_organisations %}
+        <tr><td>External Organisations Worked With</td><td>{{ answer_set.external_organisations }}</td></tr>
+    {% endif %}
+
     {% for question, answers in question_answers.items %}
         <tr>
             <td>{{ question }}</td>
