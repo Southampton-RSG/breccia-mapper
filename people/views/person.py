@@ -123,6 +123,14 @@ class ProfileView(LoginRequiredMixin, DetailView):
         context['question_answers'] = self.build_question_answers(answer_set)
         context['map_markers'] = [get_map_data(self.object)]
 
+        context['relationship'] = None
+        try:
+            context['relationship'] = models.Relationship.objects.get(
+                source=self.request.user.person, target=self.object)
+
+        except models.Relationship.DoesNotExist:
+            pass
+
         return context
 
 

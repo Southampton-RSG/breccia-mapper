@@ -106,10 +106,13 @@ class OrganisationDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'organisation'
     template_name = 'people/organisation/detail.html'
 
-    def build_question_answers(self, answer_set: models.OrganisationAnswerSet) -> typing.Dict[str, str]:
+    def build_question_answers(
+            self,
+            answer_set: models.OrganisationAnswerSet) -> typing.Dict[str, str]:
         """Collect answers to dynamic questions and join with commas."""
         show_all = self.request.user.is_superuser
-        questions = models.OrganisationQuestion.objects.filter(is_hardcoded=False)
+        questions = models.OrganisationQuestion.objects.filter(
+            is_hardcoded=False)
         if not show_all:
             questions = questions.filter(answer_is_public=True)
 
@@ -138,6 +141,14 @@ class OrganisationDetailView(LoginRequiredMixin, DetailView):
             'lat': getattr(answerset, 'latitude', None),
             'lng': getattr(answerset, 'longitude', None),
         }]
+
+        context['relationship'] = None
+        try:
+            context['relationship'] = models.OrganisationRelationship.objects.get(
+                    source=self.request.user.person, target=self.object)  # yapf: disable
+
+        except models.OrganisationRelationship.DoesNotExist:
+            pass
 
         return context
 

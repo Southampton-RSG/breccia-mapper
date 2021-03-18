@@ -22,9 +22,22 @@
 
     <h1>{{ person.name }}</h1>
 
-    <a class="btn btn-success"
-        href="{% url 'people:person.relationship.create' person_pk=person.pk %}">New Relationship
-        </a>
+    <hr>
+
+    <div class="row justify-content-md-center">
+        <div class="col-md-3">
+            {% if relationship %}
+                <a class="btn btn-warning btn-block"
+                    href="{% url 'people:person.relationship.create' person_pk=person.pk %}">Update Relationship
+                    </a>
+
+            {% else %}
+                <a class="btn btn-success btn-block"
+                    href="{% url 'people:person.relationship.create' person_pk=person.pk %}">New Relationship
+                    </a>
+            {% endif %}
+        </div>
+    </div>
 
     <hr>
 

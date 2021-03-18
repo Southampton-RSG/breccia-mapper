@@ -24,6 +24,23 @@
 
     <hr>
 
+    <div class="row justify-content-md-center">
+        <div class="col-md-3">
+            {% if relationship %}
+                <a class="btn btn-warning btn-block"
+                    href="{% url 'people:person.relationship.create' person_pk=person.pk %}">Update Relationship
+                    </a>
+
+            {% else %}
+                <a class="btn btn-success btn-block"
+                    href="{% url 'people:person.relationship.create' person_pk=person.pk %}">New Relationship
+                    </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <hr>
+
     {% if person.user != request.user and request.user.is_superuser %}
         <div class="alert alert-warning">
             <strong>NB:</strong> You are able to see the details of this person because you are an admin.
