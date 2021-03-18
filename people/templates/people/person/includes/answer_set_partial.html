@@ -15,6 +15,10 @@
         <tr><td>Organisation</td><td>{{ answer_set.organisation }}</td></tr>
     {% endif %}
 
+    {% if answer_set.disciplinary_background %}
+        <tr><td>Disciplinary Background</td><td>{{ answer_set.disciplinary_background }}</td></tr>
+    {% endif %}
+
     {% for question, answers in question_answers.items %}
         <tr>
             <td>{{ question }}</td>
