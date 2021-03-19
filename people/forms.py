@@ -52,8 +52,9 @@ class DynamicAnswerSetBase(forms.Form):
                 continue
 
             # Placeholder question for sorting hardcoded questions
-            if question.is_hardcoded and (question.text in self.Meta.fields):
-                field_order.append(question.text)
+            if question.is_hardcoded and (question.hardcoded_field
+                                          in self.Meta.fields):
+                field_order.append(question.hardcoded_field)
                 continue
 
             field_class = self.field_class

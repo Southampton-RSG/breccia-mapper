@@ -132,6 +132,8 @@ class Person(models.Model):
 
 class PersonAnswerSet(AnswerSet):
     """The answers to the person questions at a particular point in time."""
+    question_model = PersonQuestion
+
     #: Person to which this answer set belongs
     person = models.ForeignKey(Person,
                                on_delete=models.CASCADE,

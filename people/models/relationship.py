@@ -36,9 +36,7 @@ class RelationshipQuestionChoice(QuestionChoice):
 
 
 class Relationship(models.Model):
-    """
-    A directional relationship between two people allowing linked questions.
-    """
+    """A directional relationship between two people allowing linked questions."""
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['source', 'target'],
@@ -94,6 +92,8 @@ class Relationship(models.Model):
 
 class RelationshipAnswerSet(AnswerSet):
     """The answers to the relationship questions at a particular point in time."""
+
+    question_model = RelationshipQuestion
 
     #: Relationship to which this answer set belongs
     relationship = models.ForeignKey(Relationship,
@@ -175,6 +175,8 @@ class OrganisationRelationship(models.Model):
 
 class OrganisationRelationshipAnswerSet(AnswerSet):
     """The answers to the organisation relationship questions at a particular point in time."""
+
+    question_model = OrganisationRelationshipQuestion
 
     #: OrganisationRelationship to which this answer set belongs
     relationship = models.ForeignKey(OrganisationRelationship,

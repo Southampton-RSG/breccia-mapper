@@ -54,49 +54,7 @@
 
     <hr>
 
-    <table class="table table-borderless">
-        <thead>
-        <tr>
-            <th width="50%">Question</th>
-            <th>Answer</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        {% if answer_set.website %}
-            <tr><td>Website</td><td>
-                <a href="{{ answer_set.website }}">{{ answer_set.website }}</a>
-            </td></tr>
-        {% endif %}
-
-        {% if answer_set.countries %}
-            <tr><td>Countries</td><td>
-                {% for country in answer_set.countries %}
-                    {{ country.name }}{% if not forloop.last %},{% endif %}
-                {% endfor %}
-            </td></tr>
-        {% endif %}
-
-        {% if answer_set.hq_country %}
-            <tr><td>HQ Country</td><td>{{ answer_set.hq_country.name }}</td></tr>
-        {% endif %}
-
-        {% for question, answers in question_answers.items %}
-            <tr>
-                <td>{{ question }}</td>
-                <td>{{ answers }}</td>
-            </tr>
-        {% endfor %}
-
-        {% if answer_set is None %}
-            <tr>
-                <td colspan="2">No answers</td>
-            </tr>
-        {% endif %}
-        </tbody>
-    </table>
-
-    <p>Last updated: {{ answer_set.timestamp }}</p>
+    {% include 'people/includes/answer_set.html' %}
 
     <hr>
 

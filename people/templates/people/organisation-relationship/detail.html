@@ -64,32 +64,7 @@
             </div>
 
         {% else %}
-            <table class="table table-borderless">
-                <thead>
-                <tr>
-                    <th>Question</th>
-                    <th>Answer</th>
-                </tr>
-                </thead>
-
-                <tbody>
-                {% for answer in answer_set.question_answers.all %}
-                    <tr>
-                        <td>{{ answer.question }}</td>
-                        <td>{{ answer }}</td>
-                    </tr>
-
-                {% empty %}
-                    <tr>
-                        <td>No records</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-
-            <p>
-                Last updated: {{ answer_set.timestamp }}
-            </p>
+            {% include 'people/includes/answer_set.html' %}
         {% endif %}
     {% endwith %}
 

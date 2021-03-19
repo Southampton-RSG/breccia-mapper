@@ -1,4 +1,5 @@
 """Base models for configurable questions and response sets."""
+import abc
 import typing
 
 from django.db import models
@@ -53,12 +54,16 @@ class Question(models.Model):
                                              blank=False,
                                              null=False)
 
-    #: Is this question hardcoded in an AnswerSet?
-    is_hardcoded = models.BooleanField(
-        help_text='Only the order field has any effect for a hardcoded question.',
-        default=False,
-        blank=False,
-        null=False)
+    @property
+    def is_hardcoded(self) -> bool:
+        return bool(self.hardcoded_field)
+
+    hardcoded_field = models.CharField(
+        help_text='Which hardcoded field does this question represent?',
+        max_length=255,
+        blank=True,
+        null=False
+    )
 
     #: Should people be able to add their own answers?
     allow_free_text = models.BooleanField(default=False,
@@ -126,6 +131,12 @@ class AnswerSet(models.Model):
         ]
         get_latest_by = 'timestamp'
 
+    @classmethod
+    @abc.abstractproperty
+    def question_model(cls) -> models.Model:
+        """Model representing questions to be answered in this AnswerSet."""
+        raise NotImplementedError
+
     #: Entity to which this answer set belongs
     #: This foreign key must be added to each concrete subclass
     # person = models.ForeignKey(Person,
@@ -134,9 +145,14 @@ class AnswerSet(models.Model):
     #                            blank=False,
     #                            null=False)
 
-    #: Answers to :class:`Question`s
-    #: This many to many relation must be added to each concrete subclass
-    # question_answers = models.ManyToManyField(QuestionChoice)
+    @abc.abstractproperty
+    def question_answers(self) -> models.QuerySet:
+        """Answers to :class:`Question`s.
+
+        This many to many relation must be added to each concrete subclass
+        question_answers = models.ManyToManyField(<X>QuestionChoice)
+        """
+        raise NotImplementedError
 
     #: When were these answers collected?
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
@@ -149,6 +165,31 @@ class AnswerSet(models.Model):
     @property
     def is_current(self) -> bool:
         return self.replaced_timestamp is None
+
+    def build_question_answers(self, show_all: bool = False) -> typing.Dict[str, str]:
+        """Collect answers to dynamic questions and join with commas."""
+        questions = self.question_model.objects.all()
+        if not show_all:
+            questions = questions.filter(answer_is_public=True)
+
+        question_answers = {}
+        try:
+            for question in questions:
+                if question.hardcoded_field:
+                    question_answers[question.text] = getattr(
+                        self, question.hardcoded_field)
+
+                else:
+                    answers = self.question_answers.filter(
+                        question=question)
+                    question_answers[question.text] = ', '.join(
+                        map(str, answers))
+
+        except AttributeError:
+            # No AnswerSet yet
+            pass
+
+        return question_answers
 
     def as_dict(self, answers: typing.Optional[typing.Dict[str, typing.Any]] = None):
         """Get the answers from this set as a dictionary for use in Form.initial."""

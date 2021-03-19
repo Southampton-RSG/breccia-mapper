@@ -94,34 +94,6 @@ class ProfileView(LoginRequiredMixin, DetailView):
             # pk was not provided in URL
             return self.request.user.person
 
-    def build_question_answers(
-            self, answer_set: models.PersonAnswerSet) -> typing.Dict[str, str]:
-        """Collect answers to dynamic questions and join with commas."""
-        show_all = ((self.object.user == self.request.user)
-                    or self.request.user.is_superuser)
-        questions = models.PersonQuestion.objects.all()
-        if not show_all:
-            questions = questions.filter(answer_is_public=True)
-
-        question_answers = {}
-        try:
-            for question in questions:
-                if question.is_hardcoded:
-                    question_answers[str(question)] = getattr(
-                        answer_set, question.text)
-
-                else:
-                    answers = answer_set.question_answers.filter(
-                        question=question)
-                    question_answers[str(question)] = ', '.join(
-                        map(str, answers))
-
-        except AttributeError:
-            # No AnswerSet yet
-            pass
-
-        return question_answers
-
     def get_context_data(self,
                          **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         """Add current :class:`PersonAnswerSet` to context."""
@@ -129,8 +101,14 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
         answer_set = self.object.current_answers
         context['answer_set'] = answer_set
-        context['question_answers'] = self.build_question_answers(answer_set)
         context['map_markers'] = [get_map_data(self.object)]
+
+        context['question_answers'] = {}
+        if answer_set is not None:
+            show_all = ((self.object.user == self.request.user)
+                        or self.request.user.is_superuser)
+            context['question_answers'] = answer_set.build_question_answers(
+                show_all)
 
         context['relationship'] = None
         try:

@@ -19,6 +19,23 @@ class RelationshipDetailView(permissions.UserIsLinkedPersonMixin, DetailView):
     template_name = 'people/relationship/detail.html'
     related_person_field = 'source'
 
+    def get_context_data(self,
+                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+        """Add current :class:`RelationshipAnswerSet` to context."""
+        context = super().get_context_data(**kwargs)
+
+        answer_set = self.object.current_answers
+        context['answer_set'] = answer_set
+
+        context['question_answers'] = {}
+        if answer_set is not None:
+            show_all = ((self.object.source == self.request.user)
+                        or self.request.user.is_superuser)
+            context['question_answers'] = answer_set.build_question_answers(
+                show_all)
+
+        return context
+
 
 class RelationshipCreateView(LoginRequiredMixin, RedirectView):
     """View for creating a :class:`Relationship`.
@@ -124,8 +141,7 @@ class OrganisationRelationshipEndView(RelationshipEndView):
     model = models.OrganisationRelationship
 
 
-class OrganisationRelationshipDetailView(permissions.UserIsLinkedPersonMixin,
-                                         DetailView):
+class OrganisationRelationshipDetailView(RelationshipDetailView):
     """View displaying details of an :class:`OrganisationRelationship`."""
     model = models.OrganisationRelationship
     template_name = 'people/organisation-relationship/detail.html'

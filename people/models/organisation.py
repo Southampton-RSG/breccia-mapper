@@ -61,6 +61,9 @@ class Organisation(models.Model):
 
 class OrganisationAnswerSet(AnswerSet):
     """The answers to the organisation questions at a particular point in time."""
+
+    question_model = OrganisationQuestion
+
     #: Organisation to which this answer set belongs
     organisation = models.ForeignKey(Organisation,
                                      on_delete=models.CASCADE,

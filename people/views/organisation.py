@@ -117,41 +117,24 @@ class OrganisationDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'organisation'
     template_name = 'people/organisation/detail.html'
 
-    def build_question_answers(
-            self,
-            answer_set: models.OrganisationAnswerSet) -> typing.Dict[str, str]:
-        """Collect answers to dynamic questions and join with commas."""
-        show_all = self.request.user.is_superuser
-        questions = models.OrganisationQuestion.objects.filter(
-            is_hardcoded=False)
-        if not show_all:
-            questions = questions.filter(answer_is_public=True)
-
-        question_answers = {}
-        try:
-            for question in questions:
-                answers = answer_set.question_answers.filter(question=question)
-                question_answers[str(question)] = ', '.join(map(str, answers))
-
-        except AttributeError:
-            # No AnswerSet yet
-            pass
-
-        return question_answers
-
     def get_context_data(self,
                          **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         """Add map marker to context."""
         context = super().get_context_data(**kwargs)
 
-        answerset = self.object.current_answers
-        context['answer_set'] = answerset
-        context['question_answers'] = self.build_question_answers(answerset)
+        answer_set = self.object.current_answers
+        context['answer_set'] = answer_set
         context['map_markers'] = [{
             'name': self.object.name,
-            'lat': getattr(answerset, 'latitude', None),
-            'lng': getattr(answerset, 'longitude', None),
+            'lat': getattr(answer_set, 'latitude', None),
+            'lng': getattr(answer_set, 'longitude', None),
         }]
+
+        context['question_answers'] = {}
+        if answer_set is not None:
+            show_all = self.request.user.is_superuser
+            context['question_answers'] = answer_set.build_question_answers(
+                show_all)
 
         context['relationship'] = None
         try:
