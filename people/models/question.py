@@ -124,6 +124,7 @@ class AnswerSet(models.Model):
         ordering = [
             'timestamp',
         ]
+        get_latest_by = 'timestamp'
 
     #: Entity to which this answer set belongs
     #: This foreign key must be added to each concrete subclass
@@ -144,6 +145,10 @@ class AnswerSet(models.Model):
     replaced_timestamp = models.DateTimeField(blank=True,
                                               null=True,
                                               editable=False)
+
+    @property
+    def is_current(self) -> bool:
+        return self.replaced_timestamp is None
 
     def as_dict(self, answers: typing.Optional[typing.Dict[str, typing.Any]] = None):
         """Get the answers from this set as a dictionary for use in Form.initial."""

@@ -13,7 +13,15 @@
             <tbody>
             {% for relationship in person.relationships_as_source.all %}
                 <tr>
-                    <td>{{ relationship.target }}</td>
+                    <td>
+                        {% if relationship.is_current %}
+                            {{ relationship.target }}
+                        {% else %}
+                            <del>
+                                {{ relationship.target }}
+                            </del>
+                        {% endif %}
+                    </td>
                     <td>
                         <a class="btn btn-sm btn-info"
                             href="{% url 'people:person.detail' pk=relationship.target.pk %}">Profile</a>

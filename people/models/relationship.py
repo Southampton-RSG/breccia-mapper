@@ -1,6 +1,6 @@
-"""
-Models describing relationships between people.
-"""
+"""Models describing relationships between people."""
+
+import typing
 
 from django.db import models
 from django.urls import reverse
@@ -59,15 +59,17 @@ class Relationship(models.Model):
                                blank=False,
                                null=False)
 
-    #: When was this relationship defined?
-    created = models.DateTimeField(auto_now_add=True)
+    @property
+    def current_answers(self) -> typing.Optional['RelationshipAnswerSet']:
+        answer_set = self.answer_sets.latest()
+        if answer_set.is_current:
+            return answer_set
 
-    #: When was this marked as expired?  Default None means it has not expired
-    expired = models.DateTimeField(blank=True, null=True)
+        return None
 
     @property
-    def current_answers(self) -> 'RelationshipAnswerSet':
-        return self.answer_sets.last()
+    def is_current(self) -> bool:
+        return self.current_answers is not None
 
     def get_absolute_url(self):
         return reverse('people:relationship.detail', kwargs={'pk': self.pk})
@@ -141,15 +143,17 @@ class OrganisationRelationship(models.Model):
         blank=False,
         null=False)
 
-    #: When was this relationship defined?
-    created = models.DateTimeField(auto_now_add=True)
+    @property
+    def current_answers(self) -> typing.Optional['OrganisationRelationshipAnswerSet']:
+        answer_set = self.answer_sets.latest()
+        if answer_set.is_current:
+            return answer_set
 
-    #: When was this marked as expired?  Default None means it has not expired
-    expired = models.DateTimeField(blank=True, null=True)
+        return None
 
     @property
-    def current_answers(self) -> 'OrganisationRelationshipAnswerSet':
-        return self.answer_sets.last()
+    def is_current(self) -> bool:
+        return self.current_answers is not None
 
     def get_absolute_url(self):
         return reverse('people:organisation.relationship.detail',

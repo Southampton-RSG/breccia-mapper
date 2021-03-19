@@ -44,8 +44,10 @@ class PersonListView(LoginRequiredMixin, ListView):
         existing_relationships = set()
         try:
             existing_relationships = set(
-                self.request.user.person.relationship_targets.values_list(
-                    'pk', flat=True))
+                self.request.user.person.relationships_as_source.filter(
+                    answer_sets__replaced_timestamp__isnull=True
+                ).values_list('target_id', flat=True)
+            )
 
         except ObjectDoesNotExist:
             # No linked Person yet
@@ -132,8 +134,11 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
         context['relationship'] = None
         try:
-            context['relationship'] = models.Relationship.objects.get(
+            relationship = models.Relationship.objects.get(
                 source=self.request.user.person, target=self.object)
+
+            if relationship.is_current:
+                context['relationship'] = relationship
 
         except models.Relationship.DoesNotExist:
             pass

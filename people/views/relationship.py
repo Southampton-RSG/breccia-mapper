@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import DetailView, RedirectView, UpdateView
+from django.views.generic.detail import SingleObjectMixin
 
 from people import forms, models, permissions
 
@@ -89,6 +90,30 @@ class RelationshipUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
 
     def get_success_url(self) -> str:
         return self.object.get_absolute_url()
+
+
+class RelationshipEndView(permissions.UserIsLinkedPersonMixin,
+                          SingleObjectMixin, RedirectView):
+    """View for marking a relationship as ended.
+
+    Sets `replaced_timestamp` on all answer sets where this is currently null.
+    """
+    model = models.Relationship
+
+    def get_test_person(self) -> models.Person:
+        """Get the person instance which should be used for access control checks."""
+        return self.get_object().source
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Mark any previous answer sets as replaced."""
+        now_date = timezone.now().date()
+        relationship = self.get_object()
+
+        relationship.answer_sets.filter(
+            replaced_timestamp__isnull=True).update(
+                replaced_timestamp=now_date)
+
+        return relationship.target.get_absolute_url()
 
 
 class OrganisationRelationshipDetailView(permissions.UserIsLinkedPersonMixin,
