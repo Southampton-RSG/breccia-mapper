@@ -17,6 +17,24 @@
 
     <hr>
 
+    <div class="row justify-content-md-center">
+        <div class="col-md-3">
+            <a class="btn btn-warning btn-block"
+                href="{% url 'people:relationship.update' pk=relationship.pk %}">Update Relationship
+                </a>
+        </div>
+
+        {% if relationship.is_current %}
+            <div class="col-md-3">
+                <a class="btn btn-danger btn-block"
+                    href="{% url 'people:relationship.end' pk=relationship.pk %}">End Relationship
+                    </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <hr>
+
     <div class="row align-content-center align-items-center">
         <div class="col-md-5 text-center">
             <h2>Source</h2>
@@ -45,34 +63,40 @@
 
     <hr>
 
-    <a class="btn btn-success"
-       href="{% url 'people:relationship.update' pk=relationship.pk %}">Update</a>
-
     {% with relationship.current_answers as answer_set %}
-        <table class="table table-borderless">
-            <thead>
-            <tr>
-                <th>Question</th>
-                <th>Answer</th>
-            </tr>
-            </thead>
+        {% if answer_set is None %}
+            <div class="alert alert-warning mt-3">
+                This relationship has ended. You can start it again by updating it.
+            </div>
 
-            <tbody>
-            {% for answer in answer_set.question_answers.all %}
+        {% else %}
+            <table class="table table-borderless">
+                <thead>
                 <tr>
-                    <td>{{ answer.question }}</td>
-                    <td>{{ answer }}</td>
+                    <th>Question</th>
+                    <th>Answer</th>
                 </tr>
+                </thead>
 
-            {% empty %}
-                <tr>
-                    <td>No records</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                <tbody>
+                {% for answer in answer_set.question_answers.all %}
+                    <tr>
+                        <td>{{ answer.question }}</td>
+                        <td>{{ answer }}</td>
+                    </tr>
 
-        Last updated: {{ answer_set.timestamp }}
+                {% empty %}
+                    <tr>
+                        <td>No records</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <p>
+                Last updated: {{ answer_set.timestamp }}
+            </p>
+        {% endif %}
     {% endwith %}
 
 {% endblock %}

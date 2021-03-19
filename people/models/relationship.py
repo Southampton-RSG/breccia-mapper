@@ -61,9 +61,14 @@ class Relationship(models.Model):
 
     @property
     def current_answers(self) -> typing.Optional['RelationshipAnswerSet']:
-        answer_set = self.answer_sets.latest()
-        if answer_set.is_current:
-            return answer_set
+        try:
+            answer_set = self.answer_sets.latest()
+            if answer_set.is_current:
+                return answer_set
+
+        except RelationshipAnswerSet.DoesNotExist:
+            # No AnswerSet created yet
+            pass
 
         return None
 
@@ -145,9 +150,14 @@ class OrganisationRelationship(models.Model):
 
     @property
     def current_answers(self) -> typing.Optional['OrganisationRelationshipAnswerSet']:
-        answer_set = self.answer_sets.latest()
-        if answer_set.is_current:
-            return answer_set
+        try:
+            answer_set = self.answer_sets.latest()
+            if answer_set.is_current:
+                return answer_set
+
+        except OrganisationRelationshipAnswerSet.DoesNotExist:
+            # No AnswerSet created yet
+            pass
 
         return None
 

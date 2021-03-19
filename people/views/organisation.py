@@ -2,6 +2,7 @@ import typing
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
@@ -93,9 +94,19 @@ class OrganisationListView(LoginRequiredMixin, ListView):
         context['orgs_by_country'] = self.sort_organisation_countries(
             orgs_by_country)
 
-        context['existing_relationships'] = set(
-            self.request.user.person.organisation_relationship_targets.
-            values_list('pk', flat=True))
+        existing_relationships = set()
+        try:
+            existing_relationships = set(
+                self.request.user.person.organisation_relationships_as_source.filter(
+                    answer_sets__replaced_timestamp__isnull=True
+                ).values_list('target_id', flat=True)
+            )
+
+        except ObjectDoesNotExist:
+            # No linked Person yet
+            pass
+
+        context['existing_relationships'] = existing_relationships
 
         return context
 
@@ -144,8 +155,11 @@ class OrganisationDetailView(LoginRequiredMixin, DetailView):
 
         context['relationship'] = None
         try:
-            context['relationship'] = models.OrganisationRelationship.objects.get(
-                    source=self.request.user.person, target=self.object)  # yapf: disable
+            relationship = models.OrganisationRelationship.objects.get(
+                source=self.request.user.person, target=self.object)
+
+            if relationship.is_current:
+                context['relationship'] = relationship
 
         except models.OrganisationRelationship.DoesNotExist:
             pass

@@ -78,6 +78,10 @@ urlpatterns = [
          views.relationship.OrganisationRelationshipUpdateView.as_view(),
          name='organisation.relationship.update'),
 
+    path('organisation-relationships/<int:pk>/end',
+         views.relationship.OrganisationRelationshipEndView.as_view(),
+         name='organisation.relationship.end'),
+
     ############
     # Data views
     path('map',

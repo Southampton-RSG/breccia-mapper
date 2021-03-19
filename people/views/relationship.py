@@ -116,6 +116,14 @@ class RelationshipEndView(permissions.UserIsLinkedPersonMixin,
         return relationship.target.get_absolute_url()
 
 
+class OrganisationRelationshipEndView(RelationshipEndView):
+    """View for marking an organisation relationship as ended.
+
+    Sets `replaced_timestamp` on all answer sets where this is currently null.
+    """
+    model = models.OrganisationRelationship
+
+
 class OrganisationRelationshipDetailView(permissions.UserIsLinkedPersonMixin,
                                          DetailView):
     """View displaying details of an :class:`OrganisationRelationship`."""

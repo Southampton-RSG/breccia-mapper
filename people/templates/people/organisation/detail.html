@@ -42,6 +42,14 @@
                     </a>
             {% endif %}
         </div>
+
+        {% if relationship %}
+            <div class="col-md-3">
+                <a class="btn btn-danger btn-block"
+                    href="{% url 'people:organisation.relationship.end' pk=relationship.pk %}">End Relationship
+                    </a>
+            </div>
+        {% endif %}
     </div>
 
     <hr>
