@@ -147,7 +147,7 @@ class PersonAnswerSet(AnswerSet):
     ##################
     # Static questions
 
-    nationality = CountryField(blank=True, null=True)
+    nationality = CountryField(multiple=True, blank=True)
 
     country_of_residence = CountryField(blank=True, null=True)
 

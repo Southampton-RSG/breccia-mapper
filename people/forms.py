@@ -171,7 +171,7 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             'longitude',
         ]
         widgets = {
-            'nationality': Select2Widget(),
+            'nationality': Select2MultipleWidget(),
             'country_of_residence': Select2Widget(),
             'organisation_started_date': DatePickerInput(format='%Y-%m-%d'),
             'project_started_date': DatePickerInput(format='%Y-%m-%d'),

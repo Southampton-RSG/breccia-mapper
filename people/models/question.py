@@ -176,8 +176,11 @@ class AnswerSet(models.Model):
         try:
             for question in questions:
                 if question.hardcoded_field:
-                    question_answers[question.text] = getattr(
-                        self, question.hardcoded_field)
+                    answer = getattr(self, question.hardcoded_field)
+                    if isinstance(answer, list):
+                        answer = ', '.join(map(str, answer))
+
+                    question_answers[question.text] = answer
 
                 else:
                     answers = self.question_answers.filter(
