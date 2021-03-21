@@ -62,7 +62,14 @@
         }
 
         function setFreeTextState(select, freeTextField) {
-            if (select.selectedOptions[0].text.toLowerCase().startsWith('other')) {
+            var other_selected = false;
+            for (var i = 0; i < select.selectedOptions.length; i++) {
+                if (select.selectedOptions[i].text.toLowerCase().startsWith('other')) {
+                    other_selected = true;
+                }
+            }
+
+            if (other_selected) {
                 freeTextField.show();
             } else {
                 freeTextField.hide();
