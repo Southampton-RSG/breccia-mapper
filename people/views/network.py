@@ -20,7 +20,7 @@ class NetworkView(LoginRequiredMixin, FormView):
     View to display relationship network.
     """
     template_name = 'people/network.html'
-    form_class = forms.NetworkFilterForm
+    form_class = forms.NetworkRelationshipFilterForm
 
     def get_form_kwargs(self):
         """
@@ -42,7 +42,7 @@ class NetworkView(LoginRequiredMixin, FormView):
         Add filtered QuerySets of :class:`Person` and :class:`Relationship` to the context.
         """
         context = super().get_context_data(**kwargs)
-        form: forms.NetworkFilterForm = context['form']
+        form: forms.NetworkRelationshipFilterForm = context['form']
         if not form.is_valid():
             return context
 
@@ -65,7 +65,7 @@ class NetworkView(LoginRequiredMixin, FormView):
 
         # Filter answers to relationship questions
         for field, values in form.cleaned_data.items():
-            if field.startswith('question_') and values:
+            if field.startswith(f'{form.question_prefix}question_') and values:
                 relationship_answerset_set = relationship_answerset_set.filter(
                     question_answers__in=values)
 

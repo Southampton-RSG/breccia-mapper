@@ -41,6 +41,7 @@ class DynamicAnswerSetBase(forms.Form):
     field_widget: typing.Optional[typing.Type[forms.Widget]] = None
     question_model: typing.Type[models.Question]
     answer_model: typing.Type[models.QuestionChoice]
+    question_prefix: str = ''
 
     def __init__(self, *args, as_filters: bool = False, **kwargs):
         super().__init__(*args, **kwargs)
@@ -64,7 +65,7 @@ class DynamicAnswerSetBase(forms.Form):
                 field_class = forms.ModelMultipleChoiceField
                 field_widget = Select2MultipleWidget
 
-            field_name = f'question_{question.pk}'
+            field_name = f'{self.question_prefix}question_{question.pk}'
 
             # If being used as a filter - do we have alternate text?
             field_label = question.text
@@ -310,15 +311,33 @@ class OrganisationRelationshipAnswerSetForm(forms.ModelForm,
         return self.instance
 
 
-class NetworkFilterForm(DynamicAnswerSetBase):
-    """
-    Form to provide filtering on the network view.
-    """
+class NetworkRelationshipFilterForm(DynamicAnswerSetBase):
+    """Form to provide filtering on the network view."""
     field_class = forms.ModelMultipleChoiceField
     field_widget = Select2MultipleWidget
     field_required = False
     question_model = models.RelationshipQuestion
     answer_model = models.RelationshipQuestionChoice
+    question_prefix = 'relationship_'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, as_filters=True, **kwargs)
+
+        # Add date field to select relationships at a particular point in time
+        self.fields['date'] = forms.DateField(
+            required=False,
+            widget=DatePickerInput(format='%Y-%m-%d'),
+            help_text='Show relationships as they were on this date')
+
+
+class NetworkPersonFilterForm(DynamicAnswerSetBase):
+    """Form to provide filtering on the network view."""
+    field_class = forms.ModelMultipleChoiceField
+    field_widget = Select2MultipleWidget
+    field_required = False
+    question_model = models.PersonQuestion
+    answer_model = models.PersonQuestionChoice
+    question_prefix = 'person_'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, as_filters=True, **kwargs)
