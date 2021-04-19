@@ -68,7 +68,7 @@
             href="{% url 'password_change' %}?next={{ person.get_absolute_url }}">Change Password</a>
     {% endif %}
 
-    {% if request.user.is_superuser and person.user %}
+    {% if request.user.is_superuser and person.user and person.user != request.user %}
         <form style="display: inline;" action="/hijack/{{ person.user.pk }}/" method="post">
             {% csrf_token %}
             <button class="btn btn-warning" type="submit">Become {{ person.name }}</button>
