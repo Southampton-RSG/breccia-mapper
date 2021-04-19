@@ -37,6 +37,8 @@
         {% endbuttons %}
     </form>
 
+    <button class="btn btn-info mb-3" onclick="save_image();">Save Image</button>
+
     <div id="cy"
          class="mb-2"
          style="width: 100%; min-height: 1000px; flex-grow: 1; border: 2px solid black"></div>
@@ -61,14 +63,28 @@
             integrity="sha256-rI7zH7xDqO306nxvXUw9gqkeBpvvmddDdlXJjJM7rEM="
             crossorigin="anonymous"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"
+            integrity="sha512-Qlv6VSKh1gDKGoJbnyA5RMXYcvnpIqhO++MhIM2fStMcGT9i2T//tSwYFlcyoRRDcDZ+TYHpH8azBBCyhpSeqw=="
+            crossorigin="anonymous"></script>
+
     <script type="application/javascript">
+        // Global reference to Cytoscape graph - needed for `save_image`
+        var cy;
+
+        /**
+         * Save the network as an image using the browser's normal file download flow.
+         */
+        function save_image() {
+            saveAs(cy.png(), 'graph.png');
+        }
+
         /**
          * Populate a Cytoscape network from :class:`Person` and :class:`Relationship` JSON embedded in page.
          */
         function get_network() {
             // Initialise Cytoscape graph
             // See https://js.cytoscape.org/ for documentation
-            var cy = cytoscape({
+            cy = cytoscape({
                 container: document.getElementById('cy'),
                 style: [
                     {
