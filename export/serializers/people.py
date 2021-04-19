@@ -10,8 +10,7 @@ class PersonSerializer(base.FlattenedModelSerializer):
         model = models.Person
         fields = [
             'id',
-            # Name is excluded from exports
-            # See https://github.com/Southampton-RSG/breccia-mapper/issues/35
+            'name',
         ]
 
 
