@@ -14,22 +14,40 @@
     <form class="form"
           method="POST">
         {% csrf_token %}
+        {% load bootstrap4 %}
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <h3>Filter Relationships</h3>
-                {% load bootstrap4 %}
-                {% bootstrap_form form exclude='date' %}
-
-                <hr>
-                {% bootstrap_field form.date %}
-
+                {% bootstrap_form relationship_form exclude='date' %}
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <h3>Filter People</h3>
+                {% bootstrap_form person_form exclude='date' %}
             </div>
 
+            <div class="col-md-4">
+                <h3>Filter Organisations</h3>
+                {% bootstrap_form organisation_form exclude='date' %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <hr>
+                {% bootstrap_field relationship_form.date %}
+            </div>
+
+            <div class="col-md-4">
+                <hr>
+                {% bootstrap_field person_form.date %}
+            </div>
+
+            <div class="col-md-4">
+                <hr>
+                {% bootstrap_field organisation_form.date %}
+            </div>
         </div>
 
         {% buttons %}

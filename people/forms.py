@@ -53,8 +53,9 @@ class DynamicAnswerSetBase(forms.Form):
                 continue
 
             # Placeholder question for sorting hardcoded questions
-            if question.is_hardcoded and (question.hardcoded_field
-                                          in self.Meta.fields):
+            if (question.is_hardcoded
+                    and (as_filters or
+                         (question.hardcoded_field in self.Meta.fields))):
                 field_order.append(question.hardcoded_field)
                 continue
 
@@ -83,7 +84,7 @@ class DynamicAnswerSetBase(forms.Form):
             self.fields[field_name] = field
             field_order.append(field_name)
 
-            if question.allow_free_text:
+            if question.allow_free_text and not as_filters:
                 free_field = forms.CharField(label=f'{question} free text',
                                              required=False)
                 self.fields[f'{field_name}_free'] = free_field
@@ -338,6 +339,25 @@ class NetworkPersonFilterForm(DynamicAnswerSetBase):
     question_model = models.PersonQuestion
     answer_model = models.PersonQuestionChoice
     question_prefix = 'person_'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, as_filters=True, **kwargs)
+
+        # Add date field to select relationships at a particular point in time
+        self.fields['date'] = forms.DateField(
+            required=False,
+            widget=DatePickerInput(format='%Y-%m-%d'),
+            help_text='Show relationships as they were on this date')
+
+
+class NetworkOrganisationFilterForm(DynamicAnswerSetBase):
+    """Form to provide filtering on the network view."""
+    field_class = forms.ModelMultipleChoiceField
+    field_widget = Select2MultipleWidget
+    field_required = False
+    question_model = models.OrganisationQuestion
+    answer_model = models.OrganisationQuestionChoice
+    question_prefix = 'organisation_'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, as_filters=True, **kwargs)

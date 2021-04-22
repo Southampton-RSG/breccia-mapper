@@ -88,14 +88,19 @@ function get_network() {
     var relationship_set = JSON.parse(document.getElementById('relationship-set-data').textContent);
 
     for (var relationship of relationship_set) {
-        cy.add({
-            group: 'edges',
-            data: {
-                id: 'relationship-' + relationship.pk.toString(),
-                source: 'person-' + relationship.source.pk.toString(),
-                target: 'person-' + relationship.target.pk.toString()
-            }
-        })
+        try {
+            cy.add({
+                group: 'edges',
+                data: {
+                    id: 'relationship-' + relationship.pk.toString(),
+                    source: 'person-' + relationship.source.pk.toString(),
+                    target: 'person-' + relationship.target.pk.toString()
+                }
+            })
+        } catch {
+            // Exception thrown if a node in the relationship does not exist
+            // This is probably because it's been filtered out
+        }
     }
 
     // Optimise graph layout
