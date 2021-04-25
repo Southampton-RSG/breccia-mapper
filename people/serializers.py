@@ -36,3 +36,16 @@ class RelationshipSerializer(serializers.ModelSerializer):
             'source',
             'target',
         ]
+
+
+class OrganisationRelationshipSerializer(serializers.ModelSerializer):
+    source = PersonSerializer()
+    target = OrganisationSerializer()
+
+    class Meta:
+        model = models.OrganisationRelationship
+        fields = [
+            'pk',
+            'source',
+            'target',
+        ]

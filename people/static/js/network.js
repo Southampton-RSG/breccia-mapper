@@ -103,6 +103,26 @@ function get_network() {
         }
     }
 
+    // Load organisation relationships and add to graph
+    relationship_set = JSON.parse(document.getElementById('organisation-relationship-set-data').textContent);
+
+    for (var relationship of relationship_set) {
+        console.log(relationship)
+        try {
+            cy.add({
+                group: 'edges',
+                data: {
+                    id: 'organisation-relationship-' + relationship.pk.toString(),
+                    source: 'person-' + relationship.source.pk.toString(),
+                    target: 'organisation-' + relationship.target.pk.toString()
+                }
+            })
+        } catch {
+            // Exception thrown if a node in the relationship does not exist
+            // This is probably because it's been filtered out
+        }
+    }
+
     // Optimise graph layout
     var layout = cy.layout({
         name: 'cose',

@@ -77,6 +77,8 @@
 
     {{ relationship_set|json_script:'relationship-set-data' }}
 
+    {{ organisation_relationship_set|json_script:'organisation-relationship-set-data' }}
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.14.0/cytoscape.min.js"
             integrity="sha256-rI7zH7xDqO306nxvXUw9gqkeBpvvmddDdlXJjJM7rEM="
             crossorigin="anonymous"></script>

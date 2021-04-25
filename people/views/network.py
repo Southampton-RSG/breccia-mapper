@@ -124,6 +124,10 @@ class NetworkView(LoginRequiredMixin, TemplateView):
             filter_relationships(all_forms['relationship'], relationship_at_date),
             many=True).data
 
+        context['organisation_relationship_set'] = serializers.OrganisationRelationshipSerializer(
+            models.OrganisationRelationship.objects.all(), many=True
+        ).data
+
         logger.info('Found %d distinct relationships matching filters',
                     len(context['relationship_set']))
 
