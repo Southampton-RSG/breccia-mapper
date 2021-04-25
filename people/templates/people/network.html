@@ -50,26 +50,31 @@
             </div>
         </div>
 
+        <hr>
+
         {% buttons %}
-            <button class="btn btn-block btn-info" type="submit">Filter</button>
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-block btn-success" type="submit">Filter</button>
+                </div>
+
+                <div class="col-md-6">
+                    <input class="btn btn-block btn-danger" type="button" value="Reset Filters" onClick="this.form.reset()" />
+                </div>
+            </div>
         {% endbuttons %}
     </form>
 
-    <button class="btn btn-info mb-3" onclick="save_image();">Save Image</button>
+    <button class="btn btn-block btn-info mb-3" onclick="save_image();">Save Image</button>
 
     <div id="cy"
          class="mb-2"
          style="width: 100%; min-height: 1000px; flex-grow: 1; border: 2px solid black"></div>
-
-
 {% endblock %}
 
 {% block extra_script %}
     <!--
     Embedding graph data in page as JSON allows filtering to be performed entirely on the backend when we send a POST.
-
-    This is useful since one of the most popular browsers in several of the target countries is Opera Mini,
-    which renders JavaScript on a proxy server to avoid running it on the frontend.
     -->
     {{ person_set|json_script:'person-set-data' }}
 
