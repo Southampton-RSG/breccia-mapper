@@ -7,33 +7,24 @@ var network_style = [
         selector: 'node[name]',
         style: {
             label: 'data(name)',
+            width: '50px',
+            height: '50px',
             'text-halign': 'center',
             'text-valign': 'center',
-            'font-size': 8,
-            'background-color': function (ele) {
-                switch (ele.data('kind')) {
-                    case 'person':
-                        return '#0099cc'
-                    default:
-                        return '#669933'
-                }
-            },
-            'shape': function (ele) {
-                switch (ele.data('kind')) {
-                    case 'person':
-                        return 'ellipse'
-                    default:
-                        return 'rectangle'
-                }
-            }
+            'text-wrap': 'wrap',
+            'text-max-width': '100px',
+            'font-size': 12,
+            'background-color': 'data(nodeColor)',
+            'shape': 'data(nodeShape)'
         }
     },
     {
         selector: 'edge',
         style: {
-            'mid-target-arrow-shape': 'triangle',
+            'mid-target-arrow-shape': 'data(lineArrowShape)',
             'curve-style': 'straight',
             'width': 1,
+            'line-color': 'data(lineColor)'
         }
     }
 ]
@@ -65,7 +56,9 @@ function get_network() {
             data: {
                 id: 'person-' + person.pk.toString(),
                 name: person.name,
-                kind: 'person'
+                kind: 'person',
+                nodeColor: '#0099cc',
+                nodeShape: 'elipse'
             }
         })
     }
@@ -79,7 +72,8 @@ function get_network() {
             data: {
                 id: 'organisation-' + item.pk.toString(),
                 name: item.name,
-                kind: 'organisation'
+                nodeColor: '#669933',
+                nodeShape: 'rectangle'
             }
         })
     }
@@ -94,10 +88,11 @@ function get_network() {
                 data: {
                     id: 'relationship-' + relationship.pk.toString(),
                     source: 'person-' + relationship.source.pk.toString(),
-                    target: 'person-' + relationship.target.pk.toString()
+                    target: 'person-' + relationship.target.pk.toString(),
+                    lineArrowShape: 'triangle'
                 }
             })
-        } catch {
+        } catch (exc) {
             // Exception thrown if a node in the relationship does not exist
             // This is probably because it's been filtered out
         }
@@ -107,17 +102,20 @@ function get_network() {
     relationship_set = JSON.parse(document.getElementById('organisation-relationship-set-data').textContent);
 
     for (var relationship of relationship_set) {
-        console.log(relationship)
         try {
             cy.add({
                 group: 'edges',
                 data: {
                     id: 'organisation-relationship-' + relationship.pk.toString(),
                     source: 'person-' + relationship.source.pk.toString(),
-                    target: 'organisation-' + relationship.target.pk.toString()
+                    target: 'organisation-' + relationship.target.pk.toString(),
+                    lineColor: {
+                        'organisation-membership': '#669933'
+                    }[relationship.kind] || 'black',
+                    lineArrowShape: 'none'
                 }
             })
-        } catch {
+        } catch (exc) {
             // Exception thrown if a node in the relationship does not exist
             // This is probably because it's been filtered out
         }
@@ -128,7 +126,8 @@ function get_network() {
         name: 'cose',
         randomize: true,
         animate: false,
-        idealEdgeLength: function (edge) { return 64; }
+        idealEdgeLength: function (edge) { return 64; },
+        nodeRepulsion: function (node) { return 8192; }
     });
 
     layout.run();

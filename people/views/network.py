@@ -16,37 +16,34 @@ from people import forms, models, serializers
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-def filter_by_form_answers(model: typing.Type, answerset_model: typing.Type,
-                           relationship_key: str):
+def filter_by_form_answers(model: typing.Type, answerset_model: typing.Type, relationship_key: str):
     """Build a filter to select based on form responses."""
     def inner(form, at_date):
         answerset_set = answerset_model.objects.filter(
             Q(replaced_timestamp__gte=at_date)
             | Q(replaced_timestamp__isnull=True),
-            timestamp__lte=at_date)
+            timestamp__lte=at_date
+        )
 
         # Filter answers to relationship questions
         for field, values in form.cleaned_data.items():
             if field.startswith(f'{form.question_prefix}question_') and values:
-                answerset_set = answerset_set.filter(
-                    question_answers__in=values)
+                answerset_set = answerset_set.filter(question_answers__in=values)
 
-        return model.objects.filter(
-            pk__in=answerset_set.values_list(relationship_key, flat=True))
+        return model.objects.filter(pk__in=answerset_set.values_list(relationship_key, flat=True))
 
     return inner
 
 
-filter_relationships = filter_by_form_answers(models.Relationship,
-                                              models.RelationshipAnswerSet,
-                                              'relationship')
+filter_relationships = filter_by_form_answers(
+    models.Relationship, models.RelationshipAnswerSet, 'relationship'
+)
 
-filter_organisations = filter_by_form_answers(models.Organisation,
-                                              models.OrganisationAnswerSet,
-                                              'organisation')
+filter_organisations = filter_by_form_answers(
+    models.Organisation, models.OrganisationAnswerSet, 'organisation'
+)
 
-filter_people = filter_by_form_answers(models.Person, models.PersonAnswerSet,
-                                       'person')
+filter_people = filter_by_form_answers(models.Person, models.PersonAnswerSet, 'person')
 
 
 class NetworkView(LoginRequiredMixin, TemplateView):
@@ -95,41 +92,60 @@ class NetworkView(LoginRequiredMixin, TemplateView):
         if not all(map(lambda f: f.is_valid(), all_forms.values())):
             return context
 
+        # Filter on timestamp__date doesn't seem to work on MySQL
+        # To compare datetimes we need at_date to be midnight at
+        # the *end* of the day in question - so add one day to each
+
         relationship_at_date = all_forms['relationship'].cleaned_data['date']
         if not relationship_at_date:
             relationship_at_date = timezone.now().date()
+        relationship_at_date += timezone.timedelta(days=1)
 
         person_at_date = all_forms['person'].cleaned_data['date']
         if not person_at_date:
             person_at_date = timezone.now().date()
+        person_at_date += timezone.timedelta(days=1)
 
         organisation_at_date = all_forms['organisation'].cleaned_data['date']
         if not organisation_at_date:
             organisation_at_date = timezone.now().date()
-
-        # Filter on timestamp__date doesn't seem to work on MySQL
-        # To compare datetimes we need at_date to be midnight at
-        # the *end* of the day in question - so add one day here
-        relationship_at_date += timezone.timedelta(days=1)
+        organisation_at_date += timezone.timedelta(days=1)
 
         context['person_set'] = serializers.PersonSerializer(
-            filter_people(all_forms['person'], person_at_date),
-            many=True).data
+            filter_people(all_forms['person'], person_at_date), many=True
+        ).data
 
         context['organisation_set'] = serializers.OrganisationSerializer(
-            filter_organisations(all_forms['organisation'], organisation_at_date),
-            many=True).data
+            filter_organisations(all_forms['organisation'], organisation_at_date), many=True
+        ).data
 
         context['relationship_set'] = serializers.RelationshipSerializer(
-            filter_relationships(all_forms['relationship'], relationship_at_date),
-            many=True).data
+            filter_relationships(all_forms['relationship'], relationship_at_date), many=True
+        ).data
 
         context['organisation_relationship_set'] = serializers.OrganisationRelationshipSerializer(
             models.OrganisationRelationship.objects.all(), many=True
         ).data
 
-        logger.info('Found %d distinct relationships matching filters',
-                    len(context['relationship_set']))
+        for person in models.Person.objects.all():
+            try:
+                context['organisation_relationship_set'].append(
+                    {
+                        'pk': f'membership-{person.pk}',
+                        'source': serializers.PersonSerializer(person).data,
+                        'target': serializers.OrganisationSerializer(
+                            person.current_answers.organisation
+                        ).data,
+                        'kind': 'organisation-membership'
+                    }
+                )
+
+            except AttributeError:
+                pass
+
+        logger.info(
+            'Found %d distinct relationships matching filters', len(context['relationship_set'])
+        )
 
         return context
 
