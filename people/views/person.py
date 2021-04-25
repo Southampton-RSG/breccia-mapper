@@ -16,8 +16,7 @@ from .map import get_map_data
 
 
 class PersonCreateView(LoginRequiredMixin, CreateView):
-    """
-    View to create a new instance of :class:`Person`.
+    """View to create a new instance of :class:`Person`.
 
     If 'user' is passed as a URL parameter - link the new person to the current user.
     """
@@ -37,8 +36,7 @@ class PersonListView(LoginRequiredMixin, ListView):
     model = models.Person
     template_name = 'people/person/list.html'
 
-    def get_context_data(self,
-                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+    def get_context_data(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         context = super().get_context_data(**kwargs)
 
         existing_relationships = set()
@@ -59,31 +57,32 @@ class PersonListView(LoginRequiredMixin, ListView):
 
 
 class ProfileView(LoginRequiredMixin, DetailView):
-    """
-    View displaying the profile of a :class:`Person` - who may be a user.
-    """
+    """View displaying the profile of a :class:`Person` - who may be a user."""
     model = models.Person
 
-    def get(self, request: HttpRequest, *args: typing.Any,
-            **kwargs: typing.Any) -> HttpResponse:
+    def get(self, request: HttpRequest, *args: typing.Any, **kwargs: typing.Any) -> HttpResponse:
         try:
-            return super().get(request, *args, **kwargs)
+            self.object = self.get_object()  # pylint: disable=attribute-defined-outside-init
 
         except ObjectDoesNotExist:
             # User has no linked Person yet
             return redirect('index')
 
+        if self.object.user == self.request.user and self.object.current_answers is None:
+            return redirect('people:person.update', pk=self.object.pk)
+
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
     def get_template_names(self) -> typing.List[str]:
         """Return template depending on level of access."""
-        if (self.object.user
-                == self.request.user) or self.request.user.is_superuser:
+        if (self.object.user == self.request.user) or self.request.user.is_superuser:
             return ['people/person/detail_full.html']
 
         return ['people/person/detail_partial.html']
 
     def get_object(self, queryset=None) -> models.Person:
-        """
-        Get the :class:`Person` object to be represented by this page.
+        """Get the :class:`Person` object to be represented by this page.
 
         If not determined from url get current user.
         """
@@ -94,8 +93,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
             # pk was not provided in URL
             return self.request.user.person
 
-    def get_context_data(self,
-                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+    def get_context_data(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         """Add current :class:`PersonAnswerSet` to context."""
         context = super().get_context_data(**kwargs)
 
@@ -105,15 +103,14 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
         context['question_answers'] = {}
         if answer_set is not None:
-            show_all = ((self.object.user == self.request.user)
-                        or self.request.user.is_superuser)
-            context['question_answers'] = answer_set.build_question_answers(
-                show_all)
+            show_all = (self.object.user == self.request.user) or self.request.user.is_superuser
+            context['question_answers'] = answer_set.build_question_answers(show_all)
 
         context['relationship'] = None
         try:
             relationship = models.Relationship.objects.get(
-                source=self.request.user.person, target=self.object)
+                source=self.request.user.person, target=self.object
+            )
 
             if relationship.is_current:
                 context['relationship'] = relationship
@@ -131,8 +128,21 @@ class PersonUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
     template_name = 'people/person/update.html'
     form_class = forms.PersonAnswerSetForm
 
-    def get_context_data(self,
-                         **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+    def get(self, request: HttpRequest, *args: str, **kwargs: typing.Any) -> HttpResponse:
+        self.object = self.get_object()
+
+        try:
+            if (self.object.user == self.request.user) and not self.request.user.consent_given:
+                return redirect('consent')
+
+        except AttributeError:
+            # No linked user
+            pass
+
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
         context = super().get_context_data(**kwargs)
 
         context['map_markers'] = [get_map_data(self.object)]
@@ -166,8 +176,7 @@ class PersonUpdateView(permissions.UserIsLinkedPersonMixin, UpdateView):
 
         # Saving the form made self.object a PersonAnswerSet - so go up, then back down
         # Shouldn't be more than one after initial updates after migration
-        for answer_set in self.object.person.answer_sets.exclude(
-                pk=self.object.pk):
+        for answer_set in self.object.person.answer_sets.exclude(pk=self.object.pk):
             answer_set.replaced_timestamp = now_date
             answer_set.save()
 

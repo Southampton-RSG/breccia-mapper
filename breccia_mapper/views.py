@@ -6,7 +6,7 @@ These views don't represent any of the models in the apps.
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 from django.views.generic.edit import UpdateView
 
@@ -25,7 +25,13 @@ class ConsentTextView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = forms.ConsentForm
     template_name = 'consent.html'
-    success_url = reverse_lazy('index')
+
+    def get_success_url(self) -> str:
+        try:
+            return reverse('people:person.detail', kwargs={'pk': self.request.user.person.pk})
+
+        except AttributeError:
+            return reverse('index')
 
     def get_object(self, *args, **kwargs) -> User:
         return self.request.user
