@@ -126,8 +126,8 @@ function get_network() {
         name: 'cose',
         randomize: true,
         animate: false,
-        idealEdgeLength: function (edge) { return 64; },
-        nodeRepulsion: function (node) { return 8192; }
+        idealEdgeLength: function (edge) { return 40; },
+        nodeRepulsion: function (node) { return 1e7; }
     });
 
     layout.run();
