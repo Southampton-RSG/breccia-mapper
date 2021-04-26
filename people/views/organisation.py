@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from people import forms, models
+from .map import get_map_data
 
 
 class OrganisationCreateView(LoginRequiredMixin, CreateView):
@@ -124,11 +125,7 @@ class OrganisationDetailView(LoginRequiredMixin, DetailView):
 
         answer_set = self.object.current_answers
         context['answer_set'] = answer_set
-        context['map_markers'] = [{
-            'name': self.object.name,
-            'lat': getattr(answer_set, 'latitude', None),
-            'lng': getattr(answer_set, 'longitude', None),
-        }]
+        context['map_markers'] = [get_map_data(self.object)]
 
         context['question_answers'] = {}
         if answer_set is not None:
@@ -163,11 +160,7 @@ class OrganisationUpdateView(LoginRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
 
         answerset = self.object.current_answers
-        context['map_markers'] = [{
-            'name': self.object.name,
-            'lat': getattr(answerset, 'latitude', None),
-            'lng': getattr(answerset, 'longitude', None),
-        }]
+        context['map_markers'] = [get_map_data(self.object)]
 
         return context
 
