@@ -188,6 +188,10 @@ class PersonAnswerSet(AnswerSet):
     #: Longitude for displaying location on a map
     longitude = models.FloatField(blank=True, null=True)
 
+    @property
+    def location_set(self) -> bool:
+        return self.latitude and self.longitude
+
     def public_answers(self) -> models.QuerySet:
         """Get answers to questions which are public."""
         return self.question_answers.filter(question__answer_is_public=True)

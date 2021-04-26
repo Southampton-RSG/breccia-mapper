@@ -55,7 +55,9 @@
 
     <hr>
 
-    <div id="map" style="height: 800px; width: 100%"></div>
+    {% if person.current_answers.location_set %}
+        <div id="map" style="height: 800px; width: 100%"></div>
+        <hr>
+    {% endif %}
 
-    <hr>
 {% endblock %}

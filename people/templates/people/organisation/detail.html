@@ -58,7 +58,10 @@
 
     <hr>
 
-    <div id="map" style="height: 800px; width: 100%"></div>
+    {% if organisation.current_answers.location_set %}
+        <div id="map" style="height: 800px; width: 100%"></div>
+        <hr>
+    {% endif %}
 
     <hr>
 

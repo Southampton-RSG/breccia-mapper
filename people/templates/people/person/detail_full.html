@@ -79,9 +79,10 @@
 
     <hr>
 
-    <div id="map" style="height: 800px; width: 100%"></div>
-
-    <hr>
+    {% if person.current_answers.location_set %}
+        <div id="map" style="height: 800px; width: 100%"></div>
+        <hr>
+    {% endif %}
 
     {% include 'people/person/includes/relationships_full.html' %}
 
