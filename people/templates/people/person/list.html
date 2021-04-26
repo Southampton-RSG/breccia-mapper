@@ -37,17 +37,19 @@
                         <a class="btn btn-sm btn-info"
                            href="{% url 'people:person.detail' pk=person.pk %}">Profile</a>
 
-                        {% if person.pk in existing_relationships %}
-                            <a class="btn btn-sm btn-warning"
-                                style="width: 10rem"
-                                href="{% url 'people:person.relationship.create' person_pk=person.pk %}">Update Relationship
-                                </a>
+                        {% if person.user != request.user %}
+                            {% if person.pk in existing_relationships %}
+                                <a class="btn btn-sm btn-warning"
+                                    style="width: 10rem"
+                                    href="{% url 'people:person.relationship.create' person_pk=person.pk %}">Update Relationship
+                                    </a>
 
-                        {% else %}
-                            <a class="btn btn-sm btn-success"
-                                style="width: 10rem"
-                                href="{% url 'people:person.relationship.create' person_pk=person.pk %}">New Relationship
-                                </a>
+                            {% else %}
+                                <a class="btn btn-sm btn-success"
+                                    style="width: 10rem"
+                                    href="{% url 'people:person.relationship.create' person_pk=person.pk %}">New Relationship
+                                    </a>
+                            {% endif %}
                         {% endif %}
                     </td>
                 </tr>

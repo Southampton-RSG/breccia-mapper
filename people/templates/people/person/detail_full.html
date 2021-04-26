@@ -22,30 +22,32 @@
 
     <h1>{{ person.name }}</h1>
 
-    <hr>
+    {% if person.user != request.user %}
+        <hr>
 
-    <div class="row justify-content-md-center">
-        <div class="col-md-3">
+        <div class="row justify-content-md-center">
+            <div class="col-md-3">
+                {% if relationship %}
+                    <a class="btn btn-warning btn-block"
+                        href="{% url 'people:person.relationship.create' person_pk=person.pk %}">Update Relationship
+                        </a>
+
+                {% else %}
+                    <a class="btn btn-success btn-block"
+                        href="{% url 'people:person.relationship.create' person_pk=person.pk %}">New Relationship
+                        </a>
+                {% endif %}
+            </div>
+
             {% if relationship %}
-                <a class="btn btn-warning btn-block"
-                    href="{% url 'people:person.relationship.create' person_pk=person.pk %}">Update Relationship
-                    </a>
-
-            {% else %}
-                <a class="btn btn-success btn-block"
-                    href="{% url 'people:person.relationship.create' person_pk=person.pk %}">New Relationship
-                    </a>
+                <div class="col-md-3">
+                    <a class="btn btn-danger btn-block"
+                        href="{% url 'people:relationship.end' pk=relationship.pk %}">End Relationship
+                        </a>
+                </div>
             {% endif %}
         </div>
-
-        {% if relationship %}
-            <div class="col-md-3">
-                <a class="btn btn-danger btn-block"
-                    href="{% url 'people:relationship.end' pk=relationship.pk %}">End Relationship
-                    </a>
-            </div>
-        {% endif %}
-    </div>
+    {% endif %}
 
     <hr>
 
