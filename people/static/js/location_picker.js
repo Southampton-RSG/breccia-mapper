@@ -16,7 +16,7 @@ function selectLocation(event) {
                 strokeColor: marker_edge_colour,
                 strokeWeight: marker_edge_width,
                 strokeOpacity: marker_edge_alpha,
-                fillColor: marker_fill_colour,
+                fillColor: '#0099cc',
                 fillOpacity: marker_fill_alpha,
                 scale: marker_scale,
                 labelOrigin: new google.maps.Point(0, -marker_label_offset)
