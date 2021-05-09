@@ -39,6 +39,9 @@ class OrganisationQuestionChoice(QuestionChoice):
 
 class Organisation(models.Model):
     """Organisation to which a :class:`Person` belongs."""
+    class Meta:
+        ordering = ['name']
+
     name = models.CharField(max_length=255, blank=False, null=False)
 
     def __str__(self) -> str:
