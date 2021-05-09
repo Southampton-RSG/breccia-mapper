@@ -33,3 +33,8 @@
     </form>
 
 {% endblock %}
+
+{% block extra_script %}
+    {% load staticfiles %}
+    <script async defer src="{% static 'js/hide_free_text.js' %}"></script>
+{% endblock %}
