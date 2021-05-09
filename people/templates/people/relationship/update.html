@@ -10,7 +10,7 @@
                 <a href="{% url 'people:person.detail' pk=person.pk %}">{{ person }}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'people:relationship.detail' pk=relationship.pk %}">{{ relationship.target }}</a>
+                <a href="{{ relationship.get_absolute_url }}">{{ relationship.target }}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">Update Relationship</li>
         </ol>
