@@ -357,6 +357,9 @@ CONSTANCE_CONFIG = {
     'ORGANISATION_LIST_HELP': (
         '',
         'Help text to display at the top of the organisaton list.'),
+    'RELATIONSHIP_FORM_HELP': (
+        '',
+        'Help text to display at the top of relationship forms.'),
 }  # yapf: disable
 
 CONSTANCE_CONFIG_FIELDSETS = {
@@ -364,9 +367,15 @@ CONSTANCE_CONFIG_FIELDSETS = {
         'NOTICE_TEXT',
         'NOTICE_CLASS',
     ),
-    'Data Collection': ('CONSENT_TEXT', ),
-    'Help Text': ('PERSON_LIST_HELP', 'ORGANISATION_LIST_HELP'),
-}
+    'Data Collection': (
+        'CONSENT_TEXT',
+    ),
+    'Help Text': (
+        'PERSON_LIST_HELP',
+        'ORGANISATION_LIST_HELP',
+        'RELATIONSHIP_FORM_HELP',
+    ),
+}  # yapf: disable
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
