@@ -13,9 +13,17 @@ var network_style = [
             'text-valign': 'center',
             'text-wrap': 'wrap',
             'text-max-width': '90px',
-            'font-size': 12,
+            'font-size': '12rem',
             'background-color': 'data(nodeColor)',
             'shape': 'data(nodeShape)'
+        }
+    },
+    {
+        selector: 'node:selected',
+        style: {
+            'text-max-width': '300px',
+            'font-size': '40rem',
+            'z-index': 100,
         }
     },
     {
