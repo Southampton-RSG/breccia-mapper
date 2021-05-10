@@ -7,12 +7,12 @@ var network_style = [
         selector: 'node[name]',
         style: {
             label: 'data(name)',
-            width: '50px',
-            height: '50px',
+            width: '100px',
+            height: '100px',
             'text-halign': 'center',
             'text-valign': 'center',
             'text-wrap': 'wrap',
-            'text-max-width': '100px',
+            'text-max-width': '90px',
             'font-size': 12,
             'background-color': 'data(nodeColor)',
             'shape': 'data(nodeShape)'
@@ -58,7 +58,7 @@ function get_network() {
                 name: person.name,
                 kind: 'person',
                 nodeColor: '#0099cc',
-                nodeShape: 'elipse'
+                nodeShape: 'ellipse'
             }
         })
     }
@@ -89,6 +89,9 @@ function get_network() {
                     id: 'relationship-' + relationship.pk.toString(),
                     source: 'person-' + relationship.source.pk.toString(),
                     target: 'person-' + relationship.target.pk.toString(),
+                    lineColor: {
+                        'organisation-membership': '#669933'
+                    }[relationship.kind] || 'grey',
                     lineArrowShape: 'triangle'
                 }
             })
