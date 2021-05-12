@@ -2,6 +2,10 @@
 // Global reference to Cytoscape graph - needed for `save_image`
 var cy;
 
+var hide_organisations = false;
+var organisation_nodes;
+var organisation_edges;
+
 var network_style = [
     {
         selector: 'node[name]',
@@ -45,6 +49,21 @@ function save_image() {
 }
 
 /**
+ * Hide or restore organisations and relationships with them.
+ */
+function toggle_organisations() {
+    hide_organisations = !hide_organisations;
+
+    if (hide_organisations) {
+        organisation_nodes.remove();
+        organisation_edges.remove();
+    } else {
+        organisation_nodes.restore();
+        organisation_edges.restore();
+    }
+}
+
+/**
  * Populate a Cytoscape network from :class:`Person` and :class:`Relationship` JSON embedded in page.
  */
 function get_network() {
@@ -80,11 +99,13 @@ function get_network() {
             data: {
                 id: 'organisation-' + item.pk.toString(),
                 name: item.name,
+                kind: 'organisation',
                 nodeColor: '#669933',
                 nodeShape: 'rectangle'
             }
         })
     }
+    organisation_nodes = cy.nodes('[kind = "organisation"]');
 
     // Load relationships and add to graph
     var relationship_set = JSON.parse(document.getElementById('relationship-set-data').textContent);
@@ -97,6 +118,7 @@ function get_network() {
                     id: 'relationship-' + relationship.pk.toString(),
                     source: 'person-' + relationship.source.pk.toString(),
                     target: 'person-' + relationship.target.pk.toString(),
+                    kind: 'person',
                     lineColor: {
                         'organisation-membership': '#669933'
                     }[relationship.kind] || 'grey',
@@ -120,6 +142,7 @@ function get_network() {
                     id: 'organisation-relationship-' + relationship.pk.toString(),
                     source: 'person-' + relationship.source.pk.toString(),
                     target: 'organisation-' + relationship.target.pk.toString(),
+                    kind: 'organisation',
                     lineColor: {
                         'organisation-membership': '#669933'
                     }[relationship.kind] || 'black',
@@ -131,6 +154,7 @@ function get_network() {
             // This is probably because it's been filtered out
         }
     }
+    organisation_edges = cy.edges('[kind = "organisation"]');
 
     // Optimise graph layout
     var layout = cy.layout({
