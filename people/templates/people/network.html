@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block extra_head %}
+    {# There's no 'form' so need to add this to load CSS / JS #}
+    {{ relationship_form.media.css }}
+
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/cytoscape-panzoom/2.5.3/cytoscape.js-panzoom.min.css"
         integrity="sha512-MJrzp+ZGajx6AWCCCmjBWo0rPFavM1aBghVUSVVa0uYv8THryrtEygjj5r2rUg/ms33SkEC5xJ3E4ycCmxWdrw=="
@@ -93,6 +96,8 @@
 {% endblock %}
 
 {% block extra_script %}
+    {{ relationship_form.media.js }}
+
     <!--
     Embedding graph data in page as JSON allows filtering to be performed entirely on the backend when we send a POST.
     -->
@@ -106,7 +111,7 @@
 
     <script type="application/javascript">
         function reset_filters() {
-            $('select').prop('selectedIndex', -1);
+            $('select').val(null).trigger('change');
         }
     </script>
 
