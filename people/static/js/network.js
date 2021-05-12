@@ -6,11 +6,21 @@ var hide_organisations = false;
 var organisation_nodes;
 var organisation_edges;
 
+var anonymise_people = false;
+var anonymise_organisations = false;
+
 var network_style = [
     {
         selector: 'node[name]',
         style: {
-            label: 'data(name)',
+            label: function (ele) {
+                var anonymise = anonymise_people;
+                if (ele.data('kind') == 'organisation') {
+                    anonymise = anonymise_organisations;
+                }
+
+                return anonymise ? ele.data('id') : ele.data('name')
+            },
             width: '100px',
             height: '100px',
             'text-halign': 'center',
@@ -61,6 +71,22 @@ function toggle_organisations() {
         organisation_nodes.restore();
         organisation_edges.restore();
     }
+}
+
+/**
+ * Toggle person node labels between names and ids.
+ */
+function toggle_anonymise_people() {
+    anonymise_people = !anonymise_people
+    cy.elements().remove().restore();
+}
+
+/**
+ * Toggle organisation node labels between names and ids.
+ */
+function toggle_anonymise_organisations() {
+    anonymise_organisations = !anonymise_organisations
+    cy.elements().remove().restore();
 }
 
 /**
