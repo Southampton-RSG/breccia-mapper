@@ -146,7 +146,7 @@ function get_network() {
                     lineColor: {
                         'organisation-membership': '#669933'
                     }[relationship.kind] || 'black',
-                    lineArrowShape: 'none'
+                    lineArrowShape: 'triangle'
                 }
             })
         } catch (exc) {
