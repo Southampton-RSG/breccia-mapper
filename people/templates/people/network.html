@@ -66,7 +66,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <input class="btn btn-block btn-danger" type="button" value="Reset Filters" onClick="this.form.reset()" />
+                    <input class="btn btn-block btn-danger" type="button" value="Reset Filters" onClick="reset_filters();" />
                 </div>
             </div>
         {% endbuttons %}
@@ -103,6 +103,12 @@
     {{ relationship_set|json_script:'relationship-set-data' }}
 
     {{ organisation_relationship_set|json_script:'organisation-relationship-set-data' }}
+
+    <script type="application/javascript">
+        function reset_filters() {
+            $('select').prop('selectedIndex', -1);
+        }
+    </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.18.2/cytoscape.min.js"
             integrity="sha512-CBGCXtszkG5rYlQSTNUzk54/731Kz28WPk2uT1GCPCqgfVRJ2v514vzzf16HuGX9WVtE7JLqRuAERNAzFZ9Hpw=="
