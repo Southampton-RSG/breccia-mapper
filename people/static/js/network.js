@@ -100,6 +100,9 @@ function get_network() {
         style: network_style
     });
 
+    // Add pan + zoom widget with cytoscape-panzoom
+    cy.panzoom();
+
     // Load people and add to graph
     var person_set = JSON.parse(document.getElementById('person-set-data').textContent);
 
