@@ -1,7 +1,7 @@
 import csv
 import typing
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.views.generic.list import BaseListView
@@ -11,7 +11,12 @@ class QuotedCsv(csv.excel):
     quoting = csv.QUOTE_NONNUMERIC
 
 
-class CsvExportView(LoginRequiredMixin, BaseListView):
+class UserIsStaffMixin(UserPassesTestMixin):
+    def test_func(self) -> typing.Optional[bool]:
+        return self.request.user.is_staff
+
+
+class CsvExportView(UserIsStaffMixin, BaseListView):
     model = None
     serializer_class = None
 
@@ -29,5 +34,5 @@ class CsvExportView(LoginRequiredMixin, BaseListView):
         return response
 
 
-class ExportListView(LoginRequiredMixin, TemplateView):
+class ExportListView(UserIsStaffMixin, TemplateView):
     template_name = 'export/export.html'
