@@ -26,6 +26,22 @@ urlpatterns = [
          views.people.RelationshipAnswerSetExportView.as_view(),
          name='relationship-answer-set'),
 
+    path('export/organisation',
+         views.people.OrganisationExportView.as_view(),
+         name='organisation'),
+
+    path('export/organisation-answer-sets',
+         views.people.OrganisationAnswerSetExportView.as_view(),
+         name='organisation-answer-set'),
+
+    path('export/organisation-relationships',
+         views.people.OrganisationRelationshipExportView.as_view(),
+         name='organisation-relationship'),
+
+    path('export/organisation-relationship-answer-sets',
+         views.people.OrganisationRelationshipAnswerSetExportView.as_view(),
+         name='organisation-relationship-answer-set'),
+
     path('export/activities',
          views.activities.ActivityExportView.as_view(),
          name='activity'),

@@ -87,3 +87,55 @@ class RelationshipAnswerSetSerializer(AnswerSetSerializer):
             'timestamp',
             'replaced_timestamp',
         ]
+
+
+class OrganisationSerializer(base.FlattenedModelSerializer):
+    class Meta:
+        model = models.Organisation
+        fields = [
+            'id',
+            'name',
+        ]
+
+
+class OrganisationAnswerSetSerializer(AnswerSetSerializer):
+    question_model = models.OrganisationQuestion
+    organisation = OrganisationSerializer()
+
+    class Meta:
+        model = models.OrganisationAnswerSet
+        fields = [
+            'id',
+            'organisation',
+            'timestamp',
+            'replaced_timestamp',
+            'latitude',
+            'longitude',
+        ]
+
+
+class OrganisationRelationshipSerializer(base.FlattenedModelSerializer):
+    source = OrganisationSerializer()
+    target = OrganisationSerializer()
+
+    class Meta:
+        model = models.OrganisationRelationship
+        fields = [
+            'id',
+            'source',
+            'target',
+        ]
+
+
+class OrganisationRelationshipAnswerSetSerializer(AnswerSetSerializer):
+    question_model = models.OrganisationRelationshipQuestion
+    relationship = OrganisationRelationshipSerializer()
+
+    class Meta:
+        model = models.OrganisationRelationshipAnswerSet
+        fields = [
+            'id',
+            'relationship',
+            'timestamp',
+            'replaced_timestamp',
+        ]
