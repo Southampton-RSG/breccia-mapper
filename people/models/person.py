@@ -123,6 +123,14 @@ class Person(models.Model):
     def current_answers(self) -> 'PersonAnswerSet':
         return self.answer_sets.last()
 
+    @property
+    def organisation(self) -> Organisation:
+        return self.current_answers.organisation
+
+    @property
+    def country_of_residence(self):
+        return self.current_answers.country_of_residence
+
     def get_absolute_url(self):
         return reverse('people:person.detail', kwargs={'pk': self.pk})
 

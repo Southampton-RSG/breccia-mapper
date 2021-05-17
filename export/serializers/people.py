@@ -43,6 +43,8 @@ class PersonSerializer(base.FlattenedModelSerializer):
         fields = [
             'id',
             'name',
+            'organisation',
+            'country_of_residence',
         ]
 
 
