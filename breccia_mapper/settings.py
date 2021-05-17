@@ -104,7 +104,6 @@ The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABAS
   Google Maps API key to display maps of people's locations
 """
 
-import collections
 import logging
 import logging.config
 import pathlib

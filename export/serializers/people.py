@@ -5,6 +5,38 @@ from people import models
 from . import base
 
 
+def underscore(slug: str) -> str:
+    """Replace hyphens with underscores in text."""
+    return slug.replace('-', '_')
+
+
+def underscore_dict_keys(dict_: typing.Mapping[str, typing.Any]):
+    return {underscore(key): value for key, value in dict_.items()}
+
+
+class AnswerSetSerializer(base.FlattenedModelSerializer):
+    question_model = None
+
+    @property
+    def column_headers(self) -> typing.List[str]:
+        headers = super().column_headers
+
+        # Add relationship questions to columns
+        for question in self.question_model.objects.all():
+            headers.append(underscore(question.slug))
+
+        return headers
+
+    def to_representation(self, instance: models.question.AnswerSet):
+        rep = super().to_representation(instance)
+
+        rep.update(
+            underscore_dict_keys(instance.build_question_answers(use_slugs=True, show_all=True))
+        )
+
+        return rep
+
+
 class PersonSerializer(base.FlattenedModelSerializer):
     class Meta:
         model = models.Person
@@ -14,7 +46,8 @@ class PersonSerializer(base.FlattenedModelSerializer):
         ]
 
 
-class PersonAnswerSetSerializer(base.FlattenedModelSerializer):
+class PersonAnswerSetSerializer(AnswerSetSerializer):
+    question_model = models.PersonQuestion
     person = PersonSerializer()
 
     class Meta:
@@ -24,37 +57,9 @@ class PersonAnswerSetSerializer(base.FlattenedModelSerializer):
             'person',
             'timestamp',
             'replaced_timestamp',
-            'nationality',
-            'country_of_residence',
-            'organisation',
-            'organisation_started_date',
-            'job_title',
             'latitude',
             'longitude',
         ]
-
-    @property
-    def column_headers(self) -> typing.List[str]:
-        headers = super().column_headers
-
-        # Add questions to columns
-        for question in models.PersonQuestion.objects.all():
-            headers.append(underscore(question.slug))
-
-        return headers
-
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-
-        try:
-            # Add relationship question answers to data
-            for answer in instance.question_answers.all():
-                rep[underscore(answer.question.slug)] = underscore(answer.slug)
-
-        except AttributeError:
-            pass
-
-        return rep
 
 
 class RelationshipSerializer(base.FlattenedModelSerializer):
@@ -70,12 +75,8 @@ class RelationshipSerializer(base.FlattenedModelSerializer):
         ]
 
 
-def underscore(slug: str) -> str:
-    """Replace hyphens with underscores in text."""
-    return slug.replace('-', '_')
-
-
-class RelationshipAnswerSetSerializer(base.FlattenedModelSerializer):
+class RelationshipAnswerSetSerializer(AnswerSetSerializer):
+    question_model = models.RelationshipQuestion
     relationship = RelationshipSerializer()
 
     class Meta:
@@ -86,26 +87,3 @@ class RelationshipAnswerSetSerializer(base.FlattenedModelSerializer):
             'timestamp',
             'replaced_timestamp',
         ]
-
-    @property
-    def column_headers(self) -> typing.List[str]:
-        headers = super().column_headers
-
-        # Add relationship questions to columns
-        for question in models.RelationshipQuestion.objects.all():
-            headers.append(underscore(question.slug))
-
-        return headers
-
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-
-        try:
-            # Add relationship question answers to data
-            for answer in instance.question_answers.all():
-                rep[underscore(answer.question.slug)] = underscore(answer.slug)
-
-        except AttributeError:
-            pass
-
-        return rep

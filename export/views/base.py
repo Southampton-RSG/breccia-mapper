@@ -7,6 +7,10 @@ from django.views.generic import TemplateView
 from django.views.generic.list import BaseListView
 
 
+class QuotedCsv(csv.excel):
+    quoting = csv.QUOTE_NONNUMERIC
+
+
 class CsvExportView(LoginRequiredMixin, BaseListView):
     model = None
     serializer_class = None
@@ -18,10 +22,10 @@ class CsvExportView(LoginRequiredMixin, BaseListView):
         # Force ordering by PK - though this should be default anyway
         serializer = self.serializer_class(self.get_queryset().order_by('pk'), many=True)
 
-        writer = csv.DictWriter(response, fieldnames=serializer.child.column_headers)
+        writer = csv.DictWriter(response, dialect=QuotedCsv, fieldnames=serializer.child.column_headers)
         writer.writeheader()
         writer.writerows(serializer.data)
-        
+
         return response
 
 

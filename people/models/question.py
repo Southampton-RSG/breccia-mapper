@@ -166,27 +166,34 @@ class AnswerSet(models.Model):
     def is_current(self) -> bool:
         return self.replaced_timestamp is None
 
-    def build_question_answers(self, show_all: bool = False) -> typing.Dict[str, str]:
+    def build_question_answers(self,
+                               show_all: bool = False,
+                               use_slugs: bool = False) -> typing.Dict[str, str]:
         """Collect answers to dynamic questions and join with commas."""
         questions = self.question_model.objects.all()
+
         if not show_all:
             questions = questions.filter(answer_is_public=True)
 
         question_answers = {}
         try:
+            answerset_answers = list(self.question_answers.order_by().values('text', 'question_id'))
+
             for question in questions:
+                key = question.slug if use_slugs else question.text
+
                 if question.hardcoded_field:
                     answer = getattr(self, question.hardcoded_field)
                     if isinstance(answer, list):
                         answer = ', '.join(map(str, answer))
 
-                    question_answers[question.text] = answer
-
                 else:
-                    answers = self.question_answers.filter(
-                        question=question)
-                    question_answers[question.text] = ', '.join(
-                        map(str, answers))
+                    answer = ', '.join(
+                        answer['text'] for answer in answerset_answers
+                        if answer['question_id'] == question.id
+                    )
+
+                question_answers[key] = answer
 
         except AttributeError:
             # No AnswerSet yet
