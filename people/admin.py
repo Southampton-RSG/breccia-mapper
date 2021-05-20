@@ -79,7 +79,7 @@ class RelationshipQuestionAdmin(admin.ModelAdmin):
 
 @admin.register(models.Relationship)
 class RelationshipAdmin(admin.ModelAdmin):
-    pass
+    ordering = ['source__name', 'target__name']
 
 
 class OrganisationRelationshipQuestionChoiceInline(admin.TabularInline):
@@ -95,4 +95,4 @@ class OrganisationRelationshipQuestionAdmin(admin.ModelAdmin):
 
 @admin.register(models.OrganisationRelationship)
 class OrganisationRelationshipAdmin(admin.ModelAdmin):
-    pass
+    ordering = ['source__name', 'target__name']
