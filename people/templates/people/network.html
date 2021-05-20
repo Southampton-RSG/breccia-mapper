@@ -2,6 +2,7 @@
 
 {% block extra_head %}
     {# There's no 'form' so need to add this to load CSS / JS #}
+    {{ date_form.media.css }}
     {{ relationship_form.media.css }}
 
     <link rel="stylesheet"
@@ -17,85 +18,54 @@
         </ol>
     </nav>
 
-    <h1>Network View</h1>
-
-    <hr>
-
-    <form class="form"
-          method="POST">
-        {% csrf_token %}
-        {% load bootstrap4 %}
-
-        <div class="row">
-            <div class="col-md-4">
-                <h3>Filter Relationships</h3>
-                {% bootstrap_form relationship_form exclude='date' %}
-            </div>
-
-            <div class="col-md-4">
-                <h3>Filter People</h3>
-                {% bootstrap_form person_form exclude='date' %}
-            </div>
-
-            <div class="col-md-4">
-                <h3>Filter Organisations</h3>
-                {% bootstrap_form organisation_form exclude='date' %}
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4">
-                <hr>
-                {% bootstrap_field relationship_form.date %}
-            </div>
-
-            <div class="col-md-4">
-                <hr>
-                {% bootstrap_field person_form.date %}
-            </div>
-
-            <div class="col-md-4">
-                <hr>
-                {% bootstrap_field organisation_form.date %}
-            </div>
-        </div>
-
-        <hr>
-
-        {% buttons %}
-            <div class="row">
-                <div class="col-md-6">
-                    <button class="btn btn-block btn-success" type="submit">Filter</button>
-                </div>
-
-                <div class="col-md-6">
-                    <input class="btn btn-block btn-danger" type="button" value="Reset Filters" onClick="reset_filters();" />
-                </div>
-            </div>
-        {% endbuttons %}
-    </form>
-
     <div class="row">
         <div class="col-md-4">
-            <button class="btn btn-block btn-info mb-3" onclick="save_image();">Save Image</button>
+            <form class="form" method="POST">
+                {% csrf_token %}
+                {% load bootstrap4 %}
+
+                {% buttons %}
+                    <input class="btn btn-block btn-danger mb-3" type="button" value="Reset Filters" onClick="reset_filters();" />
+                    <button class="btn btn-block btn-success mb-3" type="submit">Filter</button>
+                {% endbuttons %}
+
+                {% bootstrap_form date_form %}
+                <hr>
+
+                <h3>Filter Relationships</h3>
+                {% bootstrap_form relationship_form %}
+                <hr>
+
+                <h3>Filter People</h3>
+                {% bootstrap_form person_form %}
+                <hr>
+
+                <h3>Filter Organisations</h3>
+                {% bootstrap_form organisation_form %}
+            </form>
         </div>
 
-        <div class="col-md-4">
-            <button class="btn btn-block btn-info mb-3" onclick="toggle_organisations();">Toggle Organisations</button>
-        </div>
+        <div class="col-md-8" style="display: flex; flex-direction: column;">
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-block btn-info mb-3" onclick="save_image();">Save Image</button>
+                    <button class="btn btn-block btn-info mb-3" onclick="toggle_anonymise_people();">Anonymise People</button>
+                </div>
 
-        <div class="col-md-4">
-            <button class="btn btn-block btn-info mb-3" onclick="toggle_anonymise_people();">Toggle Anonymise People</button>
-            <button class="btn btn-block btn-info mb-3" onclick="toggle_anonymise_organisations();">Toggle Anonymise Organisations</button>
+                <div class="col-md-6">
+                    <button class="btn btn-block btn-info mb-3" onclick="toggle_organisations();">Hide Organisations</button>
+                    <button class="btn btn-block btn-info mb-3" onclick="toggle_anonymise_organisations();">Anonymise Organisations</button>
+                </div>
+            </div>
+
+            <div id="cy" class="mb-2"
+                 style="width: 100%; min-height: 1000px; border: 2px solid black; z-index: 999"></div>
         </div>
     </div>
-
-    <div id="cy"
-         class="mb-2"
-         style="width: 100%; min-height: 1000px; flex-grow: 1; border: 2px solid black; z-index: 999"></div>
 {% endblock %}
 
 {% block extra_script %}
+    {{ date_form.media.js }}
     {{ relationship_form.media.js }}
 
     <!--

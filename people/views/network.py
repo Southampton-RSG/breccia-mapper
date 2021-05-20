@@ -3,7 +3,6 @@ Views for displaying networks of :class:`People` and :class:`Relationship`s.
 """
 
 import logging
-import typing
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, QuerySet
@@ -18,12 +17,11 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 def filter_by_form_answers(queryset: QuerySet, answerset_queryset: QuerySet, relationship_key: str):
     """Build a filter to select based on form responses."""
-    def inner(form):
+    def inner(form, at_date=None):
         # Filter on timestamp__date doesn't seem to work on MySQL
         # To compare datetimes we need at_date to be midnight at
         # the *end* of the day in question - so add one day
 
-        at_date = form.cleaned_data['date']
         if not at_date:
             at_date = timezone.now().date()
         at_date += timezone.timedelta(days=1)
@@ -77,6 +75,7 @@ class NetworkView(LoginRequiredMixin, TemplateView):
             'relationship': forms.NetworkRelationshipFilterForm(**form_kwargs),
             'person': forms.NetworkPersonFilterForm(**form_kwargs),
             'organisation': forms.NetworkOrganisationFilterForm(**form_kwargs),
+            'date': forms.DateForm(**form_kwargs),
         }
 
     def get_form_kwargs(self):
@@ -92,29 +91,31 @@ class NetworkView(LoginRequiredMixin, TemplateView):
         return kwargs
 
     def get_context_data(self, **kwargs):
-        """
-        Add filtered QuerySets of :class:`Person` and :class:`Relationship` to the context.
-        """
+        """Add filtered QuerySets of :class:`Person` and :class:`Relationship` to the context."""
         context = super().get_context_data(**kwargs)
+        context['full_width_page'] = True
 
         all_forms = self.get_forms()
         context['relationship_form'] = all_forms['relationship']
         context['person_form'] = all_forms['person']
         context['organisation_form'] = all_forms['organisation']
+        context['date_form'] = all_forms['date']
 
         if not all(map(lambda f: f.is_valid(), all_forms.values())):
             return context
 
+        date = all_forms['date'].cleaned_data['date']
+
         context['person_set'] = serializers.PersonSerializer(
-            filter_people(all_forms['person']), many=True
+            filter_people(all_forms['person'], at_date=date), many=True
         ).data
 
         context['organisation_set'] = serializers.OrganisationSerializer(
-            filter_organisations(all_forms['organisation']), many=True
+            filter_organisations(all_forms['organisation'], at_date=date), many=True
         ).data
 
         context['relationship_set'] = serializers.RelationshipSerializer(
-            filter_relationships(all_forms['relationship']), many=True
+            filter_relationships(all_forms['relationship'], at_date=date), many=True
         ).data
 
         context['organisation_relationship_set'] = serializers.OrganisationRelationshipSerializer(

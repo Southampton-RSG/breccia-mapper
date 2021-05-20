@@ -175,7 +175,7 @@
 
         {% block before_content %}{% endblock %}
 
-        <main class="container">
+        <main class="{{ full_width_page|yesno:'container-fluid,container' }}">
             {# Display Django messages as Bootstrap alerts #}
             {% bootstrap_messages %}
 

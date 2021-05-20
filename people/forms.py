@@ -42,20 +42,22 @@ class DynamicAnswerSetBase(forms.Form):
     question_model: typing.Type[models.Question]
     answer_model: typing.Type[models.QuestionChoice]
     question_prefix: str = ''
+    as_filters: bool = False
 
-    def __init__(self, *args, as_filters: bool = False, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         field_order = []
 
         for question in self.question_model.objects.all():
-            if as_filters and not question.answer_is_public:
+            if self.as_filters and not question.answer_is_public:
                 continue
 
-            # Placeholder question for sorting hardcoded questions
-            if (question.is_hardcoded
-                    and (as_filters or
-                         (question.hardcoded_field in self.Meta.fields))):
+            # Is a placeholder question just for sorting hardcoded questions?
+            if (
+                question.is_hardcoded
+                and (self.as_filters or (question.hardcoded_field in self.Meta.fields))
+            ):
                 field_order.append(question.hardcoded_field)
                 continue
 
@@ -70,7 +72,7 @@ class DynamicAnswerSetBase(forms.Form):
 
             # If being used as a filter - do we have alternate text?
             field_label = question.text
-            if as_filters and question.filter_text:
+            if self.as_filters and question.filter_text:
                 field_label = question.filter_text
 
             field = field_class(
@@ -80,11 +82,11 @@ class DynamicAnswerSetBase(forms.Form):
                 required=(self.field_required
                           and not question.allow_free_text),
                 initial=self.initial.get(field_name, None),
-                help_text=question.help_text if not as_filters else '')
+                help_text=question.help_text if not self.as_filters else '')
             self.fields[field_name] = field
             field_order.append(field_name)
 
-            if question.allow_free_text and not as_filters:
+            if question.allow_free_text and not self.as_filters:
                 free_field = forms.CharField(label=f'{question} free text',
                                              required=False)
                 self.fields[f'{field_name}_free'] = free_field
@@ -312,58 +314,38 @@ class OrganisationRelationshipAnswerSetForm(forms.ModelForm,
         return self.instance
 
 
-class NetworkRelationshipFilterForm(DynamicAnswerSetBase):
-    """Form to provide filtering on the network view."""
+class DateForm(forms.Form):
+    date = forms.DateField(
+        required=False,
+        widget=DatePickerInput(format='%Y-%m-%d'),
+        help_text='Show relationships as they were on this date'
+    )
+
+
+class FilterForm(DynamicAnswerSetBase):
+    """Filter objects by answerset responses."""
     field_class = forms.ModelMultipleChoiceField
     field_widget = Select2MultipleWidget
     field_required = False
+    as_filters = True
+
+
+class NetworkRelationshipFilterForm(FilterForm):
+    """Filer relationships by answerset responses."""
     question_model = models.RelationshipQuestion
     answer_model = models.RelationshipQuestionChoice
     question_prefix = 'relationship_'
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, as_filters=True, **kwargs)
 
-        # Add date field to select relationships at a particular point in time
-        self.fields['date'] = forms.DateField(
-            required=False,
-            widget=DatePickerInput(format='%Y-%m-%d'),
-            help_text='Show relationships as they were on this date')
-
-
-class NetworkPersonFilterForm(DynamicAnswerSetBase):
-    """Form to provide filtering on the network view."""
-    field_class = forms.ModelMultipleChoiceField
-    field_widget = Select2MultipleWidget
-    field_required = False
+class NetworkPersonFilterForm(FilterForm):
+    """Filer people by answerset responses."""
     question_model = models.PersonQuestion
     answer_model = models.PersonQuestionChoice
     question_prefix = 'person_'
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, as_filters=True, **kwargs)
 
-        # Add date field to select relationships at a particular point in time
-        self.fields['date'] = forms.DateField(
-            required=False,
-            widget=DatePickerInput(format='%Y-%m-%d'),
-            help_text='Show relationships as they were on this date')
-
-
-class NetworkOrganisationFilterForm(DynamicAnswerSetBase):
-    """Form to provide filtering on the network view."""
-    field_class = forms.ModelMultipleChoiceField
-    field_widget = Select2MultipleWidget
-    field_required = False
+class NetworkOrganisationFilterForm(FilterForm):
+    """Filer organisations by answerset responses."""
     question_model = models.OrganisationQuestion
     answer_model = models.OrganisationQuestionChoice
     question_prefix = 'organisation_'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, as_filters=True, **kwargs)
-
-        # Add date field to select relationships at a particular point in time
-        self.fields['date'] = forms.DateField(
-            required=False,
-            widget=DatePickerInput(format='%Y-%m-%d'),
-            help_text='Show relationships as they were on this date')

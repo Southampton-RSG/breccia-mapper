@@ -195,6 +195,10 @@ function get_network() {
     });
 
     layout.run();
+
+    setTimeout(function () {
+        document.getElementById('cy').style.height = '100%';
+    }, 1000)
 }
 
 $(window).on('load', get_network());
