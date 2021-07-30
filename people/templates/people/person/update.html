@@ -48,6 +48,8 @@
     <input id="location-search" class="controls" type="text" placeholder="Location Search"/>
     <div id="map" style="height: 800px; width: 100%"></div>
 
-    <hr>
+{% endblock %}
 
+{% block extra_script %}
+    <script async defer src="{% static 'js/hide_free_text.js' %}"></script>
 {% endblock %}

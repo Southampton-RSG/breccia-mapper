@@ -11,14 +11,13 @@ from django_countries.fields import CountryField
 from django_settings_export import settings_export
 from post_office import mail
 
+from .organisation import Organisation
 from .question import AnswerSet, Question, QuestionChoice
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 __all__ = [
     'User',
-    'Organisation',
-    'Theme',
     'PersonQuestion',
     'PersonQuestionChoice',
     'Person',
@@ -31,6 +30,9 @@ class User(AbstractUser):
     Custom user model in case we need to make changes later.
     """
     email = models.EmailField(_('email address'), blank=False, null=False)
+
+    #: Have they given consent to collect and store their data?
+    consent_given = models.BooleanField(default=False)
 
     def has_person(self) -> bool:
         """
@@ -63,33 +65,6 @@ class User(AbstractUser):
                 self.username)
 
 
-class Organisation(models.Model):
-    """Organisation to which a :class:`Person` belongs."""
-    name = models.CharField(max_length=255, blank=False, null=False)
-
-    #: Latitude for displaying location on a map
-    latitude = models.FloatField(blank=True, null=True)
-
-    #: Longitude for displaying location on a map
-    longitude = models.FloatField(blank=True, null=True)
-
-    def __str__(self) -> str:
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse('people:organisation.detail', kwargs={'pk': self.pk})
-
-
-class Theme(models.Model):
-    """
-    Project theme within which a :class:`Person` works.
-    """
-    name = models.CharField(max_length=255, blank=False, null=False)
-
-    def __str__(self) -> str:
-        return self.name
-
-
 class PersonQuestion(Question):
     """Question which may be asked about a person."""
 
@@ -110,6 +85,9 @@ class Person(models.Model):
     """
     class Meta:
         verbose_name_plural = 'people'
+        ordering = [
+            'name',
+        ]
 
     #: User account belonging to this person
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
@@ -129,6 +107,13 @@ class Person(models.Model):
         through_fields=('source', 'target'),
         symmetrical=False)
 
+    #: Organisations with whom this person has relationship - via intermediate :class:`OrganisationRelationship` model
+    organisation_relationship_targets = models.ManyToManyField(
+        Organisation,
+        related_name='relationship_sources',
+        through='OrganisationRelationship',
+        through_fields=('source', 'target'))
+
     @property
     def relationships(self):
         return self.relationships_as_source.all().union(
@@ -137,6 +122,14 @@ class Person(models.Model):
     @property
     def current_answers(self) -> 'PersonAnswerSet':
         return self.answer_sets.last()
+
+    @property
+    def organisation(self) -> Organisation:
+        return self.current_answers.organisation
+
+    @property
+    def country_of_residence(self):
+        return self.current_answers.country_of_residence
 
     def get_absolute_url(self):
         return reverse('people:person.detail', kwargs={'pk': self.pk})
@@ -147,6 +140,8 @@ class Person(models.Model):
 
 class PersonAnswerSet(AnswerSet):
     """The answers to the person questions at a particular point in time."""
+    question_model = PersonQuestion
+
     #: Person to which this answer set belongs
     person = models.ForeignKey(Person,
                                on_delete=models.CASCADE,
@@ -160,7 +155,7 @@ class PersonAnswerSet(AnswerSet):
     ##################
     # Static questions
 
-    nationality = CountryField(blank=True, null=True)
+    nationality = CountryField(multiple=True, blank=True)
 
     country_of_residence = CountryField(blank=True, null=True)
 
@@ -175,14 +170,25 @@ class PersonAnswerSet(AnswerSet):
     organisation_started_date = models.DateField(
         'Date started at this organisation', blank=False, null=True)
 
+    #: When did this person join the project?
+    project_started_date = models.DateField(blank=False, null=True)
+
     #: Job title this person holds within their organisation
-    job_title = models.CharField(max_length=255, blank=True, null=False)
+    job_title = models.CharField(help_text='Contractual job title',
+                                 max_length=255,
+                                 blank=True,
+                                 null=False)
 
-    #: Discipline(s) within which this person works
-    disciplines = models.CharField(max_length=255, blank=True, null=True)
+    disciplinary_background = models.CharField(
+        help_text='Research discipline(s) you feel most affiliated with',
+        max_length=255,
+        blank=True,
+        null=False)
 
-    #: Project themes within this person works
-    themes = models.ManyToManyField(Theme, related_name='people', blank=True)
+    #: Organisations worked with which aren't in the Organisations list
+    external_organisations = models.CharField(max_length=1023,
+                                              blank=True,
+                                              null=False)
 
     #: Latitude for displaying location on a map
     latitude = models.FloatField(blank=True, null=True)
@@ -190,15 +196,22 @@ class PersonAnswerSet(AnswerSet):
     #: Longitude for displaying location on a map
     longitude = models.FloatField(blank=True, null=True)
 
+    @property
+    def location_set(self) -> bool:
+        return self.latitude and self.longitude
+
+    def public_answers(self) -> models.QuerySet:
+        """Get answers to questions which are public."""
+        return self.question_answers.filter(question__answer_is_public=True)
+
     def as_dict(self):
         """Get the answers from this set as a dictionary for use in Form.initial."""
         exclude_fields = {
             'id',
-            'timestemp',
+            'timestamp',
             'replaced_timestamp',
             'person_id',
             'question_answers',
-            'themes',
         }
 
         def field_value_repr(field):
@@ -215,25 +228,14 @@ class PersonAnswerSet(AnswerSet):
 
         answers = {
             # Foreign key fields have _id at end in model _meta but don't in forms
-            field.attname.rstrip('_id'): field_value_repr(field)
+            # str.rstrip strips a set of characters, not a suffix, so doesn't work here
+            field.attname.rsplit('_id')[0]: field_value_repr(field)
             for field in self._meta.get_fields()
             if field.attname not in exclude_fields
         }
 
-        for answer in self.question_answers.all():
-            question = answer.question
-            field_name = f'question_{question.pk}'
-
-            if question.is_multiple_choice:
-                if field_name not in answers:
-                    answers[field_name] = []
-
-                answers[field_name].append(answer.pk)
-
-            else:
-                answers[field_name] = answer.pk
-
-        return answers
+        # Add answers to dynamic questions
+        return super().as_dict(answers=answers)
 
     def get_absolute_url(self):
         return self.person.get_absolute_url()

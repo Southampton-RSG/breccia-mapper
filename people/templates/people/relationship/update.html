@@ -10,13 +10,21 @@
                 <a href="{% url 'people:person.detail' pk=person.pk %}">{{ person }}</a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'people:relationship.detail' pk=relationship.pk %}">{{ relationship.target }}</a>
+                <a href="{{ relationship.get_absolute_url }}">{{ relationship.target }}</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">Update Relationship</li>
         </ol>
     </nav>
 
     <h1>Update Relationship</h1>
+
+    {% with config.RELATIONSHIP_FORM_HELP as help_text %}
+        {% if help_text %}
+            <div class="alert alert-info mt-3 pb-0">
+                {{ help_text|linebreaks }}
+            </div>
+        {% endif %}
+    {% endwith %}
 
     <hr>
 
@@ -32,4 +40,9 @@
         {% endbuttons %}
     </form>
 
+{% endblock %}
+
+{% block extra_script %}
+    {% load staticfiles %}
+    <script async defer src="{% static 'js/hide_free_text.js' %}"></script>
 {% endblock %}

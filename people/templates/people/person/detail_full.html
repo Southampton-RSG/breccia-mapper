@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+    {{ map_markers|json_script:'map-markers' }}
+
+    {% load staticfiles %}
+    <script src="{% static 'js/map.js' %}"></script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ settings.GOOGLE_MAPS_API_KEY }}&callback=initMap"
+                        type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'people:person.list' %}">People</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ object }}</li>
+        </ol>
+    </nav>
+
+    <h1>{{ person.name }}</h1>
+
+    {% if person.user != request.user %}
+        <hr>
+
+        <div class="row justify-content-md-center">
+            <div class="col-md-3">
+                {% if relationship %}
+                    <a class="btn btn-warning btn-block"
+                        href="{% url 'people:person.relationship.create' person_pk=person.pk %}">Update Relationship
+                        </a>
+
+                {% else %}
+                    <a class="btn btn-success btn-block"
+                        href="{% url 'people:person.relationship.create' person_pk=person.pk %}">Add Relationship
+                        </a>
+                {% endif %}
+            </div>
+
+            {% if relationship %}
+                <div class="col-md-3">
+                    <a class="btn btn-danger btn-block"
+                        href="{% url 'people:relationship.end' pk=relationship.pk %}">End Relationship
+                        </a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <hr>
+
+    {% if person.user != request.user and request.user.is_superuser %}
+        <div class="alert alert-warning">
+            <strong>NB:</strong> You are able to see the details of this person because you are an admin.
+            Regular users are not able to see this information for people other than themselves.
+        </div>
+    {% endif %}
+
+
+    {% include 'people/includes/answer_set.html' %}
+
+    <a class="btn btn-success"
+        href="{% url 'people:person.update' pk=person.pk %}">Update</a>
+
+    {% load hijack_tags %}
+    {% if person.user == request.user and not request|is_hijacked %}
+        <a class="btn btn-info"
+            href="{% url 'password_change' %}?next={{ person.get_absolute_url }}">Change Password</a>
+    {% endif %}
+
+    {% if request.user.is_superuser and person.user and person.user != request.user %}
+        <form style="display: inline;" action="/hijack/{{ person.user.pk }}/" method="post">
+            {% csrf_token %}
+            <button class="btn btn-warning" type="submit">Become {{ person.name }}</button>
+        </form>
+    {% endif %}
+
+    <hr>
+
+    {% if person.current_answers.location_set %}
+        <div id="map" style="height: 800px; width: 100%"></div>
+        <hr>
+    {% endif %}
+
+    {% include 'people/person/includes/relationships_full.html' %}
+
+    <hr>
+
+    {% include 'people/person/includes/activities_full.html' %}
+
+    <hr>
+
+{% endblock %}

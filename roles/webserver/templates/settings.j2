@@ -11,6 +11,7 @@ ALLOWED_HOSTS={% for h in allowed_hosts %}{{ h }},{% endfor %}
 ALLOWED_HOSTS={{ inventory_hostname }},localhost,127.0.0.1
 {% endif %}
 
+PARENT_PROJECT_NAME={{ parent_project_name }}
 PROJECT_SHORT_NAME={{ display_short_name }}
 PROJECT_LONG_NAME={{ display_long_name }}
 

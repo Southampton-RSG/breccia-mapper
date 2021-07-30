@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'people:person.list' %}">People</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'people:person.detail' pk=relationship.source.pk %}">{{ relationship.source }}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ relationship.target }}</li>
+        </ol>
+    </nav>
+
+    <h1>Organisation Relationship</h1>
+
+    <hr>
+
+    <div class="row justify-content-md-center">
+        <div class="col-md-3">
+            <a class="btn btn-warning btn-block"
+                href="{% url 'people:organisation.relationship.update' pk=relationship.pk %}">Update Relationship
+                </a>
+        </div>
+
+        {% if relationship.is_current %}
+            <div class="col-md-3">
+                <a class="btn btn-danger btn-block"
+                    href="{% url 'people:organisation.relationship.end' pk=relationship.pk %}">End Relationship
+                    </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <div class="row align-content-center align-items-center">
+        <div class="col-md-5 text-center">
+            <h2>Source</h2>
+            <p>{{ relationship.source }}</p>
+
+            <a class="btn btn-sm btn-info"
+               href="{% url 'people:person.detail' pk=relationship.source.pk %}">Profile</a>
+        </div>
+
+        <div class="col-md-2 text-center"></div>
+
+        <div class="col-md-5 text-center">
+            <h2>Target</h2>
+            <p>{{ relationship.target }}</p>
+
+            <a class="btn btn-sm btn-info"
+               href="{% url 'people:organisation.detail' pk=relationship.target.pk %}">Profile</a>
+        </div>
+    </div>
+
+    <hr>
+
+    {% with relationship.current_answers as answer_set %}
+        {% if answer_set is None %}
+            <div class="alert alert-warning mt-3">
+                This relationship has ended. You can start it again by updating it.
+            </div>
+
+        {% else %}
+            {% include 'people/includes/answer_set.html' %}
+        {% endif %}
+    {% endwith %}
+
+{% endblock %}

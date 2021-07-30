@@ -15,7 +15,16 @@ class PersonSerializer(serializers.ModelSerializer):
             'name',
         ]
 
-        
+
+class OrganisationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Organisation
+        fields = [
+            'pk',
+            'name',
+        ]
+
+
 class RelationshipSerializer(serializers.ModelSerializer):
     source = PersonSerializer()
     target = PersonSerializer()
@@ -26,4 +35,19 @@ class RelationshipSerializer(serializers.ModelSerializer):
             'pk',
             'source',
             'target',
+        ]
+
+
+class OrganisationRelationshipSerializer(serializers.ModelSerializer):
+    source = PersonSerializer()
+    target = OrganisationSerializer()
+    kind = serializers.ReadOnlyField(default='organisation-relationship')
+
+    class Meta:
+        model = models.OrganisationRelationship
+        fields = [
+            'pk',
+            'source',
+            'target',
+            'kind',
         ]

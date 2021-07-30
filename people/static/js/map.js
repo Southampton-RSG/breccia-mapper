@@ -1,9 +1,8 @@
 const marker_fill_alpha = 1.0;
 const marker_edge_colour = 'white';
-const marker_fill_colour = 'gray';
 
 // Size of the arrow markers used on the map
-const marker_scale = 9;
+const marker_scale = 7;
 // Offset for the place type icon (multiplier for marker scale)
 const marker_label_offset = 0.27 * marker_scale;
 // Width and transparency for the edges of the markers
@@ -11,7 +10,9 @@ const marker_edge_alpha = 1.0;
 const marker_edge_width = 1.0;
 
 let map = null;
+let selected_marker = null;
 let selected_marker_info = null;
+let markers = [];
 
 function createMarker(map, marker_data) {
     // Get the lat-long position from the data
@@ -34,12 +35,14 @@ function createMarker(map, marker_data) {
             strokeColor: marker_edge_colour,
             strokeWeight: marker_edge_width,
             strokeOpacity: marker_edge_alpha,
-            fillColor: marker_fill_colour,
+            fillColor: marker_data.type === 'Organisation' ? '#669933' : '#0099cc',
             fillOpacity: marker_fill_alpha,
             scale: marker_scale,
             labelOrigin: new google.maps.Point(0, -marker_label_offset)
         },
     });
+
+    marker.type = marker_data.type;
 
     marker.info = new google.maps.InfoWindow({
         content: "<div id='content'>" +
@@ -70,11 +73,21 @@ function initMap() {
     const markers_data = JSON.parse(
         document.getElementById('map-markers').textContent)
 
+    let markers_loaded = false
+
     // For each data entry in the json...
     for (const marker_data of markers_data) {
         try {
             const marker = createMarker(map, marker_data);
+            markers.push(marker);
+
             bounds.extend(marker.position);
+
+            if (markers_data.length === 1) {
+                selected_marker = marker;
+            }
+
+            markers_loaded = true
 
         } catch (exc) {
             // Just skip and move on to next
@@ -82,10 +95,10 @@ function initMap() {
     }
 
     map.fitBounds(bounds)
-    const max_zoom = 10
-    if (map.getZoom() > max_zoom) {
-        map.setZoom(max_zoom)
+    if (!markers_loaded) {
+        map.panTo({lat: 0, lng: 0})
     }
+    setMaxZoom()
 
     setTimeout(setMaxZoom, 100)
 
@@ -96,8 +109,8 @@ function initMap() {
  * Zoom to set level if map is zoomed in more than this.
  */
 function setMaxZoom() {
-    const max_zoom = 10
-    if (map.getZoom() > max_zoom) {
-        map.setZoom(max_zoom)
-    }
+    const max_zoom = 4
+    const min_zoom = 2
+    const zoom = Math.min(Math.max(min_zoom, map.getZoom()), max_zoom)
+    map.setZoom(zoom)
 }

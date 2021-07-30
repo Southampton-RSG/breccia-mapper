@@ -16,6 +16,10 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 Many configuration settings are input from `settings.ini`.
 The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABASE_URL, PROJECT_*_NAME, EMAIL_*
 
+- PARENT_PROJECT_NAME
+  default: Parent Project Name
+  Displayed in templates where the name of the parent project should be used
+
 - PROJECT_LONG_NAME
   default: Project Long Name
   Displayed in templates where the full name of the project should be used
@@ -100,7 +104,6 @@ The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABAS
   Google Maps API key to display maps of people's locations
 """
 
-import collections
 import logging
 import logging.config
 import pathlib
@@ -115,11 +118,14 @@ import dj_database_url
 
 SETTINGS_EXPORT = [
     'DEBUG',
+    'PARENT_PROJECT_NAME',
     'PROJECT_LONG_NAME',
     'PROJECT_SHORT_NAME',
     'GOOGLE_MAPS_API_KEY',
 ]
 
+PARENT_PROJECT_NAME = config('PARENT_PROJECT_NAME',
+                             default='Parent Project Name')
 PROJECT_LONG_NAME = config('PROJECT_LONG_NAME', default='Project Long Name')
 PROJECT_SHORT_NAME = config('PROJECT_SHORT_NAME', default='shortname')
 
@@ -157,6 +163,9 @@ THIRD_PARTY_APPS = [
     'django_select2',
     'rest_framework',
     'post_office',
+    'bootstrap_datepicker_plus',
+    'hijack',
+    'compat',
 ]
 
 FIRST_PARTY_APPS = [
@@ -264,7 +273,7 @@ AUTH_USER_MODEL = 'people.User'
 
 LOGIN_URL = reverse_lazy('login')
 
-LOGIN_REDIRECT_URL = reverse_lazy('index')
+LOGIN_REDIRECT_URL = reverse_lazy('people:person.profile')
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -327,23 +336,52 @@ LOGGING = {
 
 LOGGING_CONFIG = None
 logging.config.dictConfig(LOGGING)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 # Admin panel variables
 
-CONSTANCE_CONFIG = collections.OrderedDict([
-    ('NOTICE_TEXT',
-     ('',
-      'Text to be displayed in a notice banner at the top of every page.')),
-    ('NOTICE_CLASS', ('alert-warning',
-                      'CSS class to use for background of notice banner.')),
-])
+CONSTANCE_CONFIG = {
+    'NOTICE_TEXT': (
+        '',
+        'Text to be displayed in a notice banner at the top of every page.'),
+    'NOTICE_CLASS': (
+        'alert-warning',
+        'CSS class to use for background of notice banner.'),
+    'CONSENT_TEXT': (
+        'This is template consent text and should have been replaced. Please contact an admin.',
+        'Text to be displayed to ask for consent for data collection.'),
+    'PERSON_LIST_HELP': (
+        '',
+        'Help text to display at the top of the people list.'),
+    'ORGANISATION_LIST_HELP': (
+        '',
+        'Help text to display at the top of the organisaton list.'),
+    'RELATIONSHIP_FORM_HELP': (
+        '',
+        'Help text to display at the top of relationship forms.'),
+}  # yapf: disable
 
 CONSTANCE_CONFIG_FIELDSETS = {
-    'Notice Banner': ('NOTICE_TEXT', 'NOTICE_CLASS'),
-}
+    'Notice Banner': (
+        'NOTICE_TEXT',
+        'NOTICE_CLASS',
+    ),
+    'Data Collection': (
+        'CONSENT_TEXT',
+    ),
+    'Help Text': (
+        'PERSON_LIST_HELP',
+        'ORGANISATION_LIST_HELP',
+        'RELATIONSHIP_FORM_HELP',
+    ),
+}  # yapf: disable
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+# Django Hijack settings
+# See https://django-hijack.readthedocs.io/en/stable/
+
+HIJACK_USE_BOOTSTRAP = True
 
 # Bootstrap settings
 # See https://django-bootstrap4.readthedocs.io/en/latest/settings.html
@@ -379,11 +417,9 @@ else:
                            default=(EMAIL_PORT == 465),
                            cast=bool)
 
-
 # Upstream API keys
 
 GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY', default=None)
-
 
 # Import customisation app settings if present
 

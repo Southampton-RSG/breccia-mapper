@@ -20,16 +20,48 @@
         </ol>
     </nav>
 
-    <h1>{{ organisation.name }}</h1>
+    <h1>{{ organisation }}</h1>
 
     <hr>
 
-    <a class="btn btn-success"
-        href="{% url 'people:organisation.update' pk=organisation.pk %}">Update</a>
+    <div class="row justify-content-md-center">
+        <div class="col-md-3">
+            <a class="btn btn-warning btn-block"
+                href="{% url 'people:organisation.update' pk=organisation.pk %}">Update Organisation</a>
+        </div>
+
+        <div class="col-md-3">
+            {% if relationship %}
+                <a class="btn btn-warning btn-block"
+                    href="{% url 'people:organisation.relationship.create' organisation_pk=organisation.pk %}">Update Relationship
+                    </a>
+
+            {% else %}
+                <a class="btn btn-success btn-block"
+                    href="{% url 'people:organisation.relationship.create' organisation_pk=organisation.pk %}">Add Relationship
+                    </a>
+            {% endif %}
+        </div>
+
+        {% if relationship %}
+            <div class="col-md-3">
+                <a class="btn btn-danger btn-block"
+                    href="{% url 'people:organisation.relationship.end' pk=relationship.pk %}">End Relationship
+                    </a>
+            </div>
+        {% endif %}
+    </div>
 
     <hr>
 
-    <div id="map" style="height: 800px; width: 100%"></div>
+    {% include 'people/includes/answer_set.html' %}
+
+    <hr>
+
+    {% if organisation.current_answers.location_set %}
+        <div id="map" style="height: 800px; width: 100%"></div>
+        <hr>
+    {% endif %}
 
     <hr>
 

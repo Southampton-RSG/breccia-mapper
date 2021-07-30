@@ -7,34 +7,48 @@
         </ol>
     </nav>
 
-    <h1>People</h1>
+    <h1>Organisations</h1>
 
     <hr>
 
     <a class="btn btn-success"
         href="{% url 'people:organisation.create' %}">New Organisation</a>
 
+    {% with config.ORGANISATION_LIST_HELP as help_text %}
+        {% if help_text %}
+            <div class="alert alert-info mt-3 pb-0">
+                {{ help_text|linebreaks }}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <table class="table table-borderless">
-        <thead>
-            <tr>
-                <th>Name</th>
-            </tr>
-        </thead>
-
         <tbody>
-            {% for organisation in organisation_list.all %}
-                <tr>
-                    <td>{{ organisation }}</td>
-                    <td>
-                        <a class="btn btn-sm btn-info"
-                           href="{% url 'people:organisation.detail' pk=organisation.pk %}">Details</a>
-                    </td>
-                </tr>
+            {% for country, organisations in orgs_by_country.items %}
+                <tr><th>{{ country }}</th></tr>
 
-            {% empty %}
-                <tr>
-                    <td>No records</td>
-                </tr>
+                {% for organisation in organisations %}
+                    <tr>
+                        <td>{{ organisation }}</td>
+                        <td>
+                            <a class="btn btn-sm btn-info"
+                            href="{% url 'people:organisation.detail' pk=organisation.pk %}">Profile</a>
+
+                            {% if organisation.pk in existing_relationships %}
+                                <a class="btn btn-sm btn-warning"
+                                    style="width: 10rem"
+                                    href="{% url 'people:organisation.relationship.create' organisation_pk=organisation.pk %}">Update Relationship
+                                    </a>
+
+                            {% else %}
+                                <a class="btn btn-sm btn-success"
+                                    style="width: 10rem"
+                                    href="{% url 'people:organisation.relationship.create' organisation_pk=organisation.pk %}">Add Relationship
+                                    </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
             {% endfor %}
         </tbody>
     </table>

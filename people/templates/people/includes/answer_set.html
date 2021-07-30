@@ -1,0 +1,25 @@
+<table class="table table-borderless">
+    <thead>
+    <tr>
+        <th width="50%">Question</th>
+        <th>Answer</th>
+    </tr>
+    </thead>
+
+    <tbody>
+        {% for question, answers in question_answers.items %}
+            <tr>
+                <td>{{ question }}</td>
+                <td>{{ answers }}</td>
+            </tr>
+        {% endfor %}
+
+        {% if answer_set is None %}
+            <tr>
+                <td colspan="2">No answers</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<p>Last updated: {{ answer_set.timestamp }}</p>

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+    {{ map_markers|json_script:'map-markers' }}
+
+    {% load staticfiles %}
+    <script src="{% static 'js/map.js' %}"></script>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key={{ settings.GOOGLE_MAPS_API_KEY }}&callback=initMap"
+            type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Map</li>
+        </ol>
+    </nav>
+
+    <h1>Map</h1>
+
+    <script type="application/javascript">
+        function toggleMarkerType(type) {
+            for (var i = 0; i < markers.length; i++) {
+                if (markers[i].type === type) {
+                    markers[i].setVisible(!markers[i].getVisible());
+                }
+            }
+        }
+    </script>
+
+    <div class="row mb-2">
+        <div class="col-md-3">
+            <button class="btn btn-info btn-block" onclick="toggleMarkerType('Person');">Toggle People</button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-info btn-block" onclick="toggleMarkerType('Organisation');">Toggle Organisations</button>
+        </div>
+    </div>
+
+    <div id="map" style="height: 800px; width: 100%"></div>
+
+{% endblock %}

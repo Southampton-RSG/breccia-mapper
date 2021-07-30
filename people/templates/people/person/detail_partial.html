@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+    {{ map_markers|json_script:'map-markers' }}
+
+    {% load staticfiles %}
+    <script src="{% static 'js/map.js' %}"></script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ settings.GOOGLE_MAPS_API_KEY }}&callback=initMap"
+                        type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'people:person.list' %}">People</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ object }}</li>
+        </ol>
+    </nav>
+
+    <h1>{{ person.name }}</h1>
+
+    {% if person.user != request.user %}
+        <hr>
+
+        <div class="row justify-content-md-center">
+            <div class="col-md-3">
+                {% if relationship %}
+                    <a class="btn btn-warning btn-block"
+                        href="{% url 'people:person.relationship.create' person_pk=person.pk %}">Update Relationship
+                        </a>
+
+                {% else %}
+                    <a class="btn btn-success btn-block"
+                        href="{% url 'people:person.relationship.create' person_pk=person.pk %}">Add Relationship
+                        </a>
+                {% endif %}
+            </div>
+
+            {% if relationship %}
+                <div class="col-md-3">
+                    <a class="btn btn-danger btn-block"
+                        href="{% url 'people:relationship.end' pk=relationship.pk %}">End Relationship
+                        </a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <hr>
+
+    {% include 'people/includes/answer_set.html' %}
+
+    <hr>
+
+    {% if person.current_answers.location_set %}
+        <div id="map" style="height: 800px; width: 100%"></div>
+        <hr>
+    {% endif %}
+
+{% endblock %}

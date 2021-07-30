@@ -10,6 +10,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{ settings.PROJECT_LONG_NAME }}</title>
 
     <!-- Bootstrap CSS -->
     {% bootstrap_css %}
@@ -26,6 +27,10 @@
 
     {% load staticfiles %}
     <link rel="stylesheet" href="{% static 'css/global.css' %}">
+
+    <link rel="stylesheet"
+          type="text/css"
+          href="{% static 'hijack/hijack-styles.css' %}" />
 
     {% if 'javascript_in_head'|bootstrap_setting %}
         {% if 'include_jquery'|bootstrap_setting %}
@@ -79,7 +84,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a href="{% url 'people:person.map' %}" class="nav-link">Map</a>
+                                <a href="{% url 'people:map' %}" class="nav-link">Map</a>
                             </li>
 
                             <li class="nav-item">
@@ -144,6 +149,9 @@
             </div>
         {% endif %}
 
+        {% load hijack_tags %}
+        {% hijack_notification %}
+
         {% if request.user.is_authenticated and not request.user.has_person %}
             <div class="alert alert-info rounded-0" role="alert">
                 <p class="text-center mb-0">
@@ -156,9 +164,18 @@
             </div>
         {% endif %}
 
+        {% if request.user.is_authenticated and not request.user.consent_given %}
+            <div class="alert alert-warning rounded-0" role="alert">
+                <p class="text-center mb-0">
+                    You have not yet given consent for your data to be collected and processed.
+                    Please read and accept the <a href="{% url 'consent' %}">consent text</a>.
+                </p>
+            </div>
+        {% endif %}
+
         {% block before_content %}{% endblock %}
 
-        <main class="container">
+        <main class="{{ full_width_page|yesno:'container-fluid,container' }}">
             {# Display Django messages as Bootstrap alerts #}
             {% bootstrap_messages %}
 

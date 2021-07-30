@@ -1,5 +1,16 @@
 {% extends 'base.html' %}
 
+{% block extra_head %}
+    {# There's no 'form' so need to add this to load CSS / JS #}
+    {{ date_form.media.css }}
+    {{ relationship_form.media.css }}
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/cytoscape-panzoom/2.5.3/cytoscape.js-panzoom.min.css"
+        integrity="sha512-MJrzp+ZGajx6AWCCCmjBWo0rPFavM1aBghVUSVVa0uYv8THryrtEygjj5r2rUg/ms33SkEC5xJ3E4ycCmxWdrw=="
+        crossorigin="anonymous" />
+{% endblock %}
+
 {% block content %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -7,126 +18,85 @@
         </ol>
     </nav>
 
-    <h1>Network View</h1>
-
-    <hr>
-
-    <form class="form"
-          method="POST">
-        {% csrf_token %}
-
-        <div class="row">
-            <div class="col-md-6">
-                <h3>Filter Relationships</h3>
+    <div class="row">
+        <div class="col-md-4">
+            <form class="form" method="POST">
+                {% csrf_token %}
                 {% load bootstrap4 %}
-                {% bootstrap_form form exclude='date' %}
 
+                {% buttons %}
+                    <input class="btn btn-block btn-danger mb-3" type="button" value="Reset Filters" onClick="reset_filters();" />
+                    <button class="btn btn-block btn-success mb-3" type="submit">Filter</button>
+                {% endbuttons %}
+
+                {% bootstrap_form date_form %}
                 <hr>
-                {% bootstrap_field form.date %}
 
-            </div>
+                <h3>Filter Relationships</h3>
+                {% bootstrap_form relationship_form %}
+                <hr>
 
-            <div class="col-md-6">
                 <h3>Filter People</h3>
-            </div>
+                {% bootstrap_form person_form %}
+                <hr>
 
+                <h3>Filter Organisations</h3>
+                {% bootstrap_form organisation_form %}
+            </form>
         </div>
 
-        {% buttons %}
-            <button class="btn btn-block btn-info" type="submit">Filter</button>
-        {% endbuttons %}
-    </form>
+        <div class="col-md-8" style="display: flex; flex-direction: column;">
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-block btn-info mb-3" onclick="save_image();">Save Image</button>
+                    <button class="btn btn-block btn-info mb-3" onclick="toggle_anonymise_people();">Anonymise People</button>
+                </div>
 
-    <div id="cy"
-         class="mb-2"
-         style="width: 100%; min-height: 1000px; flex-grow: 1; border: 2px solid black"></div>
+                <div class="col-md-6">
+                    <button class="btn btn-block btn-info mb-3" onclick="toggle_organisations();">Hide Organisations</button>
+                    <button class="btn btn-block btn-info mb-3" onclick="toggle_anonymise_organisations();">Anonymise Organisations</button>
+                </div>
+            </div>
 
-
+            <div id="cy" class="mb-2"
+                 style="width: 100%; min-height: 1000px; border: 2px solid black; z-index: 999"></div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block extra_script %}
+    {{ date_form.media.js }}
+    {{ relationship_form.media.js }}
+
     <!--
     Embedding graph data in page as JSON allows filtering to be performed entirely on the backend when we send a POST.
-
-    This is useful since one of the most popular browsers in several of the target countries is Opera Mini,
-    which renders JavaScript on a proxy server to avoid running it on the frontend.
     -->
     {{ person_set|json_script:'person-set-data' }}
 
+    {{ organisation_set|json_script:'organisation-set-data' }}
+
     {{ relationship_set|json_script:'relationship-set-data' }}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.14.0/cytoscape.min.js"
-            integrity="sha256-rI7zH7xDqO306nxvXUw9gqkeBpvvmddDdlXJjJM7rEM="
-            crossorigin="anonymous"></script>
+    {{ organisation_relationship_set|json_script:'organisation-relationship-set-data' }}
 
     <script type="application/javascript">
-        /**
-         * Populate a Cytoscape network from :class:`Person` and :class:`Relationship` JSON embedded in page.
-         */
-        function get_network() {
-            // Initialise Cytoscape graph
-            // See https://js.cytoscape.org/ for documentation
-            var cy = cytoscape({
-                container: document.getElementById('cy'),
-                style: [
-                    {
-                        selector: 'node[name]',
-                        style: {
-                            label: 'data(name)',
-                            'text-halign': 'center',
-                            'text-valign': 'center',
-                            'font-size': 8
-                        }
-                    },
-                    {
-                        selector: 'edge',
-                        style: {
-                            'mid-target-arrow-shape': 'triangle',
-                            'curve-style': 'straight',
-                            'width': 1,
-                        }
-                    }
-                ]
-            });
-
-            // Load people and add to graph
-            var person_set = JSON.parse(document.getElementById('person-set-data').textContent);
-
-            for (var person of person_set) {
-                cy.add({
-                    group: 'nodes',
-                    data: {
-                        id: 'person-' + person.pk.toString(),
-                        name: person.name
-                    }
-                })
-            }
-
-            // Load relationships and add to graph
-            var relationship_set = JSON.parse(document.getElementById('relationship-set-data').textContent);
-
-            for (var relationship of relationship_set) {
-                cy.add({
-                    group: 'edges',
-                    data: {
-                        id: 'relationship-' + relationship.pk.toString(),
-                        source: 'person-' + relationship.source.pk.toString(),
-                        target: 'person-' + relationship.target.pk.toString()
-                    }
-                })
-            }
-
-            // Optimise graph layout
-            var layout = cy.layout({
-                name: 'cose',
-                randomize: true,
-                animate: false,
-                idealEdgeLength: function(edge) {return 64;}
-            });
-
-            layout.run();
+        function reset_filters() {
+            $('select').val(null).trigger('change');
         }
-
-        $( window ).on('load', get_network());
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.18.2/cytoscape.min.js"
+            integrity="sha512-CBGCXtszkG5rYlQSTNUzk54/731Kz28WPk2uT1GCPCqgfVRJ2v514vzzf16HuGX9WVtE7JLqRuAERNAzFZ9Hpw=="
+            crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape-panzoom/2.5.3/cytoscape-panzoom.min.js"
+            integrity="sha512-coQmIYa/SKS8wyZw14FTLJhHmp5jqIO2WxyGhjAnLGdym6RsLX412wLO1hqnFifU0NacrJvlUukRJEwjRkm0Xg=="
+            crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"
+            integrity="sha512-Qlv6VSKh1gDKGoJbnyA5RMXYcvnpIqhO++MhIM2fStMcGT9i2T//tSwYFlcyoRRDcDZ+TYHpH8azBBCyhpSeqw=="
+            crossorigin="anonymous"></script>
+
+    {% load staticfiles %}
+    <script src="{% static 'js/network.js' %}"></script>
 {% endblock %}
