@@ -1,0 +1,16 @@
+.dbbackup/
+.idea/
+.mypy_cache/
+.vagrant/
+.venv/
+venv/
+.vscode/
+
+Caddyfile
+docker-compose.yml
+mail.log/
+/roles/
+/static/
+*.sqlite3*
+*.log*
+deployment*
