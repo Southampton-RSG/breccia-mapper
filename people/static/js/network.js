@@ -97,7 +97,8 @@ function get_network() {
     // See https://js.cytoscape.org/ for documentation
     cy = cytoscape({
         container: document.getElementById('cy'),
-        style: network_style
+        style: network_style,
+        wheelSensitivity: 0.2
     });
 
     // Add pan + zoom widget with cytoscape-panzoom
