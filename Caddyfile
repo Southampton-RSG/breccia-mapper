@@ -1,6 +1,6 @@
-localhost breccia-mapper-dev breccia-mapper-dev.jagraham.co.uk mapper.gcrf-breccia.com {
+:80 :443 {
 
-    tls internal
+    tls {$CADDY_TLS_EMAIL}
 
     root * /srv
     file_server
