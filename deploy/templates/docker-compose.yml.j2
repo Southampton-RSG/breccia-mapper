@@ -3,13 +3,13 @@ version: '3.1'
 services:
   web:
     image: breccia-mapper
-    build: .
+    build: {{ project_src_dir }}
     ports:
       - 8000:8000
     environment:
-      DEBUG: ${DJANGO_DEBUG}
+      DEBUG: {{ django_settings.debug }}
       DATABASE_URL: sqlite:////app/db.sqlite3
-      SECRET_KEY: ${DJANGO_SECRET_KEY}
+      SECRET_KEY: {{ django_settings.secret_key }}
     volumes:
       - ./db.sqlite3:/app/db.sqlite3:z
       - static_files:/app/static

@@ -11,5 +11,7 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 COPY . ./
 
+# USER mapper
+
 ENTRYPOINT [ "/app/entrypoint.sh" ]
 CMD [ "gunicorn", "-w", "2", "-b", "0.0.0.0:8000", "breccia_mapper.wsgi" ]

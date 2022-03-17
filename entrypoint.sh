@@ -1,5 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
-python manage.py migrate \
-    && python manage.py collectstatic --no-input \
-    && exec "$@"
+set -eo pipefail
+
+python manage.py migrate
+python manage.py collectstatic --no-input
+
+exec "$@"
