@@ -59,6 +59,11 @@
         - Caddyfile
         - docker-compose.yml
 
+    - name: Create database file
+      ansible.builtin.file:
+        path: "{{ project_dir }}/db.sqlite3"
+        state: touch
+
     - name: Start Docker
       ansible.builtin.systemd:
         name: docker

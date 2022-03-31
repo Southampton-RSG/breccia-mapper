@@ -11,7 +11,7 @@ services:
       DATABASE_URL: sqlite:////app/db.sqlite3
       SECRET_KEY: {{ django_settings.secret_key }}
     volumes:
-      - ./db.sqlite3:/app/db.sqlite3:z
+      - {{ project_dir }}/db.sqlite3:/app/db.sqlite3:z
       - static_files:/app/static
 
   caddy:
