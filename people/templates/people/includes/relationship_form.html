@@ -6,6 +6,13 @@
     {% endif %}
 {% endwith %}
 
+
+<div class="alert alert-info mt-3">
+    If you do not know this person / organisation, you may use this button to autofill appropriate responses.
+
+    <button class="btn btn-warning" onclick="autofillNegative()">Autofill</button>
+</div>
+
 <hr>
 
 <form class="form"
@@ -19,3 +26,42 @@
         <button class="btn btn-success" type="submit">Submit</button>
     {% endbuttons %}
 </form>
+
+{{ form.negative_responses|json_script:"negative-response-data" }}
+
+<script type="application/javascript">
+    // Polyfill for `Object.entries` on IE
+    if (!Object.entries) {
+        Object.entries = function( obj ){
+            var ownProps = Object.keys( obj ),
+                i = ownProps.length,
+                resArray = new Array(i); // preallocate the Array
+            while (i--)
+            resArray[i] = [ownProps[i], obj[ownProps[i]]];
+
+            return resArray;
+        };
+    }
+
+    /**
+     * Autofill form with negative responses if no relationship exists.
+     */
+    function autofillNegative() {
+        var data = JSON.parse(document.getElementById("negative-response-data").textContent);
+
+        var fields = Object.entries(data)
+        for (var i = 0, n = fields.length; i < n; i++) {
+            var field = fields[i]
+
+            var options = document.getElementById("id_" + field[0]).options
+            for (var j = 0, m = options.length; j < m; j++) {
+                var option = options[j]
+                if (option.value === field[1].toString()) {
+                    option.selected = true
+                }
+            }
+        }
+    }
+</script>
+
+{{ form.negative_responses }}
