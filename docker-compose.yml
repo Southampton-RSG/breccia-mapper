@@ -1,0 +1,35 @@
+version: '3.1'
+
+services:
+  web:
+    image: breccia-mapper
+    build: .
+    ports:
+      - 8000:8000
+    environment:
+      DEBUG: ${DJANGO_DEBUG}
+      DATABASE_URL: sqlite:////app/db.sqlite3
+      SECRET_KEY: ${DJANGO_SECRET_KEY}
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3:z
+      - static_files:/app/static
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:z
+      # Caddy serves static files collected by Django
+      - static_files:/srv/static:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+
+volumes:
+  caddy_data:
+  caddy_config:
+  static_files:
