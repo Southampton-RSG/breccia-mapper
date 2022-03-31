@@ -47,6 +47,7 @@ class DynamicAnswerSetBase(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.negative_responses = {}
         field_order = []
 
         for question in self.question_model.objects.all():
@@ -85,6 +86,13 @@ class DynamicAnswerSetBase(forms.Form):
                 help_text=question.help_text if not self.as_filters else '')
             self.fields[field_name] = field
             field_order.append(field_name)
+
+            try:
+                negative_response = question.answers.get(is_negative_response=True)
+                self.negative_responses[field_name] = negative_response.id
+            
+            except (self.answer_model.DoesNotExist, self.answer_model.MultipleObjectsReturned):
+                pass
 
             if question.allow_free_text and not self.as_filters:
                 free_field = forms.CharField(label=f'{question} free text',

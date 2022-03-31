@@ -8,6 +8,7 @@ venv/
 
 Caddyfile
 docker-compose.yml
+.env
 settings.ini
 mail.log/
 /roles/

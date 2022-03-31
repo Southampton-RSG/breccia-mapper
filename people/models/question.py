@@ -114,6 +114,9 @@ class QuestionChoice(models.Model):
     #: Position of this answer in the list
     order = models.SmallIntegerField(default=0, blank=False, null=False)
 
+    #: Does this answer represent the negative response?
+    is_negative_response = models.BooleanField(default=False)
+
     @property
     def slug(self) -> str:
         return slugify(self.text)
