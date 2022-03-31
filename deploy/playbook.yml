@@ -15,10 +15,6 @@
     project_dir: /srv/{{ project_name }}
     project_src_dir: "{{ project_dir }}/src"
 
-    django_settings:
-      debug: 1
-      secret_key: debug_only_g62WlORMbo8iAcV7vKCKBQ==
-
   tasks:
     - name: Vagrant specific tasks
       block:

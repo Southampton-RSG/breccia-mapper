@@ -7,9 +7,9 @@ services:
     ports:
       - 8000:8000
     environment:
-      DEBUG: {{ django_settings.debug }}
+      DEBUG: {{ django_debug }}
       DATABASE_URL: sqlite:////app/db.sqlite3
-      SECRET_KEY: {{ django_settings.secret_key }}
+      SECRET_KEY: {{ django_secret_key }}
     volumes:
       - {{ project_dir }}/db.sqlite3:/app/db.sqlite3:z
       - static_files:/app/static
