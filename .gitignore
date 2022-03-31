@@ -15,11 +15,13 @@ db.sqlite3
 debug.log*
 
 # Configuration
+.env
 settings.ini
 deployment-key*
 
 # Deployment
 /.dbbackup/
 .vagrant/
+/custom
 staging.yml
 production.yml

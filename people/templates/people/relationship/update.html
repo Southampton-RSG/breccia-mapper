@@ -18,27 +18,7 @@
 
     <h1>Update Relationship</h1>
 
-    {% with config.RELATIONSHIP_FORM_HELP as help_text %}
-        {% if help_text %}
-            <div class="alert alert-info mt-3 pb-0">
-                {{ help_text|linebreaks }}
-            </div>
-        {% endif %}
-    {% endwith %}
-
-    <hr>
-
-    <form class="form"
-          method="POST">
-        {% csrf_token %}
-
-        {% load bootstrap4 %}
-        {% bootstrap_form form %}
-
-        {% buttons %}
-            <button class="btn btn-success" type="submit">Submit</button>
-        {% endbuttons %}
-    </form>
+    {% include 'people/includes/relationship_form.html' %}
 
 {% endblock %}
 

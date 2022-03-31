@@ -9,6 +9,10 @@ var organisation_edges;
 var anonymise_people = false;
 var anonymise_organisations = false;
 
+function nodeSize (ele) {
+    return 100 + 20 * ele.connectedEdges().length;
+}
+
 var network_style = [
     {
         selector: 'node[name]',
@@ -21,32 +25,42 @@ var network_style = [
 
                 return anonymise ? ele.data('id') : ele.data('name')
             },
-            width: '100px',
-            height: '100px',
-            'text-halign': 'center',
-            'text-valign': 'center',
-            'text-wrap': 'wrap',
-            'text-max-width': '90px',
-            'font-size': '12rem',
-            'background-color': 'data(nodeColor)',
-            'shape': 'data(nodeShape)'
+            width: nodeSize,
+            height: nodeSize,
+            textHalign: 'center',
+            textValign: 'center',
+            textWrap: 'wrap',
+            textMaxWidth: function (ele) {
+                return 0.8 * nodeSize(ele);
+            },
+            fontSize: function (ele) {
+                return (16 + ele.connectedEdges().length).toString() + 'rem';
+            },
+            backgroundColor: 'data(nodeColor)',
+            shape: 'data(nodeShape)',
+            opacity: 0.7
         }
     },
     {
         selector: 'node:selected',
         style: {
-            'text-max-width': '300px',
-            'font-size': '40rem',
-            'z-index': 100,
+            textMaxWidth: function (ele) {
+                return 0.8 * nodeSize(ele);
+            },
+            fontSize: function (ele) {
+                return (50 + ele.connectedEdges().length).toString() + 'rem';
+            },
+            zIndex: 100,
         }
     },
     {
         selector: 'edge',
         style: {
-            'mid-target-arrow-shape': 'data(lineArrowShape)',
-            'curve-style': 'straight',
-            'width': 1,
-            'line-color': 'data(lineColor)'
+            midTargetArrowShape: 'data(lineArrowShape)',
+            curveStyle: 'straight',
+            width: 4,
+            lineColor: 'data(lineColor)',
+            opacity: 0.9
         }
     }
 ]
@@ -97,7 +111,8 @@ function get_network() {
     // See https://js.cytoscape.org/ for documentation
     cy = cytoscape({
         container: document.getElementById('cy'),
-        style: network_style
+        style: network_style,
+        wheelSensitivity: 0.2
     });
 
     // Add pan + zoom widget with cytoscape-panzoom
@@ -188,10 +203,12 @@ function get_network() {
     // Optimise graph layout
     var layout = cy.layout({
         name: 'cose',
-        randomize: true,
+        randomize: false,
         animate: false,
-        idealEdgeLength: function (edge) { return 40; },
-        nodeRepulsion: function (node) { return 1e7; }
+        nodeRepulsion: function (node) {
+            return 2 ** node.connectedEdges().length;
+        },
+        nodeOverlap: 80
     });
 
     layout.run();

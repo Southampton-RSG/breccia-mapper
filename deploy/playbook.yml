@@ -1,0 +1,86 @@
+---
+- hosts: all
+  become_user: root
+  become_method: sudo
+  become: yes
+
+  pre_tasks:
+    - name: Check if running under Vagrant
+      stat:
+        path: /vagrant
+      register: vagrant_dir
+
+  vars:
+    project_name: mapper
+    project_dir: /srv/{{ project_name }}
+    project_src_dir: "{{ project_dir }}/src"
+
+  tasks:
+    - name: Vagrant specific tasks
+      block:
+      - name: Add Docker repository
+        get_url:
+          url: https://download.docker.com/linux/centos/docker-ce.repo
+          dest: '/etc/yum.repos.d/docker-ce.repo'
+      when: deploy_environment is defined and deploy_environment == "vagrant"
+
+    - name: Install system dependencies
+      ansible.builtin.yum:
+        name:
+          - git
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+
+    # - name: Update system packages
+    #   ansible.builtin.yum:
+    #     name: '*'
+    #     state: latest
+
+    - name: Clone / update from source repos
+      ansible.builtin.git:
+        repo: 'https://github.com/Southampton-RSG/breccia-mapper.git'
+        dest: '{{ project_src_dir }}'
+        version: docker
+        accept_hostkey: yes
+
+    - name: Copy template files
+      ansible.builtin.template:
+        src: '{{ item }}.j2'
+        dest: '{{ project_dir }}/{{ item }}'
+        mode: 0600
+      loop:
+        - Caddyfile
+        - docker-compose.yml
+
+    - name: Create database file
+      ansible.builtin.file:
+        path: "{{ project_dir }}/db.sqlite3"
+        state: touch
+
+    - name: Start Docker
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull latest docker images
+      ansible.builtin.command:
+        chdir: "{{ project_dir }}"
+        cmd: docker compose pull {{ item }}
+      loop:
+        - caddy
+
+    - name: Build custom images
+      ansible.builtin.command:
+        chdir: "{{ project_dir }}"
+        cmd: docker compose build {{ item }}
+      loop:
+        - web
+
+    - name: Start containers
+      ansible.builtin.command:
+        chdir: "{{ project_dir }}"
+        cmd: docker compose up -d
