@@ -11,7 +11,7 @@
       register: vagrant_dir
 
   vars:
-    project_name: mapper
+    project_name: relationship-mapper
     project_dir: /srv/{{ project_name }}
     project_src_dir: "{{ project_dir }}/src"
 
@@ -41,9 +41,10 @@
 
     - name: Clone / update from source repos
       ansible.builtin.git:
-        repo: 'https://github.com/Southampton-RSG/breccia-mapper.git'
+        # repo: 'https://github.com/Southampton-RSG/breccia-mapper.git'
+        repo: 'https://github.com/mgrove36/breccia-relationship-mapper.git'
         dest: '{{ project_src_dir }}'
-        version: docker
+        version: dev # master
         accept_hostkey: yes
 
     - name: Copy template files
