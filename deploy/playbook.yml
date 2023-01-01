@@ -56,6 +56,12 @@
         - Caddyfile
         - docker-compose.yml
 
+    - name: Copy settings file
+      ansible.builtin.copy:
+        src: 'settings.ini'
+        dest: '{{ project_src_dir }}/breccia_mapper/settings.ini'
+        mode: 0600
+
     - name: Create database file
       ansible.builtin.file:
         path: "{{ project_dir }}/db.sqlite3"
