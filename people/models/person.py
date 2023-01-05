@@ -77,6 +77,11 @@ class PersonQuestionChoice(QuestionChoice):
                                  on_delete=models.CASCADE,
                                  blank=False,
                                  null=False)
+    class Meta(QuestionChoice.Meta):
+        constraints = [
+            models.UniqueConstraint(fields=['question', 'text'],
+                                    name='unique_question_answer_personquestionchoice')
+        ]
 
 
 class Person(models.Model):

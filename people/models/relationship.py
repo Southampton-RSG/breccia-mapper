@@ -33,6 +33,11 @@ class RelationshipQuestionChoice(QuestionChoice):
                                  on_delete=models.CASCADE,
                                  blank=False,
                                  null=False)
+    class Meta(QuestionChoice.Meta):
+        constraints = [
+            models.UniqueConstraint(fields=['question', 'text'],
+                                    name='unique_question_answer_relationshipquestionchoice')
+        ]
 
 
 class Relationship(models.Model):
@@ -40,7 +45,7 @@ class Relationship(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['source', 'target'],
-                                    name='unique_relationship'),
+                                    name='unique_relationship_modelrelationship'),
         ]
 
     #: Person reporting the relationship
@@ -122,6 +127,11 @@ class OrganisationRelationshipQuestionChoice(QuestionChoice):
                                  on_delete=models.CASCADE,
                                  blank=False,
                                  null=False)
+    class Meta(QuestionChoice.Meta):
+        constraints = [
+            models.UniqueConstraint(fields=['question', 'text'],
+                                    name='unique_question_answer_organisationrelationshipquestionchoice')
+        ]
 
 
 class OrganisationRelationship(models.Model):
@@ -129,7 +139,7 @@ class OrganisationRelationship(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['source', 'target'],
-                                    name='unique_relationship'),
+                                    name='unique_relationship_modelorganisationrelationship'),
         ]
 
     #: Person reporting the relationship

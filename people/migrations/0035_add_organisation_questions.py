@@ -56,6 +56,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='organisationquestionchoice',
-            constraint=models.UniqueConstraint(fields=('question', 'text'), name='unique_question_answer'),
+            constraint=models.UniqueConstraint(fields=('question', 'text'), name='unique_question_answer_organisationquestionchoice'),
         ),
     ]

@@ -165,7 +165,6 @@ THIRD_PARTY_APPS = [
     'post_office',
     'bootstrap_datepicker_plus',
     'hijack',
-    'compat',
 ]
 
 FIRST_PARTY_APPS = [
@@ -184,6 +183,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'hijack.middleware.HijackUserMiddleware',
 ]
 
 ROOT_URLCONF = 'breccia_mapper.urls'
@@ -416,6 +416,18 @@ else:
     EMAIL_USE_SSL = config('EMAIL_USE_SSL',
                            default=(EMAIL_PORT == 465),
                            cast=bool)
+
+# Bootstrap Datepicker Plus Settings
+BOOTSTRAP_DATEPICKER_PLUS = {
+    "variant_options": {
+        "date": {
+            "format": "%Y-%m-%d",
+        },
+    }
+}
+
+# Database default automatic primary key
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Upstream API keys
 

@@ -3,7 +3,7 @@
 {% block extra_head %}
     {{ map_markers|json_script:'map-markers' }}
 
-    {% load staticfiles %}
+    {% load static %}
     <script src="{% static 'js/map.js' %}"></script>
 
     <script async defer

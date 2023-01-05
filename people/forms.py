@@ -5,7 +5,7 @@ import typing
 from django import forms
 from django.conf import settings
 
-from bootstrap_datepicker_plus import DatePickerInput
+from bootstrap_datepicker_plus.widgets import DatePickerInput
 from django_select2.forms import ModelSelect2Widget, Select2Widget, Select2MultipleWidget
 
 from . import models
@@ -185,8 +185,8 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         widgets = {
             'nationality': Select2MultipleWidget(),
             'country_of_residence': Select2Widget(),
-            'organisation_started_date': DatePickerInput(format='%Y-%m-%d'),
-            'project_started_date': DatePickerInput(format='%Y-%m-%d'),
+            'organisation_started_date': DatePickerInput(),
+            'project_started_date': DatePickerInput(),
             'latitude': forms.HiddenInput,
             'longitude': forms.HiddenInput,
         }
@@ -325,7 +325,7 @@ class OrganisationRelationshipAnswerSetForm(forms.ModelForm,
 class DateForm(forms.Form):
     date = forms.DateField(
         required=False,
-        widget=DatePickerInput(format='%Y-%m-%d'),
+        widget=DatePickerInput(),
         help_text='Show relationships as they were on this date'
     )
 

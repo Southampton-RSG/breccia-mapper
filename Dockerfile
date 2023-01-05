@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.9-slim
 
 RUN groupadd -r mapper && useradd --no-log-init -r -g mapper mapper
 
