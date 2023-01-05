@@ -14,6 +14,10 @@
     project_name: relationship-mapper
     project_dir: /srv/{{ project_name }}
     project_src_dir: "{{ project_dir }}/src"
+    provision_superuser: false
+    superuser_username: admin
+    superuser_password: admin
+    superuser_email: email@example.com
 
   tasks:
     - name: Vagrant specific tasks
@@ -91,3 +95,15 @@
       ansible.builtin.command:
         chdir: "{{ project_dir }}"
         cmd: docker compose up -d
+    
+    - name: Provision admin user
+      ansible.builtin.command:
+        chdir: "{{ project_dir }}"
+        cmd: sudo docker compose exec -it server /bin/bash -c "DJANGO_SUPERUSER_USERNAME='{{ superuser_username }}' DJANGO_SUPERUSER_PASSWORD='{{ superuser_password }}' DJANGO_SUPERUSER_EMAIL='{{ superuser_email }}' /app/manage.py createsuperuser --no-input"
+      when: provision_superuser
+
+    - name: Display warning about new superuser
+      debug:
+        msg:
+          - "[WARNING] A superuser has been provisioned with the username \"{{ superuser_username }}\" and password that was provided. This user has unlimited access to the relationship mapper."
+      when: provision_superuser
