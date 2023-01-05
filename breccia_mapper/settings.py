@@ -16,18 +16,6 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 Many configuration settings are input from `settings.ini`.
 The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABASE_URL, PROJECT_*_NAME, EMAIL_*
 
-- PARENT_PROJECT_NAME
-  default: Parent Project Name
-  Displayed in templates where the name of the parent project should be used
-
-- PROJECT_LONG_NAME
-  default: Project Long Name
-  Displayed in templates where the full name of the project should be used
-
-- PROJECT_SHORT_NAME
-  default: shortname
-  Displayed in templates where a short identifier for the project should be used
-
 - SECRET_KEY (REQUIRED)
   Used to generate CSRF tokens - must never be made public
 
@@ -118,16 +106,9 @@ import dj_database_url
 
 SETTINGS_EXPORT = [
     'DEBUG',
-    'PARENT_PROJECT_NAME',
-    'PROJECT_LONG_NAME',
-    'PROJECT_SHORT_NAME',
     'GOOGLE_MAPS_API_KEY',
 ]
 
-PARENT_PROJECT_NAME = config('PARENT_PROJECT_NAME',
-                             default='Parent Project Name')
-PROJECT_LONG_NAME = config('PROJECT_LONG_NAME', default='Project Long Name')
-PROJECT_SHORT_NAME = config('PROJECT_SHORT_NAME', default='shortname')
 
 # Build paths inside the project like this: BASE_DIR.joinpath(...)
 BASE_DIR = pathlib.Path(__file__).parent.parent
@@ -297,6 +278,10 @@ STATIC_ROOT = BASE_DIR.joinpath('static')
 
 STATICFILES_DIRS = [BASE_DIR.joinpath('breccia_mapper', 'static')]
 
+# Media uploads
+MEDIA_ROOT = BASE_DIR.joinpath('breccia_mapper', 'static', 'media')
+MEDIA_URL = "/static/media/"
+
 # Logging - NB the logger name is empty to capture all output
 
 LOGGING = {
@@ -340,6 +325,10 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 # Admin panel variables
 
+CONSTANCE_ADDITIONAL_FIELDS = {
+    'image_field': ['django.forms.ImageField', {}]
+}
+
 CONSTANCE_CONFIG = {
     'NOTICE_TEXT': (
         '',
@@ -359,17 +348,95 @@ CONSTANCE_CONFIG = {
     'RELATIONSHIP_FORM_HELP': (
         '',
         'Help text to display at the top of relationship forms.'),
+    'PARENT_PROJECT_NAME': (
+      '',
+      'Parent project name'),
+    'PROJECT_LONG_NAME': (
+      'Project Long Name',
+      'Project long name'),
+    'PROJECT_SHORT_NAME': (
+      'Short Name',
+      'Project short name'),
+    'PROJECT_LEAD': (
+      'John Doe',
+      'Project lead'),
+    'PROJECT_TAGLINE': (
+      'Here is your project\'s tagline.',
+      'Project tagline'),
+    'HOMEPAGE_HEADER_IMAGE': (
+      '800x500.png',
+      'Homepage header image',
+      'image_field'),
+    'HOMEPAGE_CARD_1_TITLE': (
+      'Step 1',
+      'Homepage card #1 title'),
+    'HOMEPAGE_CARD_1_DESCRIPTION': (
+      'Tell us about your position within the project',
+      'Homepage card #1 description'),
+    'HOMEPAGE_CARD_1_ICON': (
+      'building-user',
+      'Homepage card #1 icon'),
+    'HOMEPAGE_CARD_2_TITLE': (
+      'Step 2',
+      'Homepage card #2 title'),
+    'HOMEPAGE_CARD_2_DESCRIPTION': (
+      'Describe your relationships with other stakeholders',
+      'Homepage card #2 description'),
+    'HOMEPAGE_CARD_2_ICON': (
+      'handshake-simple',
+      'Homepage card #2 icon'),
+    'HOMEPAGE_CARD_3_TITLE': (
+      'Step 3',
+      'Homepage card #3 title'),
+    'HOMEPAGE_CARD_3_DESCRIPTION': (
+      'Use the network view to build new relationships',
+      'Homepage card #3 description'),
+    'HOMEPAGE_CARD_3_ICON': (
+      'diagram-project',
+      'Homepage card #3 icon'),
+    'HOMEPAGE_ABOUT_TITLE': (
+      'About Us',
+      'Homepage about section title'),
+    'HOMEPAGE_ABOUT_CONTENT': (
+      """Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. In massa tempor nec feugiat nisl. Eget dolor morbi non arcu risus quis varius quam quisque. Nisl pretium fusce id velit ut tortor pretium viverra suspendisse. Vitae auctor eu augue ut lectus arcu. Tellus molestie nunc non blandit massa enim nec. At consectetur lorem donec massa sapien. Placerat orci nulla pellentesque dignissim enim sit. Sit amet mauris commodo quis imperdiet. Tellus at urna condimentum mattis pellentesque.<br/>In vitae turpis massa sed. Fermentum posuere urna nec tincidunt praesent semper feugiat nibh sed. Ut consequat semper viverra nam libero justo laoreet. Velit ut tortor pretium viverra suspendisse potenti nullam ac tortor. Nunc id cursus metus aliquam eleifend mi in nulla posuere. Aliquam eleifend mi in nulla posuere sollicitudin aliquam. Est ante in nibh mauris cursus mattis molestie a iaculis. Nunc id cursus metus aliquam. Auctor urna nunc id cursus metus aliquam. Porttitor lacus luctus accumsan tortor posuere ac ut consequat semper. Volutpat consequat mauris nunc congue nisi. Leo vel fringilla est ullamcorper eget. Vitae purus faucibus ornare suspendisse sed nisi lacus sed. Massa id neque aliquam vestibulum morbi blandit. Iaculis nunc sed augue lacus viverra vitae congue. Sodales neque sodales ut etiam.""",
+      'Homepage about section content'),
+    'HOMEPAGE_ABOUT_IMAGE': (
+      '400x400.png',
+      'Homepage about section image',
+      'image_field'),
 }  # yapf: disable
 
 CONSTANCE_CONFIG_FIELDSETS = {
-    'Notice Banner': (
+    'Project options': (
+        'PARENT_PROJECT_NAME',
+        'PROJECT_LONG_NAME',
+        'PROJECT_SHORT_NAME',
+        'PROJECT_LEAD',
+        'PROJECT_TAGLINE',
+    ),
+    'Homepage configuration': (
+        'HOMEPAGE_HEADER_IMAGE',
+        'HOMEPAGE_CARD_1_TITLE',
+        'HOMEPAGE_CARD_1_DESCRIPTION',
+        'HOMEPAGE_CARD_1_ICON',
+        'HOMEPAGE_CARD_2_TITLE',
+        'HOMEPAGE_CARD_2_DESCRIPTION',
+        'HOMEPAGE_CARD_2_ICON',
+        'HOMEPAGE_CARD_3_TITLE',
+        'HOMEPAGE_CARD_3_DESCRIPTION',
+        'HOMEPAGE_CARD_3_ICON',
+        'HOMEPAGE_ABOUT_TITLE',
+        'HOMEPAGE_ABOUT_CONTENT',
+        'HOMEPAGE_ABOUT_IMAGE',
+    ),
+    'Notice banner': (
         'NOTICE_TEXT',
         'NOTICE_CLASS',
     ),
-    'Data Collection': (
+    'Data Ccollection': (
         'CONSENT_TEXT',
     ),
-    'Help Text': (
+    'Help text': (
         'PERSON_LIST_HELP',
         'ORGANISATION_LIST_HELP',
         'RELATIONSHIP_FORM_HELP',
@@ -396,7 +463,7 @@ BOOTSTRAP4 = {
 EMAIL_HOST = config('EMAIL_HOST', default=None)
 DEFAULT_FROM_EMAIL = config(
     'DEFAULT_FROM_EMAIL',
-    default=f'{PROJECT_SHORT_NAME}@localhost.localdomain')
+    default=f'{CONSTANCE_CONFIG["PROJECT_SHORT_NAME"][0]}@localhost.localdomain')
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 if EMAIL_HOST is None:

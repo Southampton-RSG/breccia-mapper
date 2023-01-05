@@ -43,3 +43,4 @@ soupsieve==2.3.2.post1
 sqlparse==0.4.3
 typed-ast
 wrapt==1.14.1
+Pillow==9.4.0

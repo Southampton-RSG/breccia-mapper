@@ -1,6 +1,7 @@
 import typing
 
-from django.conf import settings
+from constance import config
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
@@ -49,11 +50,11 @@ class OrganisationListView(LoginRequiredMixin, ListView):
         orgs_sorted = {}
 
         try_copy_by_key(orgs_by_country, orgs_sorted,
-                        f'{settings.PARENT_PROJECT_NAME} partners')
+                        f'{config.PARENT_PROJECT_NAME} partners')
         try_copy_by_key(orgs_by_country, orgs_sorted, 'International')
 
         special = {
-            f'{settings.PARENT_PROJECT_NAME} partners', 'International',
+            f'{config.PARENT_PROJECT_NAME} partners', 'International',
             'Unknown'
         }
         for country in sorted(k for k in orgs_by_country.keys()
@@ -81,7 +82,7 @@ class OrganisationListView(LoginRequiredMixin, ListView):
                     country = 'International'
 
                 if answers.is_partner_organisation:
-                    country = f'{settings.PARENT_PROJECT_NAME} partners'
+                    country = f'{config.PARENT_PROJECT_NAME} partners'
 
             except AttributeError:
                 # Organisation has no AnswerSet - country is 'Unknown'

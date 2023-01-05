@@ -3,7 +3,8 @@
 import typing
 
 from django import forms
-from django.conf import settings
+
+from constance import config
 
 from bootstrap_datepicker_plus.widgets import DatePickerInput
 from django_select2.forms import ModelSelect2Widget, Select2Widget, Select2MultipleWidget
@@ -121,7 +122,7 @@ class OrganisationAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         ]
         labels = {
             'is_partner_organisation':
-            f'Is this organisation a {settings.PARENT_PROJECT_NAME} partner organisation?'
+            f'Is this organisation a {config.PARENT_PROJECT_NAME} partner organisation?'
         }
         widgets = {
             'countries': Select2MultipleWidget(),
@@ -192,7 +193,7 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
         }
         labels = {
             'project_started_date':
-            f'Date started on the {settings.PARENT_PROJECT_NAME} project',
+            f'Date started on the {config.PARENT_PROJECT_NAME} project',
             'external_organisations':
             'Please list the main organisations external to BRECcIA work that you have been working with since 1st January 2019 that are involved in food/water security in African dryland regions'
         }

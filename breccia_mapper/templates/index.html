@@ -6,57 +6,84 @@
           href="{% static 'css/masthead.css' %}">
 {% endblock %}
 
+
 {% block before_content %}
+
+    {% get_media_prefix as MEDIA_URL %}
     <header class="container-fluid masthead text-white text-left"
-            style="background-image: url('https://via.placeholder.com/800x500')">
+            style="background-image: url('{{ MEDIA_URL }}{{ config.HOMEPAGE_HEADER_IMAGE }}')">
         <div class="overlay"></div>
 
         <div class="row">
             <div class="ml-5 px-4 mt-3 pt-3 textbox-container">
-                <h1 class="display-1">{{ settings.PROJECT_LONG_NAME }}</h1>
-                <p class="lead">Snappy leader here...</p>
+                <h1 class="display-1">{{ config.PROJECT_LONG_NAME }}</h1>
+                <p class="lead">{{ config.PROJECT_LEAD }}</p>
             </div>
         </div>
     </header>
 
     <div class="bg-secondary py-3">
         <div class="container text-white">
-            <h2>Snappy tagline here...</h2>
+            <h2>{{ config.PROJECT_TAGLINE }}</h2>
         </div>
     </div>
 
     <div class="bg-light py-2 mb-4">
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
+                {% if config.HOMEPAGE_CARD_1_TITLE %}
+                <div class="col-md-4 mx-auto">
                     <div class="card text-center">
                         <div class="card-body">
-                            <h2 class="card-title">Do Feature 1</h2>
+                            <h2 class="card-title">{{ config.HOMEPAGE_CARD_1_TITLE }}</h2>
 
-                            <span class="fa-solid fa-5x fa-book-atlas"></span>
+                            {% if config.HOMEPAGE_CARD_1_DESCRIPTION %}
+                            <p>{{ config.HOMEPAGE_CARD_1_DESCRIPTION|safe }}</p>
+                            {% endif %}
+
+                            {% if config.HOMEPAGE_CARD_1_ICON %}
+                            <span class="fa-solid fa-5x fa-{{ config.HOMEPAGE_CARD_1_ICON }}"></span>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
+                {% endif %}
 
-                <div class="col-md-4">
+                {% if config.HOMEPAGE_CARD_2_TITLE %}
+                <div class="col-md-4 mx-auto">
                     <div class="card text-center">
                         <div class="card-body">
-                            <h2 class="card-title">Do Feature 2</h2>
+                            <h2 class="card-title">{{ config.HOMEPAGE_CARD_2_TITLE }}</h2>
 
-                            <span class="fa-solid fa-5x fa-book-atlas"></span>
+                            {% if config.HOMEPAGE_CARD_2_DESCRIPTION %}
+                            <p>{{ config.HOMEPAGE_CARD_2_DESCRIPTION|safe }}</p>
+                            {% endif %}
+
+                            {% if config.HOMEPAGE_CARD_2_ICON %}
+                            <span class="fa-solid fa-5x fa-{{ config.HOMEPAGE_CARD_2_ICON }}"></span>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
+                {% endif %}
 
-                <div class="col-md-4">
+                {% if config.HOMEPAGE_CARD_3_TITLE %}
+                <div class="col-md-4 mx-auto">
                     <div class="card text-center">
                         <div class="card-body">
-                            <h2 class="card-title">Do Feature 3</h2>
+                            <h2 class="card-title">{{ config.HOMEPAGE_CARD_3_TITLE }}</h2>
 
-                            <span class="fa-solid fa-5x fa-book-atlas"></span>
+                            {% if config.HOMEPAGE_CARD_3_DESCRIPTION %}
+                            <p>{{ config.HOMEPAGE_CARD_3_DESCRIPTION|safe }}</p>
+                            {% endif %}
+
+                            {% if config.HOMEPAGE_CARD_3_ICON %}
+                            <span class="fa-solid fa-5x fa-{{ config.HOMEPAGE_CARD_3_ICON }}"></span>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -65,15 +92,16 @@
 {% block content %}
     <div class="row align-items-center" style="min-height: 400px;">
         <div class="col-sm-8">
-            <h2 class="pb-2">About {{ settings.PROJECT_LONG_NAME }}</h2>
+            <h2 class="pb-2">{{ config.HOMEPAGE_ABOUT_TITLE }}</h2>
 
             <p>
-                {{ settings.PROJECT_LONG_NAME }} is...
+                {{ config.HOMEPAGE_ABOUT_CONTENT|safe }}
             </p>
         </div>
 
         <div class="col-sm-4">
-            <img class="img-fluid py-3" src="https://via.placeholder.com/400x400">
+            {% get_media_prefix as MEDIA_URL %}
+            <img class="img-fluid py-3" src="{{ MEDIA_URL }}{{ config.HOMEPAGE_ABOUT_IMAGE }}">
         </div>
     </div>
 {% endblock %}
