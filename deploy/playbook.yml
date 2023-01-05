@@ -85,7 +85,7 @@
         chdir: "{{ project_dir }}"
         cmd: docker compose build {{ item }}
       loop:
-        - web
+        - server
 
     - name: Start containers
       ansible.builtin.command:
