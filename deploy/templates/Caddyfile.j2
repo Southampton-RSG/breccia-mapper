@@ -6,7 +6,7 @@ http://* {
         not path /static/*
     }
 
-    reverse_proxy @proxy_paths http://web:8000
+    reverse_proxy @proxy_paths http://server:8000
 
     log {
         output stderr
