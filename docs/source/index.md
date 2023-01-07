@@ -8,7 +8,10 @@ This work was funded through the "Building REsearch Capacity for sustainable wat
 This project is still under development until April 2023.
 :::
 
+## Contents
+
 ```{toctree}
-:maxdepth: 2
-:caption: Contents:
+:maxdepth: 4
+:glob:
+*
 ```
