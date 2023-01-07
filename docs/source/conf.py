@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'BRECcIA Relationship Mapper'
-copyright = 'University of Southampton'
+copyright = 'Matthew Grove, University of Southampton'
 author = 'Matthew Grove'
 release = '1.1'
 
