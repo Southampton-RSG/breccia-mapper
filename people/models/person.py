@@ -46,10 +46,10 @@ class User(AbstractUser):
         """Send a welcome email to a new user."""
         # Get exported data from settings.py first
         # context = settings_export(None)
-        context = config
-        context.update({
+        context = {
             'user': self,
-        })
+            'config': config,
+        }
 
         logger.info('Sending welcome mail to user \'%s\'', self.username)
 
