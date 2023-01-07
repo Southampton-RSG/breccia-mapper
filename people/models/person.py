@@ -45,7 +45,8 @@ class User(AbstractUser):
     def send_welcome_email(self) -> None:
         """Send a welcome email to a new user."""
         # Get exported data from settings.py first
-        context = settings_export(None)
+        # context = settings_export(None)
+        context = config
         context.update({
             'user': self,
         })
