@@ -16,3 +16,5 @@ mail.log/
 *.sqlite3*
 *.log*
 deployment*
+
+docs/
