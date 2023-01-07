@@ -436,7 +436,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
         'NOTICE_TEXT',
         'NOTICE_CLASS',
     ),
-    'Data Ccollection': (
+    'Data Collection': (
         'CONSENT_TEXT',
     ),
     'Help text': (
