@@ -3,8 +3,6 @@
 The BRECcIA Relationship Mapper can be deployed in a variety of ways, most of which utilise Docker.
 Ansible deployment has been tested on RHEL7 and RHEL8.
 
-, and Ubuntu 22.04 LTS.
-
 ## Development Deployment
 
 Prerequisites:
