@@ -279,8 +279,8 @@ STATIC_ROOT = BASE_DIR.joinpath('static')
 STATICFILES_DIRS = [BASE_DIR.joinpath('breccia_mapper', 'static')]
 
 # Media uploads
-MEDIA_ROOT = BASE_DIR.joinpath('breccia_mapper', 'static', 'media')
-MEDIA_URL = "/static/media/"
+MEDIA_ROOT = BASE_DIR.joinpath('breccia_mapper', 'media')
+MEDIA_URL = "/media/"
 
 # Logging - NB the logger name is empty to capture all output
 
