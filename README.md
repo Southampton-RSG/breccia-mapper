@@ -16,6 +16,7 @@ Deployment is managed using [Ansible](https://www.ansible.com/) and Docker (http
 ## Contributors
 
 - James Graham (@jag1g13) - developer
+- Matthew Grove (@mgrove36) - developer
 - Genevieve Agaba
 - Sebastian Reichel
 - Claire Bedelian
