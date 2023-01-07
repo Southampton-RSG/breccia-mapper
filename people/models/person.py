@@ -14,6 +14,8 @@ from post_office import mail
 from .organisation import Organisation
 from .question import AnswerSet, Question, QuestionChoice
 
+from constance import config
+
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 __all__ = [
