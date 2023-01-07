@@ -19,13 +19,29 @@ To deploy a local development version of BRECcIA Mapper inside a virtual machine
 cd deploy
 ```
 
+And then set your config options for the deployment, by copying `settings.example.ini` to `settings.ini` and changing the options contained within as required.
+
 And then start the virtual machine using:
 
 ```bash
 vagrant up
 ```
 
-Once this virtual machine has been created, provision the virtual machine (deploying the relationship mapper) using:
+If you would like a new superuser to be provisioned when deploying the relationship mapper, change the following line in `playbook.yml`:
+
+```yaml
+provision_superuser: false
+```
+
+to
+
+```yaml
+provision_superuser: true
+```
+
+And change the `superuser_*` options below it as desired.
+
+Then provision the virtual machine (deploying the relationship mapper) using:
 
 ```bash
 vagrant provision
@@ -72,7 +88,21 @@ To deploy the BRECcIA Relationship Mapper with Ansible:
 4. Edit this file to reflect your Ansible setup:
   - Use your server's hostname instead of `example.com`
   - Replace the secret key with some text known only to you
-5. Run the Ansible playbook `deploy/playbook.yml` with this inventory file using:
+5. If you would like a new superuser to be provisioned for the relationship mapper (e.g. during initial install), edit the following line of `playbook.yml`:
+
+```yaml
+provision_superuser: false
+```
+
+to
+
+```yaml
+provision_superuser: true
+```
+
+And change the `superuser_*` options below it as desired.
+
+6. Run the Ansible playbook `playbook.yml` with this inventory file using:
 
 ```
 ansible-playbook playbook.yml -i inventory.yml -K -k -u <SSH username>
