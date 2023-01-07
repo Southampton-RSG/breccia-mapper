@@ -1,9 +1,10 @@
-http://* {
+:80 :443 {
     root * /srv
     file_server
 
     @proxy_paths {
         not path /static/*
+        not path /media/*
     }
 
     reverse_proxy @proxy_paths http://server:8000

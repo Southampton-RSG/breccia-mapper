@@ -14,6 +14,7 @@ services:
     volumes:
       - {{ project_dir }}/db.sqlite3:/app/db.sqlite3:z
       - static_files:/app/static
+      - media_files:/app/media
 
   caddy:
     image: caddy:2
@@ -26,6 +27,7 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:z
       # Caddy serves static files collected by Django
       - static_files:/srv/static:ro
+      - media_files:/srv/media:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
@@ -35,3 +37,4 @@ volumes:
   caddy_data:
   caddy_config:
   static_files:
+  media_files:
