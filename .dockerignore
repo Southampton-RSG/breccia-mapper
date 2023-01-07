@@ -18,3 +18,4 @@ mail.log/
 deployment*
 
 docs/
+.readthedocs.yaml
