@@ -1,5 +1,5 @@
 all:
   hosts:
     example.com:
-      django_debug: 1
+      django_debug: 0
       django_secret_key: debug_only_g62WlORMbo8iAcV7vKCKBQ==
