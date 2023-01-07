@@ -8,13 +8,12 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from django_countries.fields import CountryField
-from django_settings_export import settings_export
 from post_office import mail
+
+from constance import config
 
 from .organisation import Organisation
 from .question import AnswerSet, Question, QuestionChoice
-
-from constance import config
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -45,7 +44,6 @@ class User(AbstractUser):
     def send_welcome_email(self) -> None:
         """Send a welcome email to a new user."""
         # Get exported data from settings.py first
-        # context = settings_export(None)
         context = {
             'user': self,
             'config': config,
