@@ -1,5 +1,7 @@
 # BRECcIA Mapper
 
+[![Documentation Status](https://readthedocs.org/projects/breccia/badge/?version=latest)](https://breccia.readthedocs.io/en/latest/?badge=latest)
+
 BRECcIA Mapper is a web app to collect and explore data about the relationships between researchers and their stakeholders on large-scale, multi-site research projects.
 This allows researchers to visually represent the relationships between project staff and stakeholders involved in the their project at different points in time.
 Through this it is possible to explore the extent of networks and change over time, and identify where new relationships can be developed or existing ones strengthened.
