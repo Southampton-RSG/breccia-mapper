@@ -96,7 +96,7 @@
         chdir: "{{ project_dir }}"
         cmd: docker compose up -d
     
-    - name: Provision admin user
+    - name: Provision superuser
       ansible.builtin.command:
         chdir: "{{ project_dir }}"
         cmd: sudo docker compose exec -it server /bin/bash -c "DJANGO_SUPERUSER_USERNAME='{{ superuser_username }}' DJANGO_SUPERUSER_PASSWORD='{{ superuser_password }}' DJANGO_SUPERUSER_EMAIL='{{ superuser_email }}' /app/manage.py createsuperuser --no-input"
