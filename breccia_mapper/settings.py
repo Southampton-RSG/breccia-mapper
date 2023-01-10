@@ -361,7 +361,7 @@ CONSTANCE_CONFIG = {
       'Relationship Mapper',
       'Project short name'),
     'PROJECT_LEAD': (
-      'John Doe',
+      'Project Lead',
       'Project lead'),
     'PROJECT_TAGLINE': (
       'Here is your project\'s tagline.',
