@@ -11,7 +11,7 @@
       register: vagrant_dir
 
   vars:
-    project_name: relationship-mapper
+    project_name: network-mapper
     project_dir: /srv/{{ project_name }}
     project_src_dir: "{{ project_dir }}/src"
     provision_superuser: false
@@ -46,7 +46,7 @@
     - name: Clone / update from source repos
       ansible.builtin.git:
         # repo: 'https://github.com/Southampton-RSG/breccia-mapper.git'
-        repo: 'https://github.com/mgrove36/breccia-relationship-mapper.git'
+        repo: 'https://github.com/mgrove36/breccia-network-mapper.git'
         dest: '{{ project_src_dir }}'
         version: dev # master
         accept_hostkey: yes
@@ -105,5 +105,5 @@
     - name: Display warning about new superuser
       debug:
         msg:
-          - "[WARNING] A superuser has been provisioned with the username \"{{ superuser_username }}\" and password that was provided. This user has unlimited access to the relationship mapper."
+          - "[WARNING] A superuser has been provisioned with the username \"{{ superuser_username }}\" and password that was provided. This user has unlimited access to the network mapper."
       when: provision_superuser

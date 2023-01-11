@@ -1,6 +1,6 @@
 # Deployment
 
-The BRECcIA Relationship Mapper can be deployed in a variety of ways, most of which utilise Docker.
+The BRECcIA Network Mapper can be deployed in a variety of ways, most of which utilise Docker.
 Ansible deployment has been tested on RHEL7 and RHEL8.
 
 ## Development Deployment
@@ -25,7 +25,7 @@ And then start the virtual machine using:
 vagrant up
 ```
 
-If you would like a new superuser to be provisioned when deploying the relationship mapper, change the following line in `playbook.yml`:
+If you would like a new superuser to be provisioned when deploying the network mapper, change the following line in `playbook.yml`:
 
 ```yaml
 provision_superuser: false
@@ -39,13 +39,13 @@ provision_superuser: true
 
 And change the `superuser_*` options below it as desired.
 
-Then provision the virtual machine (deploying the relationship mapper) using:
+Then provision the virtual machine (deploying the network mapper) using:
 
 ```bash
 vagrant provision
 ```
 
-This installs the relationship mapper and makes it available on the local machine at `http://localhost:8080`.
+This installs the network mapper and makes it available on the local machine at `http://localhost:8080`.
 If you wish to make this accessible from other devices on your local network, replace the following line in `deploy/Vagrantfile`:
 
 ```ruby
@@ -78,7 +78,7 @@ Prerequisites:
 Deployment with Ansible has been tested on RHEL7 and RHEL8, but is compatible with other Linux distributions with minor changes to the playbook (`deploy/playbook.yml`)
 :::
 
-To deploy the BRECcIA Relationship Mapper with Ansible:
+To deploy the BRECcIA Network Mapper with Ansible:
 
 1. Copy `settings.example.ini` to `settings.ini`
 2. Edit this file as desired. Note there is no requirement to change any of these variables, but it is recommended.
@@ -86,7 +86,7 @@ To deploy the BRECcIA Relationship Mapper with Ansible:
 4. Edit this file to reflect your Ansible setup:
   - Use your server's hostname instead of `example.com`
   - Replace the secret key with some text known only to you
-5. If you would like a new superuser to be provisioned for the relationship mapper (e.g. during initial install), edit the following line of `playbook.yml`:
+5. If you would like a new superuser to be provisioned for the network mapper (e.g. during initial install), edit the following line of `playbook.yml`:
 
 ```yaml
 provision_superuser: false
@@ -119,7 +119,7 @@ Prerequisites:
 Deployment with Docker has been tested on RHEL7, RHEL8, and Ubuntu 22.04 LTS
 :::
 
-To deploy the BRECcIA Relationship Mapper with Docker:
+To deploy the BRECcIA Network Mapper with Docker:
 
 1. Copy `deploy/settings.example.ini` to `breccia_mapper/settings.ini`
 2. Edit this file as desired. Note there is no requirement to change any of these variables, but it is recommended.

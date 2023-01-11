@@ -2,8 +2,8 @@ version: '3.1'
 
 services:
   server:
-    image: breccia-relationship-mapper
-    container_name: relationship-mapper-server
+    image: breccia-network-mapper
+    container_name: network-mapper-server
     build: .
     ports:
       - 8000:8000
@@ -18,7 +18,7 @@ services:
 
   caddy:
     image: caddy:2
-    container_name: relationship-mapper-caddy
+    container_name: network-mapper-caddy
     restart: unless-stopped
     ports:
       - 80:80

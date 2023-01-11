@@ -355,10 +355,10 @@ CONSTANCE_CONFIG = {
       '',
       'Parent project name'),
     'PROJECT_LONG_NAME': (
-      'Project Relationship Mapper',
+      'Project Network Mapper',
       'Project long name'),
     'PROJECT_SHORT_NAME': (
-      'Relationship Mapper',
+      'Network Mapper',
       'Project short name'),
     'PROJECT_LEAD': (
       'Project Lead',
