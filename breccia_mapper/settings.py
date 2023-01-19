@@ -348,6 +348,9 @@ CONSTANCE_CONFIG = {
     'RELATIONSHIP_FORM_HELP': (
         '',
         'Help text to display at the top of relationship forms.'),
+    'DEPLOYMENT_URL': (
+      'http://localhost',
+      'URL at which this mapper tool is accessible - do NOT include a trailing forward slash'),
     'PARENT_PROJECT_NAME': (
       '',
       'Parent project name'),
@@ -444,6 +447,9 @@ CONSTANCE_CONFIG_FIELDSETS = {
         'PERSON_LIST_HELP',
         'ORGANISATION_LIST_HELP',
         'RELATIONSHIP_FORM_HELP',
+    ),
+    'Deployment': (
+        'DEPLOYMENT_URL',
     ),
 }  # yapf: disable
 
