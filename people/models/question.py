@@ -92,7 +92,7 @@ class QuestionChoice(models.Model):
         abstract = True
         constraints = [
             models.UniqueConstraint(fields=['question', 'text'],
-                                    name='unique_question_answer')
+                                    name='unique_question_answer_modelquestionchoice')
         ]
         ordering = [
             'question__order',

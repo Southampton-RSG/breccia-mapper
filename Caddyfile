@@ -4,12 +4,13 @@
 
     @proxy_paths {
         not path /static/*
+        not path /media/*
     }
 
-    reverse_proxy @proxy_paths http://web:8000
+    reverse_proxy @proxy_paths http://server:8000
 
     log {
         output stderr
-        format single_field common_log
+        format console
     }
 }

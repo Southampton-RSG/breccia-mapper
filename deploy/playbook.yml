@@ -11,9 +11,13 @@
       register: vagrant_dir
 
   vars:
-    project_name: mapper
+    project_name: network-mapper
     project_dir: /srv/{{ project_name }}
     project_src_dir: "{{ project_dir }}/src"
+    provision_superuser: false
+    superuser_username: admin
+    superuser_password: admin
+    superuser_email: email@example.com
 
   tasks:
     - name: Vagrant specific tasks
@@ -41,9 +45,10 @@
 
     - name: Clone / update from source repos
       ansible.builtin.git:
-        repo: 'https://github.com/Southampton-RSG/breccia-mapper.git'
+        # repo: 'https://github.com/Southampton-RSG/breccia-mapper.git'
+        repo: 'https://github.com/mgrove36/breccia-network-mapper.git'
         dest: '{{ project_src_dir }}'
-        version: docker
+        version: dev # master
         accept_hostkey: yes
 
     - name: Copy template files
@@ -54,6 +59,12 @@
       loop:
         - Caddyfile
         - docker-compose.yml
+
+    - name: Copy settings file
+      ansible.builtin.copy:
+        src: 'settings.ini'
+        dest: '{{ project_src_dir }}/breccia_mapper/settings.ini'
+        mode: 0600
 
     - name: Create database file
       ansible.builtin.file:
@@ -78,9 +89,21 @@
         chdir: "{{ project_dir }}"
         cmd: docker compose build {{ item }}
       loop:
-        - web
+        - server
 
     - name: Start containers
       ansible.builtin.command:
         chdir: "{{ project_dir }}"
         cmd: docker compose up -d
+    
+    - name: Provision superuser
+      ansible.builtin.command:
+        chdir: "{{ project_dir }}"
+        cmd: sudo docker compose exec -it server /bin/bash -c "DJANGO_SUPERUSER_USERNAME='{{ superuser_username }}' DJANGO_SUPERUSER_PASSWORD='{{ superuser_password }}' DJANGO_SUPERUSER_EMAIL='{{ superuser_email }}' /app/manage.py createsuperuser --no-input"
+      when: provision_superuser
+
+    - name: Display warning about new superuser
+      debug:
+        msg:
+          - "[WARNING] A superuser has been provisioned with the username \"{{ superuser_username }}\" and password that was provided. This user has unlimited access to the network mapper."
+      when: provision_superuser
