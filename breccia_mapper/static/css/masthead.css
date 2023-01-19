@@ -12,6 +12,13 @@ header.masthead {
     z-index: -2;
 }
 
+header.masthead.masthead-shrink {
+    -webkit-background-size: contain;
+    -moz-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+}
+
 header.masthead .overlay {
     position: absolute;
     background-color: #212529;

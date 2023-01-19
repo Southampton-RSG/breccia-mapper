@@ -10,7 +10,7 @@
 {% block before_content %}
 
     {% get_media_prefix as MEDIA_URL %}
-    <header class="container-fluid masthead text-white text-left"
+    <header class="container-fluid masthead text-white text-left {% if config.HOMEPAGE_HEADER_IMAGE_SHRINK %}masthead-shrink{% endif %}"
             style="background-image: url('{{ MEDIA_URL }}{{ config.HOMEPAGE_HEADER_IMAGE }}')">
         <div class="overlay"></div>
 

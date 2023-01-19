@@ -350,7 +350,7 @@ CONSTANCE_CONFIG = {
         'Help text to display at the top of relationship forms.'),
     'DEPLOYMENT_URL': (
       'http://localhost',
-      'URL at which this mapper tool is accessible'),
+      'URL at which this mapper tool is accessible - do NOT include a trailing forward slash'),
     'PARENT_PROJECT_NAME': (
       '',
       'Parent project name'),
@@ -370,6 +370,9 @@ CONSTANCE_CONFIG = {
       '800x500.png',
       'Homepage header image',
       'image_field'),
+    'HOMEPAGE_HEADER_IMAGE_SHRINK': (
+      False,
+      'Shrink the homepage header image to display the whole image at all times'),
     'HOMEPAGE_CARD_1_TITLE': (
       'Step 1',
       'Homepage card #1 title'),
@@ -418,6 +421,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
         'PROJECT_TAGLINE',
     ),
     'Homepage configuration': (
+        'HOMEPAGE_HEADER_IMAGE_SHRINK',
         'HOMEPAGE_HEADER_IMAGE',
         'HOMEPAGE_CARD_1_TITLE',
         'HOMEPAGE_CARD_1_DESCRIPTION',
