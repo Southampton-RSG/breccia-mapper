@@ -45,8 +45,7 @@
 
     - name: Clone / update from source repos
       ansible.builtin.git:
-        # repo: 'https://github.com/Southampton-RSG/breccia-mapper.git'
-        repo: 'https://github.com/mgrove36/breccia-network-mapper.git'
+        repo: 'https://github.com/Southampton-RSG/breccia-mapper.git'
         dest: '{{ project_src_dir }}'
         version: dev # master
         accept_hostkey: yes
