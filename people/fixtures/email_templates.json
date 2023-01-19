@@ -7,8 +7,8 @@
             "created": "2020-04-27T12:13:30.448Z",
             "last_updated": "2020-04-27T14:45:27.152Z",
             "subject": "Welcome to {{config.PROJECT_LONG_NAME}}",
-            "content": "Dear user,\r\n\r\nWelcome to {{ config.PROJECT_LONG_NAME }}. You can sign in at {{ config.DEPLOYMENT_URL }}.\r\n\r\nThanks,\r\n\r\nThe {{ config.PROJECT_SHORT_NAME }} team",
-            "html_content": "<h1>{{ config.PROJECT_LONG_NAME }}</h1><br/><p>Dear user,</p><br/><p>Welcome to {{ config.PROJECT_LONG_NAME }}. You can sign in <a href='{{ config.DEPLOYMENT_URL }}'>here</a>.</p><br/><p>Thanks,</p><p>The {{ config.PROJECT_SHORT_NAME }} team</p>",
+            "content": "Dear user,\r\n\r\nWelcome to {{ config.PROJECT_LONG_NAME }}. You can set your password at {{ config.DEPLOYMENT_URL }}/password_reset/.\r\n\r\nThanks,\r\n\r\nThe {{ config.PROJECT_SHORT_NAME }} team",
+            "html_content": "<h1>{{ config.PROJECT_LONG_NAME }}</h1><br/><p>Dear user,</p><br/><p>Welcome to {{ config.PROJECT_LONG_NAME }}. You can set your password <a href='{{ config.DEPLOYMENT_URL }}/password_reset/'>here</a>.</p><br/><p>Thanks,</p><p>The {{ config.PROJECT_SHORT_NAME }} team</p>",
             "language": "",
             "default_template": null
         }
