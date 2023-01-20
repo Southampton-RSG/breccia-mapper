@@ -498,7 +498,7 @@ else:
 BOOTSTRAP_DATEPICKER_PLUS = {
     "variant_options": {
         "date": {
-            "format": "%Y-%m-%d",
+            "format": "YYYY-MM-DD",
         },
     }
 }
