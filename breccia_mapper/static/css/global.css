@@ -18,4 +18,11 @@ body {
   line-height: 60px;
   flex-shrink: 0;
 }
+
+.footer .container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
 /* end of sticky footer styles */
