@@ -54,4 +54,7 @@ urlpatterns = [
 
     path('',
          include('activities.urls')),
+
+    path('',
+         include('pwa.urls')),
 ]  # yapf: disable

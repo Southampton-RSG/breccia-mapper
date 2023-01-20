@@ -146,6 +146,7 @@ THIRD_PARTY_APPS = [
     'post_office',
     'bootstrap_datepicker_plus',
     'hijack',
+    'pwa',
 ]
 
 FIRST_PARTY_APPS = [
@@ -348,9 +349,17 @@ CONSTANCE_CONFIG = {
     'RELATIONSHIP_FORM_HELP': (
         '',
         'Help text to display at the top of relationship forms.'),
-    'DEPLOYMENT_URL': (
+    'SITE_URL': (
       'http://localhost',
       'URL at which this mapper tool is accessible - do NOT include a trailing forward slash'),
+    'SITE_ICON': (
+        'icon.png',
+        'Site icon',
+        'image_field'),
+    'SITE_ICON_192x192': (
+        'icon-192x192.png',
+        'Site icon',
+        'image_field'),
     'PARENT_PROJECT_NAME': (
       '',
       'Parent project name'),
@@ -449,7 +458,9 @@ CONSTANCE_CONFIG_FIELDSETS = {
         'RELATIONSHIP_FORM_HELP',
     ),
     'Deployment': (
-        'DEPLOYMENT_URL',
+        'SITE_URL',
+        'SITE_ICON',
+        'SITE_ICON_192x192',
     ),
 }  # yapf: disable
 
@@ -502,6 +513,40 @@ BOOTSTRAP_DATEPICKER_PLUS = {
         },
     }
 }
+
+# PWA settings
+
+PWA_SERVICE_WORKER_PATH = BASE_DIR.joinpath('static/js', 'serviceworker.js')
+
+PWA_APP_NAME = 'networkmapper'
+PWA_APP_DESCRIPTION = "Network Mapper"
+PWA_APP_THEME_COLOR = '#000000'
+PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'any'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICONS = [
+	{
+		'src': 'media/icon-192x192.png',
+		'sizes': '160x160'
+	}
+]
+PWA_APP_ICONS_APPLE = [
+	{
+		'src': 'media/icon-192x192.png',
+		'sizes': '160x160'
+	}
+]
+PWA_APP_SPLASH_SCREEN = [
+	{
+		'src': 'media/icon.png',
+		'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
+	}
+]
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = 'en-GB'
 
 # Database default automatic primary key
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
