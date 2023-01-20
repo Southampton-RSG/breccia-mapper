@@ -15,15 +15,14 @@ release = '1.1'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-	'sphinx.ext.duration',
-	'myst_parser',
+    'sphinx.ext.duration',
+    'myst_parser',
 ]
 
 myst_enable_extensions = ['colon_fence']
 
 templates_path = ['_templates']
 exclude_patterns = []
-
 
 
 # -- Options for HTML output -------------------------------------------------
