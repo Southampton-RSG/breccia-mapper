@@ -117,6 +117,8 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
         except models.Relationship.DoesNotExist:
             pass
+        except models.Person.DoesNotExist:
+            pass
 
         return context
 
