@@ -31,6 +31,18 @@ The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABAS
   default: http
   The protocol the site uses. Valid options are http or https.
 
+- PROJECT_LONG_NAME
+  default: Project Network Mapper
+  The project's full name
+
+- PROJECT_SHORT_NAME
+  default: Network Mapper
+  The project's short/abbreviated name.
+
+- PROJECT_THEME_COLOR
+  default: 212121
+  The project's theme color, in hex format (excluding the leading #).
+
 - ALLOWED_HOSTS
   default: * if DEBUG else localhost
   Accepted values for server header in request - protects against CSRF and CSS attacks
@@ -403,6 +415,9 @@ CONSTANCE_CONFIG = {
     'PROJECT_TAGLINE': (
       'Here is your project\'s tagline.',
       'Project tagline'),
+    'PROJECT_THEME_COLOR': (
+      '#212121',
+      'The hex color code for the project\'s theme color, including the #.'),
     'HOMEPAGE_HEADER_IMAGE': (
       '800x500.png',
       'Homepage header image',
@@ -456,6 +471,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
         'PROJECT_SHORT_NAME',
         'PROJECT_LEAD',
         'PROJECT_TAGLINE',
+        'PROJECT_THEME_COLOR',
     ),
     'Homepage configuration': (
         'HOMEPAGE_HEADER_IMAGE_SHRINK',
@@ -545,9 +561,9 @@ BOOTSTRAP_DATEPICKER_PLUS = {
 
 PWA_SERVICE_WORKER_PATH = BASE_DIR.joinpath('static/js', 'serviceworker.js')
 
-PWA_APP_NAME = 'networkmapper'
-PWA_APP_DESCRIPTION = "Network Mapper"
-PWA_APP_THEME_COLOR = '#000000'
+PWA_APP_NAME = CONSTANCE_CONFIG["PROJECT_SHORT_NAME"][0]
+PWA_APP_DESCRIPTION = CONSTANCE_CONFIG["PROJECT_LONG_NAME"][0]
+PWA_APP_THEME_COLOR = CONSTANCE_CONFIG["PROJECT_THEME_COLOR"][0]
 PWA_APP_BACKGROUND_COLOR = '#ffffff'
 PWA_APP_DISPLAY = 'standalone'
 PWA_APP_SCOPE = '/'
@@ -556,24 +572,25 @@ PWA_APP_START_URL = '/'
 PWA_APP_STATUS_BAR_COLOR = 'default'
 PWA_APP_ICONS = [
 	{
-		'src': 'media/icon-192x192.png',
+		'src': '/media/icon-192x192.png',
 		'sizes': '160x160'
 	}
 ]
 PWA_APP_ICONS_APPLE = [
 	{
-		'src': 'media/icon-192x192.png',
+		'src': '/media/icon-192x192.png',
 		'sizes': '160x160'
 	}
 ]
 PWA_APP_SPLASH_SCREEN = [
 	{
-		'src': 'media/icon.png',
+		'src': '/media/icon.png',
 		'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
 	}
 ]
 PWA_APP_DIR = 'ltr'
 PWA_APP_LANG = 'en-GB'
+PWA_APP_DEBUG_MODE = False
 
 # Database default automatic primary key
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

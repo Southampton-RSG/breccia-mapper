@@ -7,7 +7,6 @@
 <html lang="{{ LANGUAGE_CODE|default:'en_us' }}">
 
 {% load pwa %}
-{% progressive_web_app_meta %}
 
 <link rel="manifest" href="manifest.json">
 
@@ -52,6 +51,9 @@
     {% if form %}
         {{ form.media.css }}
     {% endif %}
+
+    <!-- PWA metadata -->
+    {% progressive_web_app_meta %}
 
     {% block extra_head %}{% endblock %}
 
