@@ -23,6 +23,14 @@ The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABAS
   default: False
   Should the server run in debug mode?  Provides information to users which is unsafe in production
 
+- SITE_URL
+  default: localhost
+  The URL the site will be deployed on. Do not include http://, https://, or a trailing slash.
+
+- SITE_PROTOCOL
+  default: http
+  The protocol the site uses. Valid options are http or https.
+
 - ALLOWED_HOSTS
   default: * if DEBUG else localhost
   Accepted values for server header in request - protects against CSRF and CSS attacks
@@ -106,6 +114,8 @@ import dj_database_url
 
 SETTINGS_EXPORT = [
     'DEBUG',
+    'SITE_URL',
+    'SITE_PROTOCOL',
     'GOOGLE_MAPS_API_KEY',
 ]
 
@@ -122,6 +132,27 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
     default='*' if DEBUG else '127.0.0.1,localhost,localhost.localdomain',
+    cast=Csv())
+
+# Site URL
+SITE_URL = config('SITE_URL', default='localhost')
+SITE_PROTOCOL = config('SITE_PROTOCOL', default='http')
+
+# CORS settings
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = config(
+    'TRUSTED_ORIGINS',
+    default='*' if DEBUG else 'http://127.0.0.1,http://localhost,http://localhost.localdomain',
+    cast=Csv())
+CORS_REPLACE_HTTPS_REFERER = True
+CSRF_COOKIE_DOMAIN = config(
+    'SITE_URL',
+    default='localhost')
+CORS_ORIGIN_WHITELIST = config(
+    'TRUSTED_ORIGINS',
+    default='*' if DEBUG else 'http://127.0.0.1,http://localhost,http://localhost.localdomain',
     cast=Csv())
 
 # Application definition
@@ -349,9 +380,6 @@ CONSTANCE_CONFIG = {
     'RELATIONSHIP_FORM_HELP': (
         '',
         'Help text to display at the top of relationship forms.'),
-    'SITE_URL': (
-      'http://localhost',
-      'URL at which this mapper tool is accessible - do NOT include a trailing forward slash'),
     'SITE_ICON': (
         'icon.png',
         'Site icon',
@@ -458,7 +486,6 @@ CONSTANCE_CONFIG_FIELDSETS = {
         'RELATIONSHIP_FORM_HELP',
     ),
     'Deployment': (
-        'SITE_URL',
         'SITE_ICON',
         'SITE_ICON_192x192',
     ),

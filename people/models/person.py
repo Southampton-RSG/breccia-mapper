@@ -47,6 +47,7 @@ class User(AbstractUser):
         context = {
             'user': self,
             'config': config,
+            'settings': settings,
         }
 
         logger.info('Sending welcome mail to user \'%s\'', self.username)
