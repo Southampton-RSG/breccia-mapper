@@ -25,8 +25,11 @@ class PersonCreateView(LoginRequiredMixin, CreateView):
     form_class = forms.PersonForm
 
     def form_valid(self, form):
-        if 'user' in self.request.GET:
-            form.instance.user = self.request.user
+        try:
+            self.request.user.person
+        except ObjectDoesNotExist:
+            if 'user' in self.request.GET:
+                form.instance.user = self.request.user
 
         return super().form_valid(form)
 
@@ -117,7 +120,9 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
         except models.Relationship.DoesNotExist:
             pass
-        except models.Person.DoesNotExist:
+
+        except ObjectDoesNotExist:
+            # No linked Person yet
             pass
 
         return context
