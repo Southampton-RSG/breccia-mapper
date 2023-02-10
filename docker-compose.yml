@@ -2,8 +2,7 @@ version: '3.1'
 
 services:
   server:
-    image: breccia-network-mapper
-    container_name: network-mapper-server
+    image: mgrove36/breccia-mapper:latest
     build: .
     ports:
       - 8000:8000
@@ -15,11 +14,9 @@ services:
       - ./db.sqlite3:/app/db.sqlite3:z
       - static_files:/app/static
       - media_files:/app/media
-      - ./icon-192x192.png:/app/media/icon-192x192.png:ro
 
   caddy:
     image: caddy:2
-    container_name: network-mapper-caddy
     restart: unless-stopped
     ports:
       - 80:80
@@ -29,6 +26,7 @@ services:
       # Caddy serves static files collected by Django
       - static_files:/srv/static:ro
       - media_files:/srv/media:ro
+      - ./icon-192x192.png:/srv/media/icon-192x192.png:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:

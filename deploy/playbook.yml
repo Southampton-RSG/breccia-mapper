@@ -88,12 +88,6 @@
         cmd: docker compose pull {{ item }}
       loop:
         - caddy
-
-    - name: Build custom images
-      ansible.builtin.command:
-        chdir: "{{ project_dir }}"
-        cmd: docker compose build {{ item }}
-      loop:
         - server
 
     - name: Start containers
