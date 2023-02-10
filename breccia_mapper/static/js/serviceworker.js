@@ -1,25 +1,11 @@
 var staticCacheName = "django-pwa-v" + new Date().getTime();
 var filesToCache = [
-    '/offline',
-    '/css/django-pwa-app.css',
-    '/media/icon-72x72.png',
-    '/media/icon-96x96.png',
-    '/media/icon-128x128.png',
-    '/media/icon-144x144.png',
-    '/media/icon-152x152.png',
-    '/media/icon-192x192.png',
-    '/media/icon-384x384.png',
-    '/media/icon-512x512.png',
-    '/static/media/splash-640x1136.png',
-    '/static/media/splash-750x1334.png',
-    '/static/media/splash-1242x2208.png',
-    '/static/media/splash-1125x2436.png',
-    '/static/media/splash-828x1792.png',
-    '/static/media/splash-1242x2688.png',
-    '/static/media/splash-1536x2048.png',
-    '/static/media/splash-1668x2224.png',
-    '/static/media/splash-1668x2388.png',
-    '/static/media/splash-2048x2732.png'
+  "/offline",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/fontawesome.min.css",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/solid.min.css",
+  "/static/css/global.css",
+  "/static/hijack/hijack.min.css",
+  "/media/icon-192x192.png",
 ];
 
 // Cache on install

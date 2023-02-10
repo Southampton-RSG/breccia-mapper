@@ -20,10 +20,8 @@ from django.conf.urls.static import static
 
 from . import views
 
-from constance import config
-
-admin.site.site_header = config.PROJECT_LONG_NAME + " Admin"
-admin.site.site_title = config.PROJECT_SHORT_NAME + " Admin"
+admin.site.site_header = settings.PROJECT_LONG_NAME + " Admin"
+admin.site.site_title = settings.PROJECT_SHORT_NAME + " Admin"
 
 urlpatterns = [
     path('admin/',

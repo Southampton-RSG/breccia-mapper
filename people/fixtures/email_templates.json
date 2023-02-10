@@ -6,9 +6,9 @@
             "description": "Default welcome email template",
             "created": "2020-04-27T12:13:30.448Z",
             "last_updated": "2020-04-27T14:45:27.152Z",
-            "subject": "Welcome to {{config.PROJECT_LONG_NAME}}",
-            "content": "Dear user,\r\n\r\nWelcome to {{ config.PROJECT_LONG_NAME }}. You can set your password at {{ settings.SITE_PROTOCOL }}://{{ settings.SITE_URL }}/password_reset/.\r\n\r\nYour username is {{ user.username }}.\r\nThanks,\r\n\r\nThe {{ config.PROJECT_SHORT_NAME }} team",
-            "html_content": "<h1>{{ config.PROJECT_LONG_NAME }}</h1><br/><p>Dear user,</p><br/><p>Welcome to {{ config.PROJECT_LONG_NAME }}. You can set your password <a href='{{ settings.SITE_PROTOCOL }}://{{ settings.SITE_URL }}/password_reset/'>here</a>.</p><p>Your username is {{ user.username }}.</p><br/><p>Thanks,</p><p>The {{ config.PROJECT_SHORT_NAME }} team</p>",
+            "subject": "Welcome to {{settings.PROJECT_LONG_NAME}}",
+            "content": "Dear user,\r\n\r\nWelcome to {{ settings.PROJECT_LONG_NAME }}. You can set your password at {{ settings.SITE_PROTOCOL }}://{{ settings.SITE_URL }}/password_reset/.\r\n\r\nYour username is {{ user.username }}.\r\nThanks,\r\n\r\nThe {{ settings.PROJECT_SHORT_NAME }} team",
+            "html_content": "<h1>{{ settings.PROJECT_LONG_NAME }}</h1><br/><p>Dear user,</p><br/><p>Welcome to {{ settings.PROJECT_LONG_NAME }}. You can set your password <a href='{{ settings.SITE_PROTOCOL }}://{{ settings.SITE_URL }}/password_reset/'>here</a>.</p><p>Your username is {{ user.username }}.</p><br/><p>Thanks,</p><p>The {{ settings.PROJECT_SHORT_NAME }} team</p>",
             "language": "",
             "default_template": null
         }

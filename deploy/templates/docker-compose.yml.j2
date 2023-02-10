@@ -8,13 +8,14 @@ services:
     ports:
       - 8000:8000
     environment:
-      DEBUG: {{ django_debug }}
-      DATABASE_URL: sqlite:////app/db.sqlite3
-      SECRET_KEY: {{ django_secret_key }}
+      DJANGO_DEBUG: ${DEBUG}
+    env_file:
+      - .env
     volumes:
       - {{ project_dir }}/db.sqlite3:/app/db.sqlite3:z
       - static_files:/app/static
       - media_files:/app/media
+      - {{ project_dir }}/icon-192x192.png:/app/media/icon-192x192.png:ro
 
   caddy:
     image: caddy:2

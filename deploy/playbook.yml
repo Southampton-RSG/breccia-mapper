@@ -61,8 +61,14 @@
 
     - name: Copy settings file
       ansible.builtin.copy:
-        src: 'settings.ini'
-        dest: '{{ project_src_dir }}/breccia_mapper/settings.ini'
+        src: '.env'
+        dest: '{{ project_dir }}/.env'
+        mode: 0600
+
+    - name: Copy site icon
+      ansible.builtin.copy:
+        src: 'icon-192x192.png'
+        dest: '{{ project_dir }}/icon-192x192.png'
         mode: 0600
 
     - name: Create database file
@@ -104,5 +110,5 @@
     - name: Display warning about new superuser
       debug:
         msg:
-          - "[WARNING] A superuser has been provisioned with the username \"{{ superuser_username }}\" and password that was provided. This user has unlimited access to the network mapper."
+          - "[WARNING] A superuser has been provisioned with the username \"{{ superuser_username }}\" and the password that was provided. This user has unlimited access to the network mapper."
       when: provision_superuser

@@ -8,13 +8,13 @@
 
 {% load pwa %}
 
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="/manifest.json">
 
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{{ config.PROJECT_LONG_NAME }}</title>
+    <title>{{ settings.PROJECT_LONG_NAME }}</title>
 
     <!-- Bootstrap CSS -->
     {% bootstrap_css %}
@@ -65,7 +65,7 @@
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container">
                     <a href="{% url 'index' %}" class="navbar-brand">
-                        {{ config.PROJECT_SHORT_NAME }}
+                        {{ settings.PROJECT_SHORT_NAME }}
                     </a>
 
                     <button type="button" class="navbar-toggler"
@@ -220,7 +220,7 @@
 
     <footer class="footer bg-light">
         <div class="container">
-            <span class="text-muted">{{ config.PROJECT_LONG_NAME }}</span>
+            <span class="text-muted">{{ settings.PROJECT_LONG_NAME }}</span>
             <span class="text-muted">Developed by the <a href="https://gcrf-breccia.com">BRECcIA</a> team</span>
         </div>
     </footer>

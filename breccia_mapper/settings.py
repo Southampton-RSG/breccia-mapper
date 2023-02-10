@@ -13,8 +13,8 @@ Before production deployment, see
 https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 
-Many configuration settings are input from `settings.ini`.
-The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABASE_URL, PROJECT_*_NAME, EMAIL_*
+Many configuration settings are input from `.env`.
+The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, PROJECT_*_NAME, EMAIL_*
 
 - SECRET_KEY (REQUIRED)
   Used to generate CSRF tokens - must never be made public
@@ -33,23 +33,27 @@ The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABAS
 
 - PROJECT_LONG_NAME
   default: Project Network Mapper
-  The project's full name
+  The project's full name.
 
 - PROJECT_SHORT_NAME
   default: Network Mapper
-  The project's short/abbreviated name.
+  The project's short/abbreviated name. This will also be used as the app's name when installed as PWA.
 
-- PROJECT_THEME_COLOR
+- PROJECT_DESCRIPTION
+  default: Application to map network relationships in the organisation.
+  The project's description. Used when installed as a PWA.
+
+- THEME_COLOR
   default: 212121
   The project's theme color, in hex format (excluding the leading #).
+
+- BACKGROUND_COLOR
+  default: ffffff
+  The project's background color, in hex format (excluding the leading #).
 
 - ALLOWED_HOSTS
   default: * if DEBUG else localhost
   Accepted values for server header in request - protects against CSRF and CSS attacks
-
-- DATABASE_URL
-  default: sqlite://db.sqlite3
-  URL to database - uses format described at https://github.com/jacobian/dj-database-url
 
 - DBBACKUP_STORAGE_LOCATION
   default: .dbbackup
@@ -129,6 +133,11 @@ SETTINGS_EXPORT = [
     'SITE_URL',
     'SITE_PROTOCOL',
     'GOOGLE_MAPS_API_KEY',
+    'PROJECT_LONG_NAME',
+    'PROJECT_SHORT_NAME',
+    'PROJECT_DESCRIPTION',
+    'THEME_COLOR',
+    'BACKGROUND_COLOR',
 ]
 
 
@@ -237,10 +246,7 @@ WSGI_APPLICATION = 'breccia_mapper.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    'default':
-    config('DATABASE_URL',
-           default='sqlite:///' + str(BASE_DIR.joinpath('db.sqlite3')),
-           cast=dj_database_url.parse)
+    'default': dj_database_url.parse('sqlite:///' + str(BASE_DIR.joinpath('db.sqlite3')))
 }
 
 # Django DBBackup
@@ -392,32 +398,15 @@ CONSTANCE_CONFIG = {
     'RELATIONSHIP_FORM_HELP': (
         '',
         'Help text to display at the top of relationship forms.'),
-    'SITE_ICON': (
-        'icon.png',
-        'Site icon',
-        'image_field'),
-    'SITE_ICON_192x192': (
-        'icon-192x192.png',
-        'Site icon',
-        'image_field'),
     'PARENT_PROJECT_NAME': (
       '',
       'Parent project name'),
-    'PROJECT_LONG_NAME': (
-      'Project Network Mapper',
-      'Project long name'),
-    'PROJECT_SHORT_NAME': (
-      'Network Mapper',
-      'Project short name'),
     'PROJECT_LEAD': (
       'Project Lead',
       'Project lead'),
     'PROJECT_TAGLINE': (
       'Here is your project\'s tagline.',
       'Project tagline'),
-    'PROJECT_THEME_COLOR': (
-      '#212121',
-      'The hex color code for the project\'s theme color, including the #.'),
     'HOMEPAGE_HEADER_IMAGE': (
       '800x500.png',
       'Homepage header image',
@@ -467,11 +456,8 @@ CONSTANCE_CONFIG = {
 CONSTANCE_CONFIG_FIELDSETS = {
     'Project options': (
         'PARENT_PROJECT_NAME',
-        'PROJECT_LONG_NAME',
-        'PROJECT_SHORT_NAME',
         'PROJECT_LEAD',
         'PROJECT_TAGLINE',
-        'PROJECT_THEME_COLOR',
     ),
     'Homepage configuration': (
         'HOMEPAGE_HEADER_IMAGE_SHRINK',
@@ -501,13 +487,15 @@ CONSTANCE_CONFIG_FIELDSETS = {
         'ORGANISATION_LIST_HELP',
         'RELATIONSHIP_FORM_HELP',
     ),
-    'Deployment': (
-        'SITE_ICON',
-        'SITE_ICON_192x192',
-    ),
 }  # yapf: disable
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+PROJECT_LONG_NAME = config('PROJECT_LONG_NAME', 'Project Network Mapper')
+PROJECT_SHORT_NAME = config('PROJECT_SHORT_NAME', 'Network Mapper')
+PROJECT_DESCRIPTION = config('PROJECT_DESCRIPTION', 'Application to map network relationships in the organisation.')
+THEME_COLOR = '#' + config('THEME_COLOR', '212121')
+BACKGROUND_COLOR = '#' + config('BACKGROUND_COLOR', 'ffffff')
 
 # Django Hijack settings
 # See https://django-hijack.readthedocs.io/en/stable/
@@ -527,7 +515,7 @@ BOOTSTRAP4 = {
 EMAIL_HOST = config('EMAIL_HOST', default=None)
 DEFAULT_FROM_EMAIL = config(
     'DEFAULT_FROM_EMAIL',
-    default=f'{CONSTANCE_CONFIG["PROJECT_SHORT_NAME"][0]}@localhost.localdomain')
+    default=f'{PROJECT_SHORT_NAME}@localhost.localdomain')
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 if EMAIL_HOST is None:
@@ -561,10 +549,10 @@ BOOTSTRAP_DATEPICKER_PLUS = {
 
 PWA_SERVICE_WORKER_PATH = BASE_DIR.joinpath('static/js', 'serviceworker.js')
 
-PWA_APP_NAME = CONSTANCE_CONFIG["PROJECT_SHORT_NAME"][0]
-PWA_APP_DESCRIPTION = CONSTANCE_CONFIG["PROJECT_LONG_NAME"][0]
-PWA_APP_THEME_COLOR = CONSTANCE_CONFIG["PROJECT_THEME_COLOR"][0]
-PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_NAME = PROJECT_SHORT_NAME
+PWA_APP_DESCRIPTION = PROJECT_DESCRIPTION
+PWA_APP_THEME_COLOR = THEME_COLOR
+PWA_APP_BACKGROUND_COLOR = BACKGROUND_COLOR
 PWA_APP_DISPLAY = 'standalone'
 PWA_APP_SCOPE = '/'
 PWA_APP_ORIENTATION = 'any'
@@ -573,24 +561,24 @@ PWA_APP_STATUS_BAR_COLOR = 'default'
 PWA_APP_ICONS = [
 	{
 		'src': '/media/icon-192x192.png',
-		'sizes': '160x160'
+		'sizes': '192x192'
 	}
 ]
 PWA_APP_ICONS_APPLE = [
 	{
 		'src': '/media/icon-192x192.png',
-		'sizes': '160x160'
+		'sizes': '192x192'
 	}
 ]
 PWA_APP_SPLASH_SCREEN = [
 	{
-		'src': '/media/icon.png',
+		'src': '/media/icon-192x192.png',
 		'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
 	}
 ]
 PWA_APP_DIR = 'ltr'
 PWA_APP_LANG = 'en-GB'
-PWA_APP_DEBUG_MODE = False
+PWA_APP_DEBUG_MODE = DEBUG
 
 # Database default automatic primary key
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

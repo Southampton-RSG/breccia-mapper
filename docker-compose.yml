@@ -8,13 +8,14 @@ services:
     ports:
       - 8000:8000
     environment:
-      DEBUG: ${DJANGO_DEBUG}
-      DATABASE_URL: sqlite:////app/db.sqlite3
-      SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DJANGO_DEBUG: ${DEBUG}
+    env_file:
+      - .env
     volumes:
       - ./db.sqlite3:/app/db.sqlite3:z
       - static_files:/app/static
       - media_files:/app/media
+      - ./icon-192x192.png:/app/media/icon-192x192.png:ro
 
   caddy:
     image: caddy:2
