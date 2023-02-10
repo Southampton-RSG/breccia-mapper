@@ -180,7 +180,7 @@ To deploy the BRECcIA Network Mapper with Vagrant:
 
 
 :::{note}
-To stop the virtual machine, run `vagrant halt` in this directory. More commands are explained in the [Vagrant docs](https://www.vagrantup.com/docs/cli).
+To stop the virtual machine, run `vagrant halt` in this directory. More commands are explained in the [Vagrant docs](https://developer.hashicorp.com/vagrant/docs/cli).
 :::
 
 <!-- # Build From Source -->
