@@ -1,74 +1,9 @@
-# Deployment
 
 The BRECcIA Network Mapper can be deployed in a variety of ways, most of which utilise Docker.
 Ansible deployment has been tested on RHEL7 and RHEL8.
 
-## Development Deployment
 
-Prerequisites:
-
-- [Vagrant](https://www.vagrantup.com/)
-- [Ansible](https://www.ansible.com/)
-
-Using Vagrant, we can create a virtual machine and deploy BRECcIA Mapper using the same provisioning scripts as a production deployment.
-To deploy a local development version of BRECcIA Mapper inside a virtual machine, first navigate to the `deploy` folder:
-
-```bash
-cd deploy
-```
-
-And then set your config options for the deployment, by copying `settings.example.ini` to `settings.ini` and changing the options contained within as required.
-
-And then start the virtual machine using:
-
-```bash
-vagrant up
-```
-
-If you would like a new superuser to be provisioned when deploying the network mapper, change the following line in `playbook.yml`:
-
-```yaml
-provision_superuser: false
-```
-
-to
-
-```yaml
-provision_superuser: true
-```
-
-And change the `superuser_*` options below it as desired.
-
-Then provision the virtual machine (deploying the network mapper) using:
-
-```bash
-vagrant provision
-```
-
-This installs the network mapper and makes it available on the local machine at `http://localhost:8080`.
-If you wish to make this accessible from other devices on your local network, replace the following line in `deploy/Vagrantfile`:
-
-```ruby
-config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-```
-
-with:
-
-```ruby
-config.vm.network "forwarded_port", guest: 80, host: 8080
-```
-
-To stop the virtual machine run the following, in the `deploy` directory:
-
-```
-vagrant halt
-```
-
-For further commands see the [Vagrant documentation](https://www.vagrantup.com/docs/cli).
-
-## Production Deployment
-
-### Ansible (Recommended)
+# Ansible
 
 Prerequisites:
 
@@ -80,36 +15,58 @@ Deployment with Ansible has been tested on RHEL7 and RHEL8, but is compatible wi
 
 To deploy the BRECcIA Network Mapper with Ansible:
 
-1. Copy `settings.example.ini` to `settings.ini`
-2. Edit this file as desired. Note there is no requirement to change any of these variables, but it is recommended.
-3. Copy `inventory.example.yml` to `inventory.yml`
-4. Edit this file to reflect your Ansible setup:
+<!-- -------------------------------------------------------
+NOTES
+pull deploy folder only
+navigate to folder
+copy icon to icon-192x192.png in folder
+copy example.env to .env and edit
+copy inventory.example.yml to inventory.yml and edit
+edit playbook if superuser desired
+run playbook
+set provision_superuser to false if was changed
+------------------------------------------------------- -->
+
+1. Download and extract the deployment files from [the latest release](https://github.com/Southampton-RSG/breccia-mapper/releases/latest):
+
+    ```bash
+    curl https://github.com/Southampton-RSG/breccia-mapper/releases/latest/download/deploy-ansible.tar | tar xzv && cd deploy-ansible
+    ```
+
+2. Copy your logo (192x192 pixels) to `icon-192x192.png` in this folder.
+
+3. Copy `example.env` to `.env`:
+
+    ```bash
+    cp example.env .env
+    ```
+
+4. Edit this file as desired. Note that some variables are required.
+5. Copy `inventory.example.yml` to `inventory.yml`:
+
+    ```bash
+    cp inventory.example.yml inventory.yml
+    ```
+
+6. Edit this file to reflect your Ansible setup:
   - Use your server's hostname instead of `example.com`
-  - Replace the secret key with some text known only to you
-5. If you would like a new superuser to be provisioned for the network mapper (e.g. during initial install), edit the following line of `playbook.yml`:
+7. If you would like a new superuser to be provisioned (e.g. during initial install), edit the `provision_superuser` variable in `playbook.yml` to `true`.
+  - Then change the `superuser_*` options below it as desired.
+8. Run the Ansible playbook `playbook.yml` with this inventory file using:
 
-```yaml
-provision_superuser: false
-```
-
-to
-
-```yaml
-provision_superuser: true
-```
-
-And change the `superuser_*` options below it as desired.
-
-6. Run the Ansible playbook `playbook.yml` with this inventory file using:
-
-```
-ansible-playbook playbook.yml -i inventory.yml -K -k -u <SSH username>
-```
+    ```bash
+    ansible-playbook playbook.yml -i inventory.yml -K -k -u <SSH username>
+    ```
 
 This will ask for your SSH and sudo passwords for the server before deploying.
 To redeploy updates, the same command can be run again - it's safe to redeploy on top of an existing deployment.
 
-### Docker Compose
+:::{warning}
+If you changed the `provision_superuser` variable in `playbook.yml` to `true`, remember to change it back to `false`.
+:::
+
+
+# Docker Compose
 
 Prerequisites:
 
@@ -119,29 +76,111 @@ Prerequisites:
 Deployment with Docker has been tested on RHEL7, RHEL8, and Ubuntu 22.04 LTS
 :::
 
+<!-- -------------------------------------------------------
+NOTES
+create folder
+pull docker compose file and example.env only
+copy icon to icon-192x192.png in folder
+copy example.env to .env and edit
+touch db file? (is this needed?)
+run docker compose up -d
+create superuser if desired
+------------------------------------------------------- -->
+
 To deploy the BRECcIA Network Mapper with Docker:
 
-1. Copy `deploy/settings.example.ini` to `breccia_mapper/settings.ini`
-2. Edit this file as desired. Note there is no requirement to change any of these variables, but it is recommended.
+1. Download and extract the deployment files from [the latest release](https://github.com/Southampton-RSG/breccia-mapper/releases/latest):
+
+    ```bash
+    curl https://github.com/mgrove36/Southampton-RSG/releases/latest/download/deploy-docker.tar | tar xzv && cd deploy-docker
+    ```
+
+2. Copy your logo (192x192 pixels) to `icon-192x192.png` in this folder.
+3. Copy `example.env` to `.env`:
+
+    ```bash
+    cp example.env .env
+    ```
+
+4. Edit this file as desired. Note that some variables are required.
 3. Create the database using:
 
-```bash
-touch db.sqlite3
-```
+    ```bash
+    touch db.sqlite3
+    ```
 
-4. Set the `DEBUG` and `SECRET_KEY` values in `docker-compose.yml`.
-  - The secret key should be a long, random string that only you know. Replace `${DJANGO_SECRET_KEY}` with this key.
-  - Debug can be `True` or `False`. Replace `${DJANGO_DEBUG}` with this value.
-  - You can also set these via environment variables on the host machine. The appropriate environment variables are `DJANGO_SECRET_KEY` and `DJANGO_DEBUG`.
 5. Start the containers with the following command (you may need to use `sudo`):
 
-```bash
-docker compose up -d
-```
+    ```bash
+    docker compose up -d
+    ```
 
-6. Create a superuser by running the following, and enter their details when prompted:
+6. If desired (e.g. on initial deployment), create a superuser by running the following, and enter their details when prompted:
 
-```bash
-docker compose exec -it server /bin/bash -c "/app/manage.py createsuperuser"
-```
+    ```bash
+    docker compose exec -it server /bin/bash -c "/app/manage.py createsuperuser"
+    ```
 
+:::{important}
+If you don't create a superuser when you first deploy the app, you will be unable to log in.
+:::
+
+# Vagrant
+
+Prerequisites:
+
+- [Vagrant](https://www.vagrantup.com/)
+- [Ansible](https://www.ansible.com/)
+
+<!-- -------------------------------------------------------
+NOTES
+pull deploy folder only
+navigate to folder
+copy icon to icon-192x192.png in folder
+copy example.env to .env and edit
+edit playbook if superuser desired
+run vagrant up and/or vagrant provision
+set provision_superuser to false if was changed
+------------------------------------------------------- -->
+
+To deploy the BRECcIA Network Mapper with Vagrant:
+
+1. Download and extract the deployment files from [the latest release](https://github.com/Southampton-RSG/breccia-mapper/releases/latest):
+
+    ```bash
+    curl https://github.com/mgrove36/Southampton-RSG/releases/latest/download/deploy-vagrant.tar | tar xzv && cd deploy-vagrant
+    ```
+
+2. Copy your logo (192x192 pixels) to `icon-192x192.png` in this folder.
+3. Copy `example.env` to `.env`:
+
+    ```bash
+    cp example.env .env
+    ```
+
+4. Edit this file as desired. Note that some variables are required.
+5. If you would like a new superuser to be provisioned (e.g. during initial install), edit the `provision_superuser` variable in `playbook.yml` to `true`.
+  - Then change the `superuser_*` options below it as desired.
+6. To change where the app is accessible from, edit the `config.vm.network` line in `Vagrantfile`.
+  - By default, the app is accessible only from `http://localhost:8080`.
+  - To make it available from any IP address, replace `host: 8080, host_ip: "127.0.0.1"` with `host: 8080`.
+  - To change the port the app is available on, edit `host: 8080`.
+  - More details are available in the [Vagrant docs](https://developer.hashicorp.com/vagrant/docs/networking).
+6. Start the virtual machine:
+
+    ```bash
+    vagrant up
+    ```
+
+7. Deploy the Network Mapper on the virtual machine:
+
+    ```bash
+    vagrant provision
+    ```
+
+
+:::{note}
+To stop the virtual machine, run `vagrant halt` in this directory. More commands are explained in the [Vagrant docs](https://www.vagrantup.com/docs/cli).
+:::
+
+<!-- # Build From Source -->
