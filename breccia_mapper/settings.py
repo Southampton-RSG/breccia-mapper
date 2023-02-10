@@ -515,7 +515,7 @@ BOOTSTRAP4 = {
 EMAIL_HOST = config('EMAIL_HOST', default=None)
 DEFAULT_FROM_EMAIL = config(
     'DEFAULT_FROM_EMAIL',
-    default=f'{PROJECT_SHORT_NAME}@localhost.localdomain')
+    default=f'{PROJECT_SHORT_NAME.replace(" ","")}@localhost.localdomain')
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 if EMAIL_HOST is None:
