@@ -10,8 +10,6 @@ from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from post_office import mail
 
-from constance import config
-
 from .organisation import Organisation
 from .question import AnswerSet, Question, QuestionChoice
 
@@ -46,7 +44,6 @@ class User(AbstractUser):
         # Get exported data from settings.py first
         context = {
             'user': self,
-            'config': config,
             'settings': settings,
         }
 
