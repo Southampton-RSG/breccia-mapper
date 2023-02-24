@@ -4,6 +4,7 @@
     {% load i18n %}
     {% get_current_language as LANGUAGE_CODE %}
 {% endif %}
+{% load bootstrap_customizer %}
 <html lang="{{ LANGUAGE_CODE|default:'en_us' }}">
 
 {% load pwa %}
@@ -19,6 +20,9 @@
 
     <!-- Bootstrap CSS -->
     {% bootstrap_css %}
+    <style lang="css">
+        {% bootstrap_theme_css_above_the_fold %}
+    </style>
 
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/fontawesome.min.css"
@@ -61,6 +65,7 @@
 </head>
 
 <body>
+    <link rel="stylesheet" type="text/css" href="{% bootstrap_theme_css_below_the_fold_url %}" />
     <div class="content" style="display: flex; flex-direction: column">
         {% block navbar %}
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">

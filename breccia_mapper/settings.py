@@ -206,6 +206,7 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.microsoft',
     'django_inlinecss',
+    'bootstrap_customizer',
 ]
 
 FIRST_PARTY_APPS = [
@@ -227,6 +228,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'hijack.middleware.HijackUserMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
+    'bootstrap_customizer.middleware.BootstrapThemeMiddleware',
 ]
 
 FIXTURE_DIRS = [

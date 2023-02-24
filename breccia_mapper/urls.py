@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.urls import include, path
 from django.conf.urls.static import static
+from bootstrap_customizer import urls as bootstrap_customizer_urls
 
 from . import views
 
@@ -55,4 +56,7 @@ urlpatterns = [
 
     path('accounts/',
          include('allauth.urls')),
+
+    path('bootstrap_customizer',
+         include(bootstrap_customizer_urls)),
 ]  # yapf: disable
