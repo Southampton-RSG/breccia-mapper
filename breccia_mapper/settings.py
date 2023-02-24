@@ -202,6 +202,7 @@ THIRD_PARTY_APPS = [
 ]
 
 FIRST_PARTY_APPS = [
+    'breccia_mapper',
     'people',
     'activities',
     'export',
