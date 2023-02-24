@@ -10,13 +10,13 @@
 {% block before_content %}
 
     {% get_media_prefix as MEDIA_URL %}
-    <header class="container-fluid masthead text-white text-left {% if config.HOMEPAGE_HEADER_IMAGE_SHRINK %}masthead-shrink{% endif %}"
+    <header class="container-fluid masthead text-white text-left {% if config.HOMEPAGE_HEADER_IMAGE_SHRINK %}masthead-shrink{% endif %} py-2"
             style="background-image: url('{{ MEDIA_URL }}{{ config.HOMEPAGE_HEADER_IMAGE }}')">
         <div class="overlay"></div>
 
         <div class="row">
-            <div class="mx-5 px-4 my-3 pt-3 pb-2 textbox-container">
-                <h1 class="display-1">{{ settings.PROJECT_LONG_NAME }}</h1>
+            <div class="px-4 my-3 pt-3 pb-2 textbox-container">
+                <h1>{{ settings.PROJECT_LONG_NAME }}</h1>
                 <p class="lead">{{ config.PROJECT_LEAD }}</p>
             </div>
         </div>
