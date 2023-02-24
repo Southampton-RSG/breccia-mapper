@@ -71,11 +71,6 @@
         dest: '{{ project_dir }}/icon-192x192.png'
         mode: 0600
 
-    - name: Create database file
-      ansible.builtin.file:
-        path: "{{ project_dir }}/db.sqlite3"
-        state: touch
-
     - name: Start Docker
       ansible.builtin.systemd:
         name: docker
@@ -89,6 +84,7 @@
       loop:
         - caddy
         - server
+        - db
 
     - name: Start containers
       ansible.builtin.command:
