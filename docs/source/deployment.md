@@ -75,7 +75,7 @@ To deploy the BRECcIA Network Mapper with Docker:
 1. Download and extract the deployment files from [the latest release](https://github.com/Southampton-RSG/breccia-mapper/releases/latest):
 
     ```bash
-    curl https://github.com/mgrove36/Southampton-RSG/releases/latest/download/deploy-docker.tar | tar xzv && cd network-mapper
+    curl https://github.com/Southampton-RSG/releases/latest/download/deploy-docker.tar | tar xzv && cd network-mapper
     ```
 
 2. Copy your logo (192x192 pixels) to `icon-192x192.png` in this folder.
@@ -120,7 +120,7 @@ To deploy the BRECcIA Network Mapper with Vagrant:
 1. Download and extract the deployment files from [the latest release](https://github.com/Southampton-RSG/breccia-mapper/releases/latest):
 
     ```bash
-    curl https://github.com/mgrove36/Southampton-RSG/releases/latest/download/deploy-vagrant.tar | tar xzv && cd network-mapper
+    curl https://github.com/Southampton-RSG/releases/latest/download/deploy-vagrant.tar | tar xzv && cd network-mapper
     ```
 
 2. Copy your logo (192x192 pixels) to `icon-192x192.png` in this folder.
