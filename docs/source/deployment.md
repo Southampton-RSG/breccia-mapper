@@ -86,12 +86,6 @@ To deploy the BRECcIA Network Mapper with Docker:
     ```
 
 4. Edit this file as desired. Note that some variables are required.
-3. Create the database using:
-
-    ```bash
-    touch db.sqlite3
-    ```
-
 5. Start the containers with the following command (you may need to use `sudo`):
 
     ```bash
