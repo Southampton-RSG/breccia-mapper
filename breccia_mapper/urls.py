@@ -34,9 +34,6 @@ urlpatterns = [
          include('hijack.urls', namespace='hijack')),
 
     path('',
-         include('django.contrib.auth.urls')),
-
-    path('',
          views.IndexView.as_view(),
          name='index'),
 
@@ -55,4 +52,7 @@ urlpatterns = [
 
     path('',
          include('pwa.urls')),
+
+    path('accounts/',
+         include('allauth.urls')),
 ]  # yapf: disable

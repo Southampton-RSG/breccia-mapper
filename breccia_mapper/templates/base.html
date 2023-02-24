@@ -7,6 +7,7 @@
 <html lang="{{ LANGUAGE_CODE|default:'en_us' }}">
 
 {% load pwa %}
+{% load socialaccount %}
 
 <link rel="manifest" href="/manifest.json">
 
@@ -77,6 +78,12 @@
                     <div class="navbar-collapse collapse" id="navbarCollapse">
                         <ul class="navbar-nav mt-2 mt-lg-0">
                             <li class="nav-item">
+                                <a href="{% if request.user.person %}{% url 'people:person.profile' %}{% else %}{% url 'people:person.create' %}?user{% endif %}" class="nav-link">
+                                    Profile
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
                                 <a href="{% url 'people:person.list' %}" class="nav-link">People</a>
                             </li>
 
@@ -114,23 +121,18 @@
                         <ul class="navbar-nav mt-2 mt-lg-0 ml-auto">
                             {% if request.user.is_authenticated %}
                                 <li class="nav-item">
-                                    {% if request.user.person %}
-                                        <a href="{% url 'people:person.profile' %}" class="nav-link">
-                                            <i class="fa-solid fa-circle-user"></i>
-                                            {{ request.user }}
-                                        </a>
-
-                                    {% else %}
-                                        <a href="{% url 'people:person.create' %}?user" class="nav-link">
-                                            <i class="fa-solid fa-circle-user"></i>
-                                            {{ request.user }}
-                                        </a>
-
-                                    {% endif %}
+                                    <a href="{% url 'account_email' %}" class="nav-link">
+                                        <i class="fa-solid fa-circle-user"></i>
+                                        {% if request.user.first_name != "" %}
+                                        {{ request.user.first_name }}
+                                        {% else %}
+                                        {{ request.user }}
+                                        {% endif %}
+                                    </a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a href="{% url 'logout' %}" class="nav-link">
+                                    <a href="{% url 'account_logout' %}" class="nav-link">
                                         <i class="fa-solid fa-right-from-bracket"></i>
                                         Log Out
                                     </a>
@@ -138,7 +140,7 @@
 
                             {% else %}
                                 <li class="nav-item">
-                                    <a href="{% url 'login' %}" class="nav-link">
+                                    <a href="{% url 'account_login' %}" class="nav-link">
                                         <i class="fa-solid fa-right-to-bracket"></i>
                                         Log In
                                     </a>

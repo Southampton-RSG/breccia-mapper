@@ -1,0 +1,11 @@
+{% load i18n %}
+{% load account %}
+
+{% block content %}
+{% user_display user as user_display %}
+
+<h3 class="h3" id="head_banner">Already Logged In</h3>
+<p class="forgot_password_info" >You are already logged in as {{ user_display }}.</p>
+<a class="btn btn-primary mb-4" id="custom_logout_no" href="{% url 'account_email' %}">Account Details</a>
+
+{% endblock %}

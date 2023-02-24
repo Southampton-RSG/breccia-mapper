@@ -1,0 +1,10 @@
+Dear user,
+
+You have a new account on {{ settings.PROJECT_LONG_NAME }}. You can log in at the link below.
+
+Your username is {{ user.username }}.
+
+Log in: {{ settings.SITE_PROTOCOL }}://{{ settings.SITE_URL }}/accounts/login/
+
+Thanks,
+The {{ settings.PROJECT_SHORT_NAME }} team

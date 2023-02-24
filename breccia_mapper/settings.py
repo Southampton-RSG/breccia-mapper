@@ -185,6 +185,7 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 ]
 
 THIRD_PARTY_APPS = [
@@ -199,6 +200,12 @@ THIRD_PARTY_APPS = [
     'bootstrap_datepicker_plus',
     'hijack',
     'pwa',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.microsoft',
+    'django_inlinecss',
 ]
 
 FIRST_PARTY_APPS = [
@@ -219,6 +226,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'hijack.middleware.HijackUserMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
+]
+
+FIXTURE_DIRS = [
+    BASE_DIR.joinpath('breccia_mapper', 'fixtures'),
 ]
 
 ROOT_URLCONF = 'breccia_mapper.urls'
@@ -242,6 +254,33 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'breccia_mapper.wsgi.application'
+
+# allauth
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+SITE_ID = 1
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = SITE_PROTOCOL
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
+# 1 day
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 86400
+# or any other page
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_ADAPTER = 'breccia_mapper.account_adapter.ControlSignupsAccountAdapter'
+
+
+PROJECT_LONG_NAME = config('PROJECT_LONG_NAME', 'Project Network Mapper')
+PROJECT_SHORT_NAME = config('PROJECT_SHORT_NAME', 'Network Mapper')
+PROJECT_DESCRIPTION = config('PROJECT_DESCRIPTION', 'Application to map network relationships in the organisation.')
+THEME_COLOR = '#' + config('THEME_COLOR', '212121')
+BACKGROUND_COLOR = '#' + config('BACKGROUND_COLOR', 'ffffff')
+
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
@@ -303,7 +342,7 @@ AUTH_USER_MODEL = 'people.User'
 
 # Login flow
 
-LOGIN_URL = reverse_lazy('login')
+LOGIN_URL = reverse_lazy('account_login')
 
 LOGIN_REDIRECT_URL = reverse_lazy('people:person.profile')
 
@@ -408,6 +447,15 @@ CONSTANCE_CONFIG = {
     'PROJECT_TAGLINE': (
       'Here is your project\'s tagline.',
       'Project tagline'),
+    'ALLOW_SIGNUPS': (
+      False,
+      'Allow new users to sign up using the site\'s sign up form'),
+    'ENABLE_GOOGLE_LOGIN': (
+      False,
+      'Allow users to sign in using their Google accounts'),
+    'ENABLE_MICROSOFT_LOGIN': (
+        False,
+        'Allow users to sign in using their Microsoft accounts'),
     'HOMEPAGE_HEADER_IMAGE': (
       '800x500.png',
       'Homepage header image',
@@ -459,6 +507,9 @@ CONSTANCE_CONFIG_FIELDSETS = {
         'PARENT_PROJECT_NAME',
         'PROJECT_LEAD',
         'PROJECT_TAGLINE',
+        'ALLOW_SIGNUPS',
+        'ENABLE_GOOGLE_LOGIN',
+        'ENABLE_MICROSOFT_LOGIN',
     ),
     'Homepage configuration': (
         'HOMEPAGE_HEADER_IMAGE_SHRINK',
@@ -491,12 +542,6 @@ CONSTANCE_CONFIG_FIELDSETS = {
 }  # yapf: disable
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
-
-PROJECT_LONG_NAME = config('PROJECT_LONG_NAME', 'Project Network Mapper')
-PROJECT_SHORT_NAME = config('PROJECT_SHORT_NAME', 'Network Mapper')
-PROJECT_DESCRIPTION = config('PROJECT_DESCRIPTION', 'Application to map network relationships in the organisation.')
-THEME_COLOR = '#' + config('THEME_COLOR', '212121')
-BACKGROUND_COLOR = '#' + config('BACKGROUND_COLOR', 'ffffff')
 
 # Django Hijack settings
 # See https://django-hijack.readthedocs.io/en/stable/
