@@ -48,3 +48,4 @@ Pillow==9.4.0
 django-allauth
 django-inlinecss-redux
 django-bootstrap-customizer
+psycopg2-binary

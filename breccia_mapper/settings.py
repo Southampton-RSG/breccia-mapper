@@ -288,7 +288,14 @@ BACKGROUND_COLOR = '#' + config('BACKGROUND_COLOR', 'ffffff')
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.parse('sqlite:///' + str(BASE_DIR.joinpath('db.sqlite3')))
+    'default' : {
+      'ENGINE': 'django.db.backends.postgresql',
+      'NAME': 'breccia-mapper',
+      'USER': 'breccia-mapper',
+      'PASSWORD': config('DB_PASSWORD'),
+      'HOST': 'db',
+      'PORT': '5432',
+    }
 }
 
 # Django DBBackup
@@ -487,7 +494,7 @@ CONSTANCE_CONFIG = {
       'Step 3',
       'Homepage card #3 title'),
     'HOMEPAGE_CARD_3_DESCRIPTION': (
-      'Use the network view to build new relationships',
+      'Use the network view to analyse relationships',
       'Homepage card #3 description'),
     'HOMEPAGE_CARD_3_ICON': (
       'diagram-project',
