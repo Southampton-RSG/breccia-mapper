@@ -83,7 +83,7 @@
                     <div class="navbar-collapse collapse" id="navbarCollapse">
                         <ul class="navbar-nav mt-2 mt-lg-0">
                             <li class="nav-item">
-                                <a href="{% if request.user.person %}{% url 'people:person.profile' %}{% else %}{% url 'people:person.create' %}?user{% endif %}" class="nav-link">
+                                <a href="{% if request.user.person %}{% url 'people:person.profile' %}{% else %}{% url 'people:person.create' %}{% endif %}" class="nav-link">
                                     Profile
                                 </a>
                             </li>
@@ -197,7 +197,7 @@
                     Please fill in your details so you can be part of the network.
 
                     <a class="btn btn-success"
-                    href="{% url 'people:person.create' %}?user">Profile</a>
+                    href="{% url 'people:person.create' %}">Profile</a>
                 </p>
             </div>
         {% endif %}
