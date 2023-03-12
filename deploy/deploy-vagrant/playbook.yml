@@ -1,0 +1,104 @@
+---
+- hosts: all
+  become_user: root
+  become_method: sudo
+  become: yes
+
+  pre_tasks:
+    - name: Check if running under Vagrant
+      stat:
+        path: /vagrant
+      register: vagrant_dir
+
+  vars:
+    project_name: network-mapper
+    project_dir: /srv/{{ project_name }}
+    project_src_dir: "{{ project_dir }}/src"
+    provision_superuser: false
+    superuser_username: admin
+    superuser_password: admin
+    superuser_email: email@example.com
+
+  tasks:
+    - name: Vagrant specific tasks
+      block:
+      - name: Add Docker repository
+        get_url:
+          url: https://download.docker.com/linux/centos/docker-ce.repo
+          dest: '/etc/yum.repos.d/docker-ce.repo'
+      when: deploy_environment is defined and deploy_environment == "vagrant"
+
+    - name: Install system dependencies
+      ansible.builtin.yum:
+        name:
+          - git
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+
+    # - name: Update system packages
+    #   ansible.builtin.yum:
+    #     name: '*'
+    #     state: latest
+
+    - name: Clone / update from source repos
+      ansible.builtin.git:
+        repo: 'https://github.com/Southampton-RSG/breccia-mapper.git'
+        dest: '{{ project_src_dir }}'
+        version: dev # master
+        accept_hostkey: yes
+
+    - name: Copy template files
+      ansible.builtin.template:
+        src: '{{ item }}.j2'
+        dest: '{{ project_dir }}/{{ item }}'
+        mode: 0600
+      loop:
+        - Caddyfile
+        - docker-compose.yml
+
+    - name: Copy settings file
+      ansible.builtin.copy:
+        src: '.env'
+        dest: '{{ project_dir }}/.env'
+        mode: 0600
+
+    - name: Copy site icon
+      ansible.builtin.copy:
+        src: 'icon-192x192.png'
+        dest: '{{ project_dir }}/icon-192x192.png'
+        mode: 0600
+
+    - name: Start Docker
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull latest docker images
+      ansible.builtin.command:
+        chdir: "{{ project_dir }}"
+        cmd: docker compose pull {{ item }}
+      loop:
+        - caddy
+        - server
+        - db
+
+    - name: Start containers
+      ansible.builtin.command:
+        chdir: "{{ project_dir }}"
+        cmd: docker compose up -d
+    
+    - name: Provision superuser
+      ansible.builtin.command:
+        chdir: "{{ project_dir }}"
+        cmd: sudo docker compose exec -it server /bin/bash -c "DJANGO_SUPERUSER_USERNAME='{{ superuser_username }}' DJANGO_SUPERUSER_PASSWORD='{{ superuser_password }}' DJANGO_SUPERUSER_EMAIL='{{ superuser_email }}' /app/manage.py createsuperuser --no-input"
+      when: provision_superuser
+
+    - name: Display warning about new superuser
+      debug:
+        msg:
+          - "[WARNING] A superuser has been provisioned with the username \"{{ superuser_username }}\" and the password that was provided. This user has unlimited access to the network mapper."
+      when: provision_superuser

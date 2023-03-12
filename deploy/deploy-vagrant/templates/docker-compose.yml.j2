@@ -1,0 +1,57 @@
+version: '3.1'
+
+services:
+  server:
+    image: mgrove36/breccia-mapper:latest
+    build: {{ project_src_dir }}
+    ports:
+      - 8000:8000
+    environment:
+      DJANGO_DEBUG: ${DEBUG}
+    env_file:
+      - .env
+    volumes:
+      - static_files:/app/static
+      - media_files:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:z
+      # Caddy serves static files collected by Django
+      - static_files:/srv/static:ro
+      - media_files:/srv/media
+      - {{ project_dir }}/icon-192x192.png:/srv/media/icon-192x192.png:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - server
+
+  db:
+    image: postgres:15.2-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: 'breccia-mapper'
+      POSTGRES_USER: 'breccia-mapper'
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U breccia-mapper"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  caddy_data:
+  caddy_config:
+  static_files:
+  media_files:
+  postgres_data:
