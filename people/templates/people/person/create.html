@@ -10,7 +10,11 @@
         </ol>
     </nav>
 
-    <h1>New Person</h1>
+    {% if request.user.has_person %}
+        <h1>New Person</h1>
+    {% else %}
+        <h1>Create Your Profile</h1>
+    {% endif %}
 
     <hr>
 

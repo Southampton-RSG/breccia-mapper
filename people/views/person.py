@@ -14,6 +14,12 @@ from django.views.generic import CreateView, DetailView, ListView, UpdateView
 from people import forms, models, permissions
 from .map import get_map_data
 
+from random import randint
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()  # pylint: disable=invalid-name
+
 
 class PersonCreateView(LoginRequiredMixin, CreateView):
     """View to create a new instance of :class:`Person`.
@@ -27,9 +33,18 @@ class PersonCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         try:
             self.request.user.person
+            # user already has associated person
+            # assign newly created user, required for user hijacking
+            # so admins can manage relationships of all people
+            random_int = randint(0,999999999)
+            while User.objects.filter(username='autogen_'+str(random_int)):
+                random_int += 1
+            
+            form.instance.user = User.objects.create_user('autogen_' + str(random_int))
+            form.instance.user.consent_given = self.request.user.consent_given
+            form.instance.user.save()
         except ObjectDoesNotExist:
-            if 'user' in self.request.GET:
-                form.instance.user = self.request.user
+            form.instance.user = self.request.user
 
         return super().form_valid(form)
 

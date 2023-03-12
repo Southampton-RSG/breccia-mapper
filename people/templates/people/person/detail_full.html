@@ -73,8 +73,8 @@
     {% if request.user.is_superuser and person.user and person.user != request.user %}
     <form action="{% url 'hijack:acquire' %}" method="POST">
         {% csrf_token %}
-        <input type="hidden" name="user_pk" value="{{ person.pk }}">
-            <button class="btn btn-warning" type="submit">Become {{ person.name }}</button>
+        <input type="hidden" name="user_pk" value="{{ person.user.pk }}">
+        <button class="btn btn-warning" type="submit">Become {{ person.name }}</button>
         <input type="hidden" name="next" value="{{ request.path }}">
     </form>
     {% endif %}

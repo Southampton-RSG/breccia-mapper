@@ -61,7 +61,7 @@ class RelationshipCreateView(LoginRequiredMixin, RedirectView):
 
         except ObjectDoesNotExist:
             # User has no linked Person yet
-            return reverse('people:person.create') + '?user'
+            return reverse('people:person.create')
 
         return reverse('people:relationship.update',
                        kwargs={'pk': relationship.pk})
