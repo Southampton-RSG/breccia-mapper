@@ -4,8 +4,6 @@ services:
   server:
     image: mgrove36/breccia-mapper:latest
     build: {{ project_src_dir }}
-    ports:
-      - 8000:8000
     environment:
       DJANGO_DEBUG: ${DEBUG}
     env_file:
