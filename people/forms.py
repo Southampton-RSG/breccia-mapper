@@ -195,7 +195,7 @@ class PersonAnswerSetForm(forms.ModelForm, DynamicAnswerSetBase):
             'project_started_date':
             f'Date started on the {config.PARENT_PROJECT_NAME} project',
             'external_organisations':
-            'Please list the main organisations external to BRECcIA work that you have been working with since 1st January 2019 that are involved in food/water security in African dryland regions'
+            'Which external organisations do you work with that are involved in a related field/industry?'
         }
         help_texts = {
             'organisation_started_date':

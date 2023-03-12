@@ -29,7 +29,7 @@ def forward_organisations(apps, schema_editor):
 
     try:
         question = PersonQuestion.objects.filter(
-            text='Please list the main organisations external to BRECcIA work that you have been working with since 1st January 2019 that are involved in food/water security in African dryland regions'
+            text='Which external organisations do you work with that are involved in a related field/industry?'
         ).latest('version')
 
         PersonAnswerSet = apps.get_model('people', 'PersonAnswerSet')
