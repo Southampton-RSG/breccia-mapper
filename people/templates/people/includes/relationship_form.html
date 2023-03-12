@@ -64,4 +64,4 @@
     }
 </script>
 
-{{ form.negative_responses }}
+{{ form.negative_responses|json_script:"negative-response-data" }}
