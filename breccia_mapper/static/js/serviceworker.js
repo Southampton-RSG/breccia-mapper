@@ -1,9 +1,10 @@
 var staticCacheName = "django-pwa-v" + new Date().getTime();
 var filesToCache = [
-  "/offline",
+  "/offline/",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/fontawesome.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/solid.min.css",
   "/static/css/global.css",
+  "/static/js/serviceworker.js",
   "/static/hijack/hijack.min.css",
   "/media/icon-192x192.png",
 ];
@@ -41,7 +42,7 @@ self.addEventListener("fetch", event => {
                 return response || fetch(event.request);
             })
             .catch(() => {
-                return caches.match('offline');
+                return caches.match('/offline/');
             })
     )
 });
