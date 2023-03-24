@@ -1,4 +1,4 @@
-# Configuration
+# 2 Configuration
 
 After installing the Network Mapper, some configuration must be done in the web interface. You will need to log in with an admin account.
 
