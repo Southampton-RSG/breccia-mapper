@@ -7,7 +7,7 @@ Ansible deployment has been tested on RHEL7 and RHEL8.
 
 If you are an organisation deploying the app on a server, [Ansible](#ansible) is recommended. If Ansible is not used with your server, [Docker Compose](#docker-compose) or [][Vagrant](#vagrant) are recommended.
 
-If you are an individual deploying the app on your local machine, [Docker Desktop](#docker-desktop) is recommended. However, if you are planning on making the app accessible to other people (outside your computer), we advise deploying the app on a server.
+If you are an individual deploying the app on your local machine, [Docker (for individuals)](#docker-for-individuals) is recommended. However, if you are planning on making the app accessible to other people (outside your computer), we advise deploying the app on a server.
 
 ## Ansible
 
@@ -27,7 +27,7 @@ To deploy the BRECcIA Network Mapper with Ansible:
     curl https://github.com/Southampton-RSG/breccia-mapper/releases/latest/download/deploy-ansible.tar | tar xzv && cd network-mapper
     ```
 
-2. Copy your logo (192x192 pixels) to `icon-192x192.png` in this folder.
+2. Copy your logo (192x192 pixels) to `icon-192x192.png` in the `network-mapper` folder.
 
 3. Copy `example.env` to `.env`:
 
@@ -78,7 +78,7 @@ To deploy the BRECcIA Network Mapper with Docker:
     curl https://github.com/Southampton-RSG/releases/latest/download/deploy-docker.tar | tar xzv && cd network-mapper
     ```
 
-2. Copy your logo (192x192 pixels) to `icon-192x192.png` in this folder.
+2. Copy your logo (192x192 pixels) to `icon-192x192.png` in the `network-mapper` folder.
 3. Copy `example.env` to `.env`:
 
     ```bash
@@ -117,7 +117,7 @@ To deploy the BRECcIA Network Mapper with Vagrant:
     curl https://github.com/Southampton-RSG/releases/latest/download/deploy-vagrant.tar | tar xzv && cd network-mapper
     ```
 
-2. Copy your logo (192x192 pixels) to `icon-192x192.png` in this folder.
+2. Copy your logo (192x192 pixels) to `icon-192x192.png` in the `network-mapper` folder.
 3. Copy `example.env` to `.env`:
 
     ```bash
@@ -149,7 +149,46 @@ To deploy the BRECcIA Network Mapper with Vagrant:
 To stop the virtual machine, run `vagrant halt` in this directory. More commands are explained in the [Vagrant docs](https://developer.hashicorp.com/vagrant/docs/cli).
 :::
 
-## Docker Desktop
+## Docker (for individuals)
 
-Coming soon.
+This is the recommended deployment method for individuals who are not planning on making the network mapper accessible to other users.
+
+:::{warning}
+The network mapper will not run with Docker on Arm-based devices. This includes devices with Apple silicon - e.g. M1 and M2 Macs.
+
+To run it on these devices you will need to build it yourself, which requires additional knowledge of Docker.
+:::
+
+Prerequisites:
+
+- [Docker Compose](https://docs.docker.com/compose) is installed and running. If you are not familiar with Docker, we recommend using [Docker Desktop](https://docs.docker.com/desktop/). Simply install and run it.
+
+To deploy the BRECcIA Network Mapper with Docker Desktop:
+
+1. Download `deploy-docker.zip` [from the latest release](https://github.com/Southampton-RSG/breccia-mapper/releases/latest).
+2. Extract the zip file into an appropriate folder.
+3. Copy your logo (192x192 pixels) to `icon-192x192.png` in the `network-mapper` folder.
+4. Copy `example.env` to `.env` in this folder.
+5. Edit this file as desired. Note that some variables are required.
+    
+    - Variables are set with the following syntax, in this case setting the `DEBUG` variable to `False`:
+    
+        ```Dotenv
+        DEBUG=False
+        ```
+
+6. Open a terminal window in this folder. On Windows, do this by holding `Shift` and right clicking inside the folder; then selecting either `Open in Terminal` or `Open PowerShell window here`.
+6. Start the network mapper with the following command:
+
+    ```bash
+    docker compose up -d
+    ```
+
+7. If desired (e.g. on initial deployment), create a superuser by running the following, and enter their details when prompted:
+
+    ```bash
+    docker compose exec -it server /bin/bash -c "/app/manage.py createsuperuser"
+    ```
+
+Once the network mapper has been started for the first time with the above steps, it will appear in Docker Desktop (if installed). It can then be stopped/started again from here.
 
