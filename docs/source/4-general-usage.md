@@ -50,7 +50,7 @@ Click the `Profile` button in the navigation bar at the top of the screen. If yo
 4. Finally click `Submit`.
 
 :::{note}
-Activities can only be edited by administrators once they have been created.
+Once an ativity has been created, it can only be edited by administrators.
 :::
 
 ## Record Activity Attendance
