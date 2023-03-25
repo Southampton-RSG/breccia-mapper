@@ -35,7 +35,7 @@ To deploy the BRECcIA Network Mapper with Ansible:
     cp example.env .env
     ```
 
-4. Edit this file as desired. Note that some variables are required.
+4. Edit this file as desired. Note that some variables are required, and that `True` and `False` values must have correct capitalisation.
 5. Copy `inventory.example.yml` to `inventory.yml`:
 
     ```bash
@@ -85,7 +85,7 @@ To deploy the BRECcIA Network Mapper with Docker:
     cp example.env .env
     ```
 
-4. Edit this file as desired. Note that some variables are required.
+4. Edit this file as desired. Note that some variables are required, and that `True` and `False` values must have correct capitalisation.
 5. Start the containers with the following command (you may need to use `sudo`):
 
     ```bash
@@ -124,7 +124,7 @@ To deploy the BRECcIA Network Mapper with Vagrant:
     cp example.env .env
     ```
 
-4. Edit this file as desired. Note that some variables are required.
+4. Edit this file as desired. Note that some variables are required, and that `True` and `False` values must have correct capitalisation.
 5. If you would like a new superuser to be provisioned (e.g. during initial install), edit the `provision_superuser` variable in `playbook.yml` to `true`.
     - Then change the `superuser_*` options below it as desired.
 6. To change where the app is accessible from, edit the `config.vm.network` line in `Vagrantfile`.
@@ -169,7 +169,7 @@ To deploy the BRECcIA Network Mapper with Docker Desktop:
 2. Extract the zip file into an appropriate folder.
 3. Copy your logo (192x192 pixels) to `icon-192x192.png` in the `network-mapper` folder.
 4. Copy `example.env` to `.env` in this folder.
-5. Edit this file as desired. Note that some variables are required.
+5. Edit this file as desired. Note that some variables are required, and that `True` and `False` values must have correct capitalisation.
     
     - Variables are set with the following syntax, in this case setting the `DEBUG` variable to `False`:
     
@@ -192,3 +192,8 @@ To deploy the BRECcIA Network Mapper with Docker Desktop:
 
 Once the network mapper has been started for the first time with the above steps, it will appear in Docker Desktop (if installed). It can then be stopped/started again from here.
 
+To stop it from the terminal, run
+
+```bash
+docker compose down
+```
