@@ -10,7 +10,7 @@
         {% buttons %}
             <input type="hidden" name="next" value="{{ next }}">
             <input type="submit" class="btn btn-primary" value="Login">
-            {% if config.ENABLE_SIGNUPS %}
+            {% if config.ALLOW_SIGNUPS %}
             <a class="btn btn-info" href="{% url 'account_signup' %}">Sign up</a>
             {% endif %}
         {% endbuttons %}
