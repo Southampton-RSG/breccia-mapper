@@ -27,6 +27,9 @@
   {% endif %}
   
   <button class="btn btn-primary " type="submit">{% trans "Log in" %}</button>
+  {% if config.ALLOW_SIGNUPS %}
+  <a class="btn btn-secondary" href="{% url 'account_signup' %}">Sign up</a>
+  {% endif %}
   <a class="btn btn-outline-dark" href="{% url 'account_reset_password' %}">{% trans "Forgot password?" %}</a>  
 
 </form>
