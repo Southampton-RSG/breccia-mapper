@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.views.generic import TemplateView
 
 from people import forms, models, serializers
+from breccia_mapper.views import UserIsStaffMixin
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -57,7 +58,7 @@ filter_people = filter_by_form_answers(
 )
 
 
-class NetworkView(LoginRequiredMixin, TemplateView):
+class NetworkView(UserIsStaffMixin, LoginRequiredMixin, TemplateView):
     """View to display relationship network."""
     template_name = 'people/network.html'
 

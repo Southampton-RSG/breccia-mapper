@@ -1,19 +1,14 @@
 import csv
 import typing
 
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.views.generic.list import BaseListView
+from breccia_mapper.views import UserIsStaffMixin
 
 
 class QuotedCsv(csv.excel):
     quoting = csv.QUOTE_NONNUMERIC
-
-
-class UserIsStaffMixin(UserPassesTestMixin):
-    def test_func(self) -> typing.Optional[bool]:
-        return self.request.user.is_staff
 
 
 class CsvExportView(UserIsStaffMixin, BaseListView):

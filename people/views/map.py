@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.views.generic import TemplateView
 
 from people import forms, models, permissions
+from breccia_mapper.views import UserIsStaffMixin
 
 
 def get_map_data(obj: typing.Union[models.Person, models.Organisation]) -> typing.Dict[str, typing.Any]:
@@ -33,7 +34,7 @@ def get_map_data(obj: typing.Union[models.Person, models.Organisation]) -> typin
     }
 
 
-class MapView(LoginRequiredMixin, TemplateView):
+class MapView(UserIsStaffMixin, LoginRequiredMixin, TemplateView):
     """View displaying a map of :class:`Person` and :class:`Organisation` locations."""
     template_name = 'people/map.html'
 
