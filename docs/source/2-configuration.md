@@ -44,7 +44,7 @@ If desired, you can adjust the site's theming through the admin dashboard. All o
 - Change the heading font weight (i.e. thickness) by expanding the `Headings` section and replacing the content of the `Headings font weight` field.
 - Change the heading line height by expanding the `Headings` section and replacing the content of the `Headings line height` field.
 
-Then click save.
+Then click `Save`.
 
 ### Main Configuration Options
 
@@ -73,11 +73,11 @@ There are several general settings which must be configured. Open the admin dash
 21. `PARENT_PROJECT_NAME`: The name of the project's parent project, if one exists.
 22. `PROJECT_LEAD`: The project's lead person, organisation, or similar.
 23. `PROJECT_TAGLINE`: The project's tagline.
-24. `ALLOW_SIGNUPS`: Whether new users should be able to sign themselves up through the site.
+24. `ALLOW_SIGNUPS`: Whether new users should be able to sign themselves up through the site. This is useful for minimising the number of users that must be manually created, and it is recommended that this feature is disabled once all users have created their accounts.
 25. `ENABLE_GOOGLE_LOGIN`: Whether login through Google should be enabled. Only enable this if Google login has been configured. See [Google login](#google).
 25. `ENABLE_MICROSOFT_LOGIN`: Whether login through Microsoft should be enabled. Only enable this if Microsoft login has been configured. See [Microsoft login](#microsoft).
 
-Then click save.
+Then click `Save`.
 
 ### Questions
 
@@ -95,7 +95,7 @@ There are several types of questions, but they all have the same set of informat
 - Question choices
 	- Text: The main text of the option.
 	- Order: The priority order for the option to be displayed in. Lower priority options will be displayed earlier in the list of options.
-	- Is negative response: Only applicable for relationship questions. Whether the option indicates that there is no relationship with the individual or organisation. This allows automatic population of questions if there is no relationship to report. All options marked as negative responses will be selected when this button is pressed.
+	- Is negative response: Only applicable for relationship questions. Whether the option indicates the relationship is of the lowest level of closeness. This allows automatic population of questions if the relationship being reported is not at all close. All options marked as negative responses will be selected when this button is pressed.
 	- Delete?: Whether the option should be deleted when the question is saved.
 
 There are various types of questions, which can be added by clicking `Add` next to the appropriate section in the admin dashboard:
@@ -105,15 +105,39 @@ There are various types of questions, which can be added by clicking `Add` next 
 - Person questions: Questions that are shown when creating a person or updating their details.
 - Relationship questions: Questions that are shown when reporting a relationship with a person.
 
+### Existing Questions
+
+Some "person questions" (i.e. questions about people) are preset, but require answers to be provided.
+
+1. In the admin dashboard, click `Person questions` under `PEOPLE`, then select each of the following questions in turn:
+
+	- Disciplines
+	- Research theme affiliation
+	- Role
+
+2. For each question, provide a set of possible answers as per the instructions [above](#questions).
+
+:::{note}
+At least one organisation must also exist for people to be able to create their profiles (unless the organisation question is removed). To create an organisation follow the instructions [below](#organisations).
+:::
+
 ### Organisations
 
-Organisations are created through the main site (not the admin dashboard). Go to the `Organisations` page, and click `New Organisation`. Answer the questions shown to create the organisation.
+Organisations are created through the main site (not the admin dashboard).
+
+1. Click `Organisations` in the banner at the top of the screen.
+2. Click `New Organisation` at the top of the page.
+2. Answer the questions shown.
+4. Finally click `Submit`.
 
 ### People
 
 Organisations are created through the main site (not the admin dashboard). People should only be created when it is known that the person will not have a login of their own to the site - e.g. for researchers logging data for multiple individuals.
 
-To create a person, go to the `People` page, and click `New Person`. Answer the questions shown to create the person.
+1. Click `People` in the banner at the top of the screen.
+2. Click `New Person` at the top of the page.
+2. Answer the questions shown.
+4. Finally click `Submit`.
 
 ## Federated Login
 
@@ -132,7 +156,7 @@ Then:
 - Enter the client secret from Google in the `Secret key` field.
 - Leave the `Key` field blank.
 - Click `Choose all` under the `Available sites` box, to enable Google login on this site.
-- Click save.
+- Click `Save`.
 
 Then enable Google login with the `ENABLE_GOOGLE_LOGIN` option in the `Config` section of the admin dashboard.
 
@@ -149,12 +173,16 @@ Then:
 - Enter the client secret value from Google in the `Secret key` field.
 - Leave the `Key` field blank.
 - Click `Choose all` under the `Available sites` box, to enable Google login on this site.
-- Click save.
+- Click `Save`.
 
 Then enable Microsoft login with the `ENABLE_MICROSOFT_LOGIN` option in the `Config` section of the admin dashboard.
 
-## Inviting Other Users
+## Inviting Users
 
 In the admin dashboard, click `Add` next to `Users`. Choose a username for them, enter their email address, and enter a temporary password. It does not matter what this password is, and you do not need to remember or store it, as the new user is automatically sent an email welcoming them to the platform and containing instructions for how to reset their password.
 
-If the user you wish to invite already has a `Person` created for them, they will already have an account with a random username and login disabled. To find this account, go to `People` (in the `People` section) in the admin dashboard and select the appropriate person. Then click the blue eye icon next to the `User` field. This will take you to the user, and you can then change their username along with add a first name, last name, and email address. Note that a welcome email will not be sent to the user in this case, so you will have to let them know that their account is active and what their username is. They can use the *forgot password* option when logging in to set their password.
+If the user you wish to invite already has a `Person` created for them, they will already have an account with a random username and login disabled. To find this account, go to `People` (in the `People` section) in the admin dashboard and select the appropriate person. Then click the blue eye icon next to the `User` field.
+
+![Person's user relation with blue eye icon](images/2-person-user.png "Person's user relation with blue eye icon")
+
+This will take you to the user, and you can then change their username along with add a first name, last name, and email address. Note that a welcome email will not be sent to the user in this case, so you will have to let them know that their account is active and what their username is. They can use the *forgot password* option when logging in to set their password.
