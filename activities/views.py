@@ -79,7 +79,7 @@ class ActivityAttendanceView(permissions.UserIsLinkedPersonMixin, SingleObjectMi
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        if request.is_ajax():
+        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
             self.object.attendance_list.add(self.get_test_person())
 
             return HttpResponse(status=204)
@@ -89,7 +89,7 @@ class ActivityAttendanceView(permissions.UserIsLinkedPersonMixin, SingleObjectMi
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        if request.is_ajax():
+        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
             self.object.attendance_list.remove(self.get_test_person())
 
             return HttpResponse(status=204)

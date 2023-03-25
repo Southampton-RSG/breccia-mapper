@@ -1,15 +1,22 @@
 header.masthead {
     position: relative;
     background: #343a40 no-repeat center;
-    -webkit-background-size: contain;
-    -moz-background-size: contain;
-    -o-background-size: contain;
-    background-size: contain;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
     padding-top: 8rem;
     padding-bottom: 8rem;
     min-height: 400px;
     height: 40vh;
     z-index: -2;
+}
+
+header.masthead.masthead-shrink {
+    -webkit-background-size: contain;
+    -moz-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
 }
 
 header.masthead .overlay {
@@ -25,6 +32,11 @@ header.masthead .overlay {
 
 header.masthead .textbox-container {
     background-color: rgba(30, 30, 30, 0.2);
+}
+
+header.masthead > .row {
+    max-width: 1140px;
+    margin: auto;
 }
 
 @media (min-width: 768px) {

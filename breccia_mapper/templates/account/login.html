@@ -1,0 +1,62 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block head_links %} 
+
+<title>Sign In</title>
+
+{% endblock %}
+
+{% block head_title %}{% trans "Sign In" %} {% endblock %}
+
+{% block content %}
+
+<h3 class="h3" id="head_banner">{% trans "Sign In" %}</h3>
+
+<form id="login_form" method="POST" action="{% url 'account_login' %}">
+  {% csrf_token %}
+  
+  {% load bootstrap4 %}
+  {% bootstrap_form form %}
+
+  {% if redirect_field_value %}
+  
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  
+  {% endif %}
+  
+  <button class="btn btn-primary " type="submit">{% trans "Log in" %}</button>
+  {% if config.ALLOW_SIGNUPS %}
+  <a class="btn btn-secondary" href="{% url 'account_signup' %}">Sign up</a>
+  {% endif %}
+  <a class="btn btn-outline-dark" href="{% url 'account_reset_password' %}">{% trans "Forgot password?" %}</a>  
+
+</form>
+
+{% if config.ENABLE_GOOGLE_LOGIN or config.ENABLE_MICROSOFT_LOGIN %}
+
+{% load account socialaccount %}
+
+{% get_providers as socialaccount_providers %}
+<h5>Federated Login</h5>
+<div class="social_providers_list">
+
+{% for provider in socialaccount_providers %}
+{% if provider.name == "Google" and config.ENABLE_GOOGLE_LOGIN or provider.name == "Microsoft Graph" and config.ENABLE_MICROSOFT_LOGIN %}
+  <form action="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}" method="post">
+    {% csrf_token %}
+    <button class="btn btn-outline-dark" type="submit">
+      {% if provider.name == "Microsoft Graph" %}
+        Microsoft
+      {% else %}
+        {{provider.name}}
+      {% endif %}
+    </button>
+  </form>
+{% endif %}
+{% endfor %}
+</div>
+
+{% endif %}
+{% endblock %}

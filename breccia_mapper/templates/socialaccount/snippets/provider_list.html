@@ -1,0 +1,22 @@
+{% load socialaccount %}
+
+{% get_providers as socialaccount_providers %}
+
+{% for provider in socialaccount_providers %}
+{% if provider.id == "openid" %}
+{% for brand in provider.get_brands %}
+<form action="{% provider_login_url provider.id openid=brand.openid_url process=process %}" method="post">
+  {% csrf_token %}
+  <button class="btn btn-outline-dark" type="submit">
+    {{ brand.name }}
+  </button>
+</form>
+{% endfor %}
+{% endif %}
+<form action="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}" method="post">
+  {% csrf_token %}
+  <button class="btn btn-outline-dark" type="submit">
+    {% if provider.name == 'Microsoft Graph' %}Microsoft{% else %}{{provider.name}}{% endif %}
+  </button>
+</form>
+{% endfor %}

@@ -12,10 +12,31 @@ body {
   flex: 1 0 auto;
 }
 
+main {
+  padding-top: 12px;
+  margin-bottom: 12px;
+}
+
+form {
+  margin-bottom: 24px;
+}
+
+.social_providers_list > form {
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
 
 .footer {
   height: 60px;
   line-height: 60px;
   flex-shrink: 0;
+}
+
+.footer .container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 /* end of sticky footer styles */

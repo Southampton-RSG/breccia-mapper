@@ -13,20 +13,8 @@ Before production deployment, see
 https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 
-Many configuration settings are input from `settings.ini`.
-The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABASE_URL, PROJECT_*_NAME, EMAIL_*
-
-- PARENT_PROJECT_NAME
-  default: Parent Project Name
-  Displayed in templates where the name of the parent project should be used
-
-- PROJECT_LONG_NAME
-  default: Project Long Name
-  Displayed in templates where the full name of the project should be used
-
-- PROJECT_SHORT_NAME
-  default: shortname
-  Displayed in templates where a short identifier for the project should be used
+Many configuration settings are input from `.env`.
+The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, PROJECT_*_NAME, EMAIL_*
 
 - SECRET_KEY (REQUIRED)
   Used to generate CSRF tokens - must never be made public
@@ -35,13 +23,37 @@ The most likely required settings are: SECRET_KEY, DEBUG, ALLOWED_HOSTS, DATABAS
   default: False
   Should the server run in debug mode?  Provides information to users which is unsafe in production
 
+- SITE_URL
+  default: localhost
+  The URL the site will be deployed on. Do not include http://, https://, or a trailing slash.
+
+- SITE_PROTOCOL
+  default: http
+  The protocol the site uses. Valid options are http or https.
+
+- PROJECT_LONG_NAME
+  default: Project Network Mapper
+  The project's full name.
+
+- PROJECT_SHORT_NAME
+  default: Network Mapper
+  The project's short/abbreviated name. This will also be used as the app's name when installed as PWA.
+
+- PROJECT_DESCRIPTION
+  default: Application to map network relationships in the organisation.
+  The project's description. Used when installed as a PWA.
+
+- THEME_COLOR
+  default: 212121
+  The project's theme color, in hex format (excluding the leading #).
+
+- BACKGROUND_COLOR
+  default: ffffff
+  The project's background color, in hex format (excluding the leading #).
+
 - ALLOWED_HOSTS
   default: * if DEBUG else localhost
   Accepted values for server header in request - protects against CSRF and CSS attacks
-
-- DATABASE_URL
-  default: sqlite://db.sqlite3
-  URL to database - uses format described at https://github.com/jacobian/dj-database-url
 
 - DBBACKUP_STORAGE_LOCATION
   default: .dbbackup
@@ -118,16 +130,16 @@ import dj_database_url
 
 SETTINGS_EXPORT = [
     'DEBUG',
-    'PARENT_PROJECT_NAME',
+    'SITE_URL',
+    'SITE_PROTOCOL',
+    'GOOGLE_MAPS_API_KEY',
     'PROJECT_LONG_NAME',
     'PROJECT_SHORT_NAME',
-    'GOOGLE_MAPS_API_KEY',
+    'PROJECT_DESCRIPTION',
+    'THEME_COLOR',
+    'BACKGROUND_COLOR',
 ]
 
-PARENT_PROJECT_NAME = config('PARENT_PROJECT_NAME',
-                             default='Parent Project Name')
-PROJECT_LONG_NAME = config('PROJECT_LONG_NAME', default='Project Long Name')
-PROJECT_SHORT_NAME = config('PROJECT_SHORT_NAME', default='shortname')
 
 # Build paths inside the project like this: BASE_DIR.joinpath(...)
 BASE_DIR = pathlib.Path(__file__).parent.parent
@@ -143,6 +155,27 @@ ALLOWED_HOSTS = config(
     default='*' if DEBUG else '127.0.0.1,localhost,localhost.localdomain',
     cast=Csv())
 
+# Site URL
+SITE_URL = config('SITE_URL', default='localhost')
+SITE_PROTOCOL = config('SITE_PROTOCOL', default='http')
+
+# CORS settings
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = config(
+    'TRUSTED_ORIGINS',
+    default='*' if DEBUG else 'http://127.0.0.1,http://localhost,http://localhost.localdomain',
+    cast=Csv())
+CORS_REPLACE_HTTPS_REFERER = True
+CSRF_COOKIE_DOMAIN = config(
+    'SITE_URL',
+    default='localhost')
+CORS_ORIGIN_WHITELIST = config(
+    'TRUSTED_ORIGINS',
+    default='*' if DEBUG else 'http://127.0.0.1,http://localhost,http://localhost.localdomain',
+    cast=Csv())
+
 # Application definition
 
 DJANGO_APPS = [
@@ -152,6 +185,7 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 ]
 
 THIRD_PARTY_APPS = [
@@ -165,10 +199,18 @@ THIRD_PARTY_APPS = [
     'post_office',
     'bootstrap_datepicker_plus',
     'hijack',
-    'compat',
+    'pwa',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.microsoft',
+    'django_inlinecss',
+    'bootstrap_customizer',
 ]
 
 FIRST_PARTY_APPS = [
+    'breccia_mapper',
     'people',
     'activities',
     'export',
@@ -184,6 +226,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'hijack.middleware.HijackUserMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
+    'bootstrap_customizer.middleware.BootstrapThemeMiddleware',
+]
+
+FIXTURE_DIRS = [
+    BASE_DIR.joinpath('breccia_mapper', 'fixtures'),
 ]
 
 ROOT_URLCONF = 'breccia_mapper.urls'
@@ -208,14 +257,45 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'breccia_mapper.wsgi.application'
 
+# allauth
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+SITE_ID = 1
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = SITE_PROTOCOL
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
+# 1 day
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 86400
+# or any other page
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_ADAPTER = 'breccia_mapper.account_adapter.ControlSignupsAccountAdapter'
+
+
+PROJECT_LONG_NAME = config('PROJECT_LONG_NAME', 'Project Network Mapper')
+PROJECT_SHORT_NAME = config('PROJECT_SHORT_NAME', 'Network Mapper')
+PROJECT_DESCRIPTION = config('PROJECT_DESCRIPTION', 'Application to map network relationships in the organisation.')
+THEME_COLOR = '#' + config('THEME_COLOR', '212121')
+BACKGROUND_COLOR = '#' + config('BACKGROUND_COLOR', 'ffffff')
+
+
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    'default':
-    config('DATABASE_URL',
-           default='sqlite:///' + str(BASE_DIR.joinpath('db.sqlite3')),
-           cast=dj_database_url.parse)
+    'default' : {
+      'ENGINE': 'django.db.backends.postgresql',
+      'NAME': 'breccia-mapper',
+      'USER': 'breccia-mapper',
+      'PASSWORD': config('DB_PASSWORD'),
+      'HOST': 'db',
+      'PORT': '5432',
+    }
 }
 
 # Django DBBackup
@@ -271,7 +351,7 @@ AUTH_USER_MODEL = 'people.User'
 
 # Login flow
 
-LOGIN_URL = reverse_lazy('login')
+LOGIN_URL = reverse_lazy('account_login')
 
 LOGIN_REDIRECT_URL = reverse_lazy('people:person.profile')
 
@@ -296,6 +376,10 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR.joinpath('static')
 
 STATICFILES_DIRS = [BASE_DIR.joinpath('breccia_mapper', 'static')]
+
+# Media uploads
+MEDIA_ROOT = BASE_DIR.joinpath('media')
+MEDIA_URL = "/media/"
 
 # Logging - NB the logger name is empty to capture all output
 
@@ -340,6 +424,10 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 # Admin panel variables
 
+CONSTANCE_ADDITIONAL_FIELDS = {
+    'image_field': ['django.forms.ImageField', {}]
+}
+
 CONSTANCE_CONFIG = {
     'NOTICE_TEXT': (
         '',
@@ -359,17 +447,103 @@ CONSTANCE_CONFIG = {
     'RELATIONSHIP_FORM_HELP': (
         '',
         'Help text to display at the top of relationship forms.'),
+    'PARENT_PROJECT_NAME': (
+      '',
+      'Parent project name'),
+    'PROJECT_LEAD': (
+      'Project Lead',
+      'Project lead'),
+    'PROJECT_TAGLINE': (
+      'Here is your project\'s tagline.',
+      'Project tagline'),
+    'ALLOW_SIGNUPS': (
+      False,
+      'Allow new users to sign up using the site\'s sign up form'),
+    'ENABLE_GOOGLE_LOGIN': (
+      False,
+      'Allow users to sign in using their Google accounts'),
+    'ENABLE_MICROSOFT_LOGIN': (
+        False,
+        'Allow users to sign in using their Microsoft accounts'),
+    'HOMEPAGE_HEADER_IMAGE': (
+      '800x500.png',
+      'Homepage header image',
+      'image_field'),
+    'HOMEPAGE_HEADER_IMAGE_SHRINK': (
+      False,
+      'Shrink the homepage header image to display the whole image at all times'),
+    'HOMEPAGE_CARD_1_TITLE': (
+      'Step 1',
+      'Homepage card #1 title'),
+    'HOMEPAGE_CARD_1_DESCRIPTION': (
+      'Tell us about your position within the project',
+      'Homepage card #1 description'),
+    'HOMEPAGE_CARD_1_ICON': (
+      'building-user',
+      'Homepage card #1 icon'),
+    'HOMEPAGE_CARD_2_TITLE': (
+      'Step 2',
+      'Homepage card #2 title'),
+    'HOMEPAGE_CARD_2_DESCRIPTION': (
+      'Describe your relationships with other stakeholders',
+      'Homepage card #2 description'),
+    'HOMEPAGE_CARD_2_ICON': (
+      'handshake-simple',
+      'Homepage card #2 icon'),
+    'HOMEPAGE_CARD_3_TITLE': (
+      'Step 3',
+      'Homepage card #3 title'),
+    'HOMEPAGE_CARD_3_DESCRIPTION': (
+      'Use the network view to analyse relationships',
+      'Homepage card #3 description'),
+    'HOMEPAGE_CARD_3_ICON': (
+      'diagram-project',
+      'Homepage card #3 icon'),
+    'HOMEPAGE_ABOUT_TITLE': (
+      'About Us',
+      'Homepage about section title'),
+    'HOMEPAGE_ABOUT_CONTENT': (
+      """Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. In massa tempor nec feugiat nisl. Eget dolor morbi non arcu risus quis varius quam quisque. Nisl pretium fusce id velit ut tortor pretium viverra suspendisse. Vitae auctor eu augue ut lectus arcu. Tellus molestie nunc non blandit massa enim nec. At consectetur lorem donec massa sapien. Placerat orci nulla pellentesque dignissim enim sit. Sit amet mauris commodo quis imperdiet. Tellus at urna condimentum mattis pellentesque.<br/>In vitae turpis massa sed. Fermentum posuere urna nec tincidunt praesent semper feugiat nibh sed. Ut consequat semper viverra nam libero justo laoreet. Velit ut tortor pretium viverra suspendisse potenti nullam ac tortor. Nunc id cursus metus aliquam eleifend mi in nulla posuere. Aliquam eleifend mi in nulla posuere sollicitudin aliquam. Est ante in nibh mauris cursus mattis molestie a iaculis. Nunc id cursus metus aliquam. Auctor urna nunc id cursus metus aliquam. Porttitor lacus luctus accumsan tortor posuere ac ut consequat semper. Volutpat consequat mauris nunc congue nisi. Leo vel fringilla est ullamcorper eget. Vitae purus faucibus ornare suspendisse sed nisi lacus sed. Massa id neque aliquam vestibulum morbi blandit. Iaculis nunc sed augue lacus viverra vitae congue. Sodales neque sodales ut etiam.""",
+      'Homepage about section content'),
+    'HOMEPAGE_ABOUT_IMAGE': (
+      '400x400.png',
+      'Homepage about section image',
+      'image_field'),
 }  # yapf: disable
 
 CONSTANCE_CONFIG_FIELDSETS = {
-    'Notice Banner': (
+    'Project options': (
+        'PARENT_PROJECT_NAME',
+        'PROJECT_LEAD',
+        'PROJECT_TAGLINE',
+        'ALLOW_SIGNUPS',
+        'ENABLE_GOOGLE_LOGIN',
+        'ENABLE_MICROSOFT_LOGIN',
+    ),
+    'Homepage configuration': (
+        'HOMEPAGE_HEADER_IMAGE_SHRINK',
+        'HOMEPAGE_HEADER_IMAGE',
+        'HOMEPAGE_CARD_1_TITLE',
+        'HOMEPAGE_CARD_1_DESCRIPTION',
+        'HOMEPAGE_CARD_1_ICON',
+        'HOMEPAGE_CARD_2_TITLE',
+        'HOMEPAGE_CARD_2_DESCRIPTION',
+        'HOMEPAGE_CARD_2_ICON',
+        'HOMEPAGE_CARD_3_TITLE',
+        'HOMEPAGE_CARD_3_DESCRIPTION',
+        'HOMEPAGE_CARD_3_ICON',
+        'HOMEPAGE_ABOUT_TITLE',
+        'HOMEPAGE_ABOUT_CONTENT',
+        'HOMEPAGE_ABOUT_IMAGE',
+    ),
+    'Notice banner': (
         'NOTICE_TEXT',
         'NOTICE_CLASS',
     ),
     'Data Collection': (
         'CONSENT_TEXT',
     ),
-    'Help Text': (
+    'Help text': (
         'PERSON_LIST_HELP',
         'ORGANISATION_LIST_HELP',
         'RELATIONSHIP_FORM_HELP',
@@ -396,7 +570,7 @@ BOOTSTRAP4 = {
 EMAIL_HOST = config('EMAIL_HOST', default=None)
 DEFAULT_FROM_EMAIL = config(
     'DEFAULT_FROM_EMAIL',
-    default=f'{PROJECT_SHORT_NAME}@localhost.localdomain')
+    default=f'{PROJECT_SHORT_NAME.replace(" ","")}@localhost.localdomain')
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 if EMAIL_HOST is None:
@@ -416,6 +590,53 @@ else:
     EMAIL_USE_SSL = config('EMAIL_USE_SSL',
                            default=(EMAIL_PORT == 465),
                            cast=bool)
+
+# Bootstrap Datepicker Plus Settings
+BOOTSTRAP_DATEPICKER_PLUS = {
+    "variant_options": {
+        "date": {
+            "format": "YYYY-MM-DD",
+        },
+    }
+}
+
+# PWA settings
+
+PWA_SERVICE_WORKER_PATH = BASE_DIR.joinpath('static/js', 'serviceworker.js')
+
+PWA_APP_NAME = PROJECT_SHORT_NAME
+PWA_APP_DESCRIPTION = PROJECT_DESCRIPTION
+PWA_APP_THEME_COLOR = THEME_COLOR
+PWA_APP_BACKGROUND_COLOR = BACKGROUND_COLOR
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'any'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICONS = [
+	{
+		'src': '/media/icon-192x192.png',
+		'sizes': '192x192'
+	}
+]
+PWA_APP_ICONS_APPLE = [
+	{
+		'src': '/media/icon-192x192.png',
+		'sizes': '192x192'
+	}
+]
+PWA_APP_SPLASH_SCREEN = [
+	{
+		'src': '/media/icon-192x192.png',
+		'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
+	}
+]
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = 'en-GB'
+PWA_APP_DEBUG_MODE = DEBUG
+
+# Database default automatic primary key
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Upstream API keys
 

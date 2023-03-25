@@ -9,7 +9,8 @@
         {% bootstrap_form form %}
         {% buttons %}
             <input type="hidden" name="next" value="{{ next }}">
-            <input type="submit" class="btn btn-info" value="Login">
+            <input type="submit" class="btn btn-primary" value="Login">
         {% endbuttons %}
+        <p>Forgot your password? Reset it <a href="{% url 'account_reset_password' %}">here</a>.</p>
     </form>
 {% endblock %}

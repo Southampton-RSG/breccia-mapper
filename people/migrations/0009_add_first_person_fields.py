@@ -18,6 +18,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='person',
             name='gender',
-            field=models.CharField(blank=True, choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other'), ('N', 'Prefer not to say')], max_length=1),
+            field=models.CharField(blank=True, choices=[('M', 'Male'), ('F', 'Female'), ('B', 'Non-binary'), ('O', 'Other'), ('N', 'Prefer not to say')], max_length=1),
         ),
     ]

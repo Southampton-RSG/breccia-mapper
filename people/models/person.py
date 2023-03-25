@@ -8,7 +8,6 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from django_countries.fields import CountryField
-from django_settings_export import settings_export
 from post_office import mail
 
 from .organisation import Organisation
@@ -43,10 +42,10 @@ class User(AbstractUser):
     def send_welcome_email(self) -> None:
         """Send a welcome email to a new user."""
         # Get exported data from settings.py first
-        context = settings_export(None)
-        context.update({
+        context = {
             'user': self,
-        })
+            'settings': settings,
+        }
 
         logger.info('Sending welcome mail to user \'%s\'', self.username)
 
@@ -77,6 +76,11 @@ class PersonQuestionChoice(QuestionChoice):
                                  on_delete=models.CASCADE,
                                  blank=False,
                                  null=False)
+    class Meta(QuestionChoice.Meta):
+        constraints = [
+            models.UniqueConstraint(fields=['question', 'text'],
+                                    name='unique_question_answer_personquestionchoice')
+        ]
 
 
 class Person(models.Model):

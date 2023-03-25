@@ -3,6 +3,8 @@
 import typing
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import DetailView, RedirectView, UpdateView
@@ -44,9 +46,22 @@ class RelationshipCreateView(LoginRequiredMixin, RedirectView):
     """
     def get_redirect_url(self, *args: typing.Any,
                          **kwargs: typing.Any) -> typing.Optional[str]:
-        target = models.Person.objects.get(pk=self.kwargs.get('person_pk'))
-        relationship, _ = models.Relationship.objects.get_or_create(
-            source=self.request.user.person, target=target)
+        target = None
+        try:
+            target = models.Person.objects.get(pk=self.kwargs.get('person_pk'))
+            if target is None: raise ObjectDoesNotExist
+
+        except ObjectDoesNotExist:
+            # target doesn't exist
+            return reverse('people:person.list')
+
+        try:
+            relationship, _ = models.Relationship.objects.get_or_create(
+                source=self.request.user.person, target=target)
+
+        except ObjectDoesNotExist:
+            # User has no linked Person yet
+            return reverse('people:person.create')
 
         return reverse('people:relationship.update',
                        kwargs={'pk': relationship.pk})

@@ -67,10 +67,10 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='organisationrelationshipquestionchoice',
-            constraint=models.UniqueConstraint(fields=('question', 'text'), name='unique_question_answer'),
+            constraint=models.UniqueConstraint(fields=('question', 'text'), name='unique_question_answer_organisationrelationshipquestionchoice'),
         ),
         migrations.AddConstraint(
             model_name='organisationrelationship',
-            constraint=models.UniqueConstraint(fields=('source', 'target'), name='unique_relationship'),
+            constraint=models.UniqueConstraint(fields=('source', 'target'), name='unique_relationship_organisationrelationship'),
         ),
     ]

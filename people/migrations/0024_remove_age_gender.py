@@ -10,6 +10,7 @@ from .utils.question_sets import port_question
 class GenderChoices(TextChoices):
     MALE = 'M', 'Male'
     FEMALE = 'F', 'Female'
+    NON_BINARY = 'B', 'Non-binary'
     OTHER = 'O', 'Other'
     PREFER_NOT_TO_SAY = 'N', 'Prefer not to say'
 

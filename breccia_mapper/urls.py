@@ -14,9 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
 from django.urls import include, path
+from django.conf.urls.static import static
+from bootstrap_customizer import urls as bootstrap_customizer_urls
 
 from . import views
+
+admin.site.site_header = settings.PROJECT_LONG_NAME + " Admin"
+admin.site.site_title = settings.PROJECT_SHORT_NAME + " Admin"
 
 urlpatterns = [
     path('admin/',
@@ -27,9 +33,6 @@ urlpatterns = [
 
     path('hijack/',
          include('hijack.urls', namespace='hijack')),
-
-    path('',
-         include('django.contrib.auth.urls')),
 
     path('',
          views.IndexView.as_view(),
@@ -47,4 +50,13 @@ urlpatterns = [
 
     path('',
          include('activities.urls')),
+
+    path('',
+         include('pwa.urls')),
+
+    path('accounts/',
+         include('allauth.urls')),
+
+    path('bootstrap_customizer',
+         include(bootstrap_customizer_urls)),
 ]  # yapf: disable

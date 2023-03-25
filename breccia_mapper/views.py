@@ -9,6 +9,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django.views.generic.edit import UpdateView
+from django.contrib.auth.mixins import UserPassesTestMixin
+import typing
 
 from . import forms
 
@@ -18,6 +20,10 @@ User = get_user_model()  # pylint: disable=invalid-name
 class IndexView(TemplateView):
     # Template set in Django settings file - may be customised by a customisation app
     template_name = settings.TEMPLATE_NAME_INDEX
+
+class UserIsStaffMixin(UserPassesTestMixin):
+    def test_func(self) -> typing.Optional[bool]:
+        return self.request.user.is_staff
 
 
 class ConsentTextView(LoginRequiredMixin, UpdateView):

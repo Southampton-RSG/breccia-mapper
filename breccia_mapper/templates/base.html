@@ -4,7 +4,13 @@
     {% load i18n %}
     {% get_current_language as LANGUAGE_CODE %}
 {% endif %}
+{% load bootstrap_customizer %}
 <html lang="{{ LANGUAGE_CODE|default:'en_us' }}">
+
+{% load pwa %}
+{% load socialaccount %}
+
+<link rel="manifest" href="/manifest.json">
 
 <head>
     <!-- Required meta tags -->
@@ -14,23 +20,28 @@
 
     <!-- Bootstrap CSS -->
     {% bootstrap_css %}
+    <style lang="css">
+        {% bootstrap_theme_css_above_the_fold %}
+    </style>
 
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/fontawesome.min.css"
-          integrity="sha256-/sdxenK1NDowSNuphgwjv8wSosSNZB0t5koXqd7XqOI="
-          crossorigin="anonymous" />
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/fontawesome.min.css"
+        integrity="sha512-giQeaPns4lQTBMRpOOHsYnGw1tGVzbAIHUyHRgn7+6FmiEgGGjaG0T2LZJmAPMzRCl+Cug0ItQ2xDZpTmEc+CQ=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
 
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/solid.min.css"
-          integrity="sha256-8DcgqUGhWHHsTLj1qcGr0OuPbKkN1RwDjIbZ6DKh/RA="
-          crossorigin="anonymous" />
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/solid.min.css"
+        integrity="sha512-6mc0R607di/biCutMUtU9K7NtNewiGQzrvWX4bWTeqmljZdJrwYvKJtnhgR+Ryvj+NRJ8+NnnCM/biGqMe/iRA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
 
-    {% load staticfiles %}
+    {% load static %}
     <link rel="stylesheet" href="{% static 'css/global.css' %}">
 
     <link rel="stylesheet"
           type="text/css"
-          href="{% static 'hijack/hijack-styles.css' %}" />
+          href="{% static 'hijack/hijack.min.css' %}" />
 
     {% if 'javascript_in_head'|bootstrap_setting %}
         {% if 'include_jquery'|bootstrap_setting %}
@@ -46,11 +57,15 @@
         {{ form.media.css }}
     {% endif %}
 
+    <!-- PWA metadata -->
+    {% progressive_web_app_meta %}
+
     {% block extra_head %}{% endblock %}
 
 </head>
 
 <body>
+    <link rel="stylesheet" type="text/css" href="{% bootstrap_theme_css_below_the_fold_url %}" />
     <div class="content" style="display: flex; flex-direction: column">
         {% block navbar %}
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -68,6 +83,12 @@
                     <div class="navbar-collapse collapse" id="navbarCollapse">
                         <ul class="navbar-nav mt-2 mt-lg-0">
                             <li class="nav-item">
+                                <a href="{% if request.user.person %}{% url 'people:person.profile' %}{% else %}{% url 'people:person.create' %}{% endif %}" class="nav-link">
+                                    Profile
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
                                 <a href="{% url 'people:person.list' %}" class="nav-link">People</a>
                             </li>
 
@@ -83,15 +104,15 @@
                                 <a href="{% url 'activities:activity.list' %}" class="nav-link">Activities</a>
                             </li>
 
-                            <li class="nav-item">
-                                <a href="{% url 'people:map' %}" class="nav-link">Map</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{% url 'people:network' %}" class="nav-link">Network</a>
-                            </li>
-
                             {% if request.user.is_superuser %}
+                                <li class="nav-item">
+                                    <a href="{% url 'people:map' %}" class="nav-link">Map</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{% url 'people:network' %}" class="nav-link">Network</a>
+                                </li>
+
                                 <li class="nav-item">
                                     <a href="{% url 'export:index' %}" class="nav-link">Export</a>
                                 </li>
@@ -105,32 +126,27 @@
                         <ul class="navbar-nav mt-2 mt-lg-0 ml-auto">
                             {% if request.user.is_authenticated %}
                                 <li class="nav-item">
-                                    {% if request.user.person %}
-                                        <a href="{% url 'people:person.profile' %}" class="nav-link">
-                                            <i class="fas fa-user-circle"></i>
-                                            {{ request.user }}
-                                        </a>
-
-                                    {% else %}
-                                        <a href="{% url 'people:person.create' %}?user" class="nav-link">
-                                            <i class="fas fa-user-circle"></i>
-                                            {{ request.user }}
-                                        </a>
-
-                                    {% endif %}
+                                    <a href="{% url 'account_email' %}" class="nav-link">
+                                        <i class="fa-solid fa-circle-user"></i>
+                                        {% if request.user.first_name != "" %}
+                                        {{ request.user.first_name }}
+                                        {% else %}
+                                        {{ request.user }}
+                                        {% endif %}
+                                    </a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a href="{% url 'logout' %}" class="nav-link">
-                                        <i class="fas fa-sign-out-alt"></i>
+                                    <a href="{% url 'account_logout' %}" class="nav-link">
+                                        <i class="fa-solid fa-right-from-bracket"></i>
                                         Log Out
                                     </a>
                                 </li>
 
                             {% else %}
                                 <li class="nav-item">
-                                    <a href="{% url 'login' %}" class="nav-link">
-                                        <i class="fas fa-sign-in-alt"></i>
+                                    <a href="{% url 'account_login' %}" class="nav-link">
+                                        <i class="fa-solid fa-right-to-bracket"></i>
                                         Log In
                                     </a>
                                 </li>
@@ -149,8 +165,30 @@
             </div>
         {% endif %}
 
-        {% load hijack_tags %}
-        {% hijack_notification %}
+        {% load hijack %}
+
+        {# Hijack notification if user is hijacked #}
+        {% if person.user == request.user and request.user.is_hijacked %}
+        <div class="djhj" id="djhj">
+            <div class="djhj-notification">
+                <div class="djhj-message">
+                    {% blocktrans trimmed with user=request.user %}
+                    You are currently working on behalf of <em>{{ user }}</em>.
+                    {% endblocktrans %}
+                </div>
+                <form action="{% url 'hijack:release' %}" method="POST" class="djhj-actions">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button class="djhj-button" onclick="document.getElementById('djhj').style.display = 'none';" type="button">
+                        {% trans 'hide' %}
+                    </button>
+                    <button class="djhj-button" type="submit">
+                        {% trans 'release' %}
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
 
         {% if request.user.is_authenticated and not request.user.has_person %}
             <div class="alert alert-info rounded-0" role="alert">
@@ -159,7 +197,7 @@
                     Please fill in your details so you can be part of the network.
 
                     <a class="btn btn-success"
-                    href="{% url 'people:person.create' %}?user">Profile</a>
+                    href="{% url 'people:person.create' %}">Profile</a>
                 </p>
             </div>
         {% endif %}
@@ -190,6 +228,7 @@
     <footer class="footer bg-light">
         <div class="container">
             <span class="text-muted">{{ settings.PROJECT_LONG_NAME }}</span>
+            <span class="text-muted">Developed by the <a href="https://gcrf-breccia.com">BRECcIA</a> team</span>
         </div>
     </footer>
 
