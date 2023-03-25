@@ -17,5 +17,5 @@ mail.log/
 *.log*
 deployment*
 
-docs/
+/docs/
 .readthedocs.yaml
