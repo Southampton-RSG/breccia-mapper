@@ -2,7 +2,7 @@
 
 After installing the Network Mapper, some configuration must be done in the web interface. You will need to log in with an admin account.
 
-:::{info}
+:::{information}
 Admin dashboard: this is the admin section of the site, accessed by clicking `Admin` in the navigation bar at the top of the screen.
 :::
 
@@ -132,7 +132,7 @@ Organisations are created through the main site (not the admin dashboard).
 
 ### People
 
-:::{info}
+:::{information}
 When a `Person` is created for a user who does not have an account, an anonymous account is created for them - with login disabled and a random username (starting `autogen_`). This allows administrators to edit their details on their behalf. You should not delete these users unless you wish to delete all data relating to that person.
 :::
 
