@@ -2,7 +2,7 @@
 
 You will need to log in with an administrator account to perform these actions.
 
-:::{information}
+:::{note}
 Admin dashboard: this is the admin section of the site, accessed by clicking `Admin` in the navigation bar at the top of the screen.
 :::
 
