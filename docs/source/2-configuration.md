@@ -1,4 +1,5 @@
 # Configuration
+(configuration)=
 
 After installing the Network Mapper, some configuration must be done in the web interface. You will need to log in with an admin account.
 
@@ -182,7 +183,6 @@ Then:
 Then enable Microsoft login with the `ENABLE_MICROSOFT_LOGIN` option in the `Config` section of the admin dashboard, as per [these instructions](#main-configuration-options).
 
 ## Inviting Users
-(inviting_users)=
 
 In the admin dashboard, click `Add` next to `Users`. Choose a username for them, enter their email address, and enter a temporary password. It does not matter what this password is, and you do not need to remember or store it, as the new user is automatically sent an email welcoming them to the platform and providing instructions for how to reset their password.
 
