@@ -8,7 +8,7 @@ Admin dashboard: this is the admin section of the site, accessed by clicking `Ad
 
 ## Inviting Users
 
-Please see {doc}`Configuration <2-configuration#inviting-users>`.
+Please see [Configuration](/2-configuration#inviting-users).
 
 ## Deleting Users
 
