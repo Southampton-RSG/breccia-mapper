@@ -6,10 +6,6 @@ It can be deployed by individuals or organisations, and supports login with user
 
 This work was funded through the "Building REsearch Capacity for sustainable water and food security In drylands of sub-saharan Africa" (BRECcIA) project which is supported by UK Research and Innovation as part of the Global Challenges Research Fund, grant number NE/P021093/1.
 
-:::{note}
-This project is still under development until April 2023.
-:::
-
 ## Contents
 
 ```{toctree}
