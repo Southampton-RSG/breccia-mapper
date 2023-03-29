@@ -1,11 +1,11 @@
 # Deployment
 
-The BRECcIA Network Mapper can be deployed in a variety of ways, most of which utilise Docker.
+The [BRECcIA Network Mapper](https://github.com/Southampton-RSG/breccia-mapper) can be deployed in a variety of ways, most of which utilise Docker.
 Ansible deployment has been tested on RHEL7 and RHEL8.
 
 ## Choosing How to Deploy
 
-If you are an organisation deploying the app on a server, [Ansible](#ansible) is recommended. If Ansible is not used with your server, [Docker Compose](#docker-compose) or [][Vagrant](#vagrant) are recommended.
+If you are an organisation deploying the app on a server, [Ansible](#ansible) is recommended. If Ansible is not used on your server, [Docker Compose](#docker-compose) or [Vagrant](#vagrant) are recommended.
 
 If you are an individual deploying the app on your local machine, [Docker (for individuals)](#docker-for-individuals) is recommended. However, if you are planning on making the app accessible to other people (outside your computer), we advise deploying the app on a server.
 
@@ -16,7 +16,7 @@ Prerequisites:
 - [Ansible](https://www.ansible.com/)
 
 :::{note}
-Deployment with Ansible has been tested on RHEL7 and RHEL8, but is compatible with other Linux distributions with minor changes to the playbook (`deploy/playbook.yml`)
+Deployment with Ansible has been tested on RHEL7 and RHEL8, but is compatible with other Linux distributions with minor changes to the playbook (`playbook.yml`)
 :::
 
 To deploy the BRECcIA Network Mapper with Ansible:
@@ -163,7 +163,7 @@ Prerequisites:
 
 - [Docker Compose](https://docs.docker.com/compose) is installed and running. If you are not familiar with Docker, we recommend using [Docker Desktop](https://docs.docker.com/desktop/). Simply install and run it.
 
-To deploy the BRECcIA Network Mapper with Docker Desktop:
+To deploy the BRECcIA Network Mapper with Docker:
 
 1. Download `deploy-docker.zip` [from the latest release](https://github.com/Southampton-RSG/breccia-mapper/releases/latest).
 2. Extract the zip file into an appropriate folder.

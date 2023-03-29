@@ -2,13 +2,13 @@
 
 You will need to log in with an administrator account to perform these actions.
 
-:::{important}
-Admin dashboard: this is the admin section of the site, accessed by clicking `Admin` on the navigation bar at the top.
+:::{note}
+Admin dashboard: this is the admin section of the site, accessed by clicking `Admin` in the navigation bar at the top of the screen.
 :::
 
 ## Inviting Users
 
-Please see [Configuration](2-configuration#inviting-users).
+Please see [Configuration](inviting_users).
 
 ## Deleting Users
 
@@ -47,28 +47,28 @@ The user you wish to make an administrator must already exist. Then:
 
 ## View a Map of People and Organisations
 
-To view an interactive map showing people and organisations that have recorded their locations, click `Map` in the banner at the top of the screen. You can toggle the visibility of people and organisations with the buttons at the top of the page.
-
-Nodes for people on the map have the same colour as the buttons at the top of the page. Nodes can be clicked the name of the person or organisation they represent, and this can be clicked to view their profile.
-
 :::{note}
 This page is only available to administrators.
 :::
+
+To view an interactive map showing people and organisations that have reported their locations, click `Map` in the navigation bar at the top of the screen. You can toggle the visibility of people and organisations with the buttons at the top of the page.
+
+`Person` nodes on the map have the same colour as the buttons at the top of the page. Nodes can be clicked to show the name of the person or organisation they represent, and these in turn can be clicked to view the person's or organisation's profile.
 
 ## View a Graph of the Network
 
-The network mapper provides an interface to view the network as a graph. To access it, click `Network` in the banner at the top of the screen. This graph can be customised with various filters as shown on the page. Setting the date will show the state of the network as it was on the given date. People and organisations can be anonymised, organisations can be hidden, and the graph can be downloaded as an image. These options are all available as buttons on the page.
+:::{note}
+This page is only available to administrators.
+:::
+
+The network mapper provides an interface to view the network as a graph. To access it, click `Network` in the navigation bar at the top of the screen. This graph can be customised with various filters as shown on the page. Setting the date will show the state of the network as it was on the given date. People and organisations can be anonymised, organisations can be hidden, and the graph can be downloaded as an image. These options are all available as buttons on the page.
 
 The graph can also be manipulated with the mouse.
 
-:::{note}
-This page is only available to administrators.
-:::
-
 ## Export Data
 
-All data relating to the network can be exported as CSV files. To do this, click `Export` in the banner at the top of the screen, then click `Export` next to the data you wish to export. This can then be manipulated as a spreadsheet or with a tool like R to perform more complex data analysis than is available natively in the network mapper.
-
 :::{note}
 This page is only available to administrators.
 :::
+
+All data relating to the network can be exported as CSV files. To do this, click `Export` in the navigation bar at the top of the screen, then click `Export` next to the data you wish to export. This can then be manipulated as a spreadsheet or with a tool like R to perform more complex data analysis than is available natively in the network mapper.

@@ -1,6 +1,6 @@
 # BRECcIA Mapper
 
-[![Documentation Status](https://readthedocs.org/projects/breccia/badge/?version=latest)](https://breccia.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/breccia/badge/?version=latest)](https://docs.gcrf-breccia.com/en/latest/?badge=latest)
 
 BRECcIA Mapper is a web app to collect and explore data about the relationships between researchers and their stakeholders on large-scale, multi-site research projects.
 This allows researchers to visually represent the relationships between project staff and stakeholders involved in the their project at different points in time.
@@ -11,7 +11,7 @@ This work was funded through the "Building REsearch Capacity for sustainable wat
 ## Deployment
 
 This project is written in Python using the popular [Django](https://www.djangoproject.com/) framework.
-Deployment is managed using [Ansible](https://www.ansible.com/) and Docker (https://www.docker.com/), see the `deploy/README.md` for details.
+Deployment relies on [Docker Compose](https://docs.docker.com/compose) but is possible with various methods. See [the documentation](https://docs.gcrf-breccia.com/en/latest/1-deployment.html) for details.
 
 ## Contributors
 

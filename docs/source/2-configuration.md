@@ -1,9 +1,9 @@
 # Configuration
 
-After installing the Network Mapper, some configuration must be done in the web interface. You will need to log in with an admin account.
+After installing the [BRECcIA Network Mapper](https://github.com/Southampton-RSG/breccia-mapper), some configuration must be done in the web interface. You will need to log in with an admin account.
 
-:::{important}
-Admin dashboard: this is the admin section of the site, accessed by clicking `Admin` on the navigation bar at the top.
+:::{note}
+Admin dashboard: this is the admin section of the site, accessed by clicking `Admin` in the navigation bar at the top of the screen.
 :::
 
 ## Setup
@@ -50,32 +50,32 @@ Then click `Save`.
 
 There are several general settings which must be configured. Open the admin dashboard and click `Config` under `CONSTANCE`, then configure the available settings, as explained below.
 
-1. `CONSENT_TEXT`: The text shown to users when requesting consent to use their data. This text accompanies a checkbox captioned `I have read and understood this information and consent to my data being used in this way`.
-2. `PERSON_LIST_HELP`: Help text to display at the top of the people list.
-3. `ORGANISATION_LIST_HELP`: Help text to display at the top of the organisaton list.
-4. `RELATIONSHIP_FORM_HELP`: Help text to display at the top of relationship forms.
-5. `HOMEPAGE_HEADER_IMAGE_SHRINK`: Whether the homepage header image should be shrunk to display the whole image at all times.
-6. `HOMEPAGE_HEADER_IMAGE`: The header image for the homepage.
-7. `HOMEPAGE_CARD_1_TITLE`: The title for the first card displayed on the homepage.
-8. `HOMEPAGE_CARD_1_DESCRIPTION`: The description for the first card displayed on the homepage.
-9. `HOMEPAGE_CARD_1_ICON`: The icon for the first card displayed on the homepage. Icons are FontAwesome 6 icons, which are listed [here](https://fontawesome.com/v6/search?m=free).
-10. `HOMEPAGE_CARD_2_TITLE`: The title for the second card displayed on the homepage.
-11. `HOMEPAGE_CARD_2_DESCRIPTION`: The description for the second card displayed on the homepage.
-12. `HOMEPAGE_CARD_2_ICON`: The icon for the second card displayed on the homepage. Icons are FontAwesome 6 icons, which are listed [here](https://fontawesome.com/v6/search?m=free).
-13. `HOMEPAGE_CARD_3_TITLE`: The title for the third card displayed on the homepage.
-14. `HOMEPAGE_CARD_3_DESCRIPTION`: The description for the third card displayed on the homepage.
-15. `HOMEPAGE_CARD_3_ICON`: The icon for the third card displayed on the homepage. Icons are FontAwesome 6 icons, which are listed [here](https://fontawesome.com/v6/search?m=free).
-16. `HOMEPAGE_ABOUT_TITLE`: The title for the about section on the homepage.
-17. `HOMEPAGE_ABOUT_CONTENT`: The content for the about section on the homepage. HTML is accepted.
-18. `HOMEPAGE_ABOUT_IMAGE`: The image for the about section on the homepage.
-19. `NOTICE_TEXT`: Text to be displayed in a notice banner at the top of every page.
-20. `NOTICE_CLASS`: CSS class to use for background of the notice banner.
-21. `PARENT_PROJECT_NAME`: The name of the project's parent project, if one exists.
-22. `PROJECT_LEAD`: The project's lead person, organisation, or similar.
-23. `PROJECT_TAGLINE`: The project's tagline.
-24. `ALLOW_SIGNUPS`: Whether new users should be able to sign themselves up through the site. This is useful for minimising the number of users that must be manually created, and it is recommended that this feature is disabled once all users have created their accounts.
-25. `ENABLE_GOOGLE_LOGIN`: Whether login through Google should be enabled. Only enable this if Google login has been configured. See [Google login](#google).
-25. `ENABLE_MICROSOFT_LOGIN`: Whether login through Microsoft should be enabled. Only enable this if Microsoft login has been configured. See [Microsoft login](#microsoft).
+- `CONSENT_TEXT`: The text shown to users when requesting consent to use their data. This text accompanies a checkbox captioned `I have read and understood this information and consent to my data being used in this way`.
+- `PERSON_LIST_HELP`: Help text to display at the top of the people list.
+- `ORGANISATION_LIST_HELP`: Help text to display at the top of the organisaton list.
+- `RELATIONSHIP_FORM_HELP`: Help text to display at the top of relationship forms.
+- `HOMEPAGE_HEADER_IMAGE_SHRINK`: Whether the homepage header image should be shrunk to display the whole image at all times.
+- `HOMEPAGE_HEADER_IMAGE`: The header image for the homepage.
+- `HOMEPAGE_CARD_1_TITLE`: The title for the first card displayed on the homepage.
+- `HOMEPAGE_CARD_1_DESCRIPTION`: The description for the first card displayed on the homepage.
+- `HOMEPAGE_CARD_1_ICON`: The icon for the first card displayed on the homepage. Icons are FontAwesome 6 icons, which are listed [here](https://fontawesome.com/v6/search?m=free).
+- `HOMEPAGE_CARD_2_TITLE`: The title for the second card displayed on the homepage.
+- `HOMEPAGE_CARD_2_DESCRIPTION`: The description for the second card displayed on the homepage.
+- `HOMEPAGE_CARD_2_ICON`: The icon for the second card displayed on the homepage. Icons are FontAwesome 6 icons, which are listed [here](https://fontawesome.com/v6/search?m=free).
+- `HOMEPAGE_CARD_3_TITLE`: The title for the third card displayed on the homepage.
+- `HOMEPAGE_CARD_3_DESCRIPTION`: The description for the third card displayed on the homepage.
+- `HOMEPAGE_CARD_3_ICON`: The icon for the third card displayed on the homepage. Icons are FontAwesome 6 icons, which are listed [here](https://fontawesome.com/v6/search?m=free).
+- `HOMEPAGE_ABOUT_TITLE`: The title for the about section on the homepage.
+- `HOMEPAGE_ABOUT_CONTENT`: The content for the about section on the homepage. HTML is accepted.
+- `HOMEPAGE_ABOUT_IMAGE`: The image for the about section on the homepage.
+- `NOTICE_TEXT`: Text to be displayed in a notice banner at the top of every page.
+- `NOTICE_CLASS`: CSS class to use for the background of the notice banner.
+- `PARENT_PROJECT_NAME`: The name of the project's parent project, if one exists.
+- `PROJECT_LEAD`: The project's lead person, organisation, or similar.
+- `PROJECT_TAGLINE`: The project's tagline.
+- `ALLOW_SIGNUPS`: Whether new users should be able to sign themselves up through the site. This is useful for minimising the number of users that must be manually created, and it is recommended that this feature is disabled once all users have created their accounts.
+- `ENABLE_GOOGLE_LOGIN`: Whether login through Google should be enabled. Only enable this if Google login has been configured. See [Google login](#google).
+- `ENABLE_MICROSOFT_LOGIN`: Whether login through Microsoft should be enabled. Only enable this if Microsoft login has been configured. See [Microsoft login](#microsoft).
 
 Then click `Save`.
 
@@ -83,20 +83,20 @@ Then click `Save`.
 
 There are several types of questions, but they all have the same set of information stored in them:
 
-- Version: The version of the question - this should be incremented when the question is altered.
-- Text: The main text of the question.
-- Filter text: Each question appears as a filter on the `Network` page. This is alternative text to replace the full question as the filter title. If left blank, the main text of the question will be used.
-- Help text: Help text shown below the question when people enter their answer.
-- Answer is public: Whether answers to this question should be considered public.
-- Is multiple choice: Whether users should only be allowed to select multiple options, instead of just one.
-- Hardcoded field: The name of the hardcoded field that the question relates to. This is not applicable for non-default questions.
-- Allow free text: Whether users should be allowed to enter their own text in addition to choosing an available option. When a user enters free text, a new option will be created with their input.
-- Order: The priority order for the question to be displayed in. Lower priority questions will be displayed earlier in the list of questions.
+- `Version`: The version of the question - this should be incremented when the question is altered.
+- `Text`: The main text of the question.
+- `Filter text`: Each question appears as a filter on the `Network` page. This is alternative text to replace the full question as the filter title. If left blank, the main text of the question will be used.
+- `Help text`: Help text shown below the question when people enter their answer.
+- `Answer is public`: Whether answers to this question should be considered public.
+- `Is multiple choice`: Whether users should only be allowed to select multiple options, instead of just one.
+- `Hardcoded field`: The name of the hardcoded field that the question relates to. This is not applicable for non-preset questions (i.e. ones that you create).
+- `Allow free text`: Whether users should be allowed to enter their own text in addition to choosing an available option. When a user enters free text, a new option will be created with their input.
+- `Order`: The priority order for the question to be displayed in. Lower priority questions will be displayed earlier in the list of questions.
 - Question choices
-	- Text: The main text of the option.
-	- Order: The priority order for the option to be displayed in. Lower priority options will be displayed earlier in the list of options.
-	- Is negative response: Only applicable for relationship questions. Whether the option indicates the relationship is of the lowest level of closeness. This allows automatic population of questions if the relationship being reported is not at all close. All options marked as negative responses will be selected when this button is pressed.
-	- Delete?: Whether the option should be deleted when the question is saved.
+	- `Text`: The main text of the option.
+	- `Order`: The priority order for the option to be displayed in. Lower priority options will be displayed earlier in the list of options.
+	- `Is negative response`: Only applicable for relationship questions. Whether the option indicates the relationship is of the lowest level of closeness. This allows automatic population of questions if the relationship being reported is not at all close. All options marked as negative responses will be selected when this button is pressed.
+	- `Delete?`: Whether the option should be deleted when the question is saved.
 
 There are various types of questions, which can be added by clicking `Add` next to the appropriate section in the admin dashboard:
 
@@ -125,23 +125,27 @@ At least one organisation must also exist for people to be able to create their 
 
 Organisations are created through the main site (not the admin dashboard).
 
-1. Click `Organisations` in the banner at the top of the screen.
+1. Click `Organisations` in the navigation bar at the top of the screen.
 2. Click `New Organisation` at the top of the page.
 2. Answer the questions shown.
 4. Finally click `Submit`.
 
 ### People
 
-Organisations are created through the main site (not the admin dashboard). People should only be created when it is known that the person will not have a login of their own to the site - e.g. for researchers logging data for multiple individuals.
+:::{note}
+When a `Person` is created for a user who does not have an account, an anonymous account is created for them - with login disabled and a random username (starting `autogen_`). This allows administrators to edit their details on their behalf. You should not delete these users unless you wish to delete all data relating to that person.
+:::
 
-1. Click `People` in the banner at the top of the screen.
+People are created through the main site (not the admin dashboard). People should only be created when it is known that the person will not have a login of their own to the site - e.g. for researchers logging data for multiple individuals.
+
+1. Click `People` in the navigation bar at the top of the screen.
 2. Click `New Person` at the top of the page.
 2. Answer the questions shown.
 4. Finally click `Submit`.
 
 ## Federated Login
 
-Federated login is supported for Google an Microsoft accounts, and can be set up through the `Social Accounts` section of the admin dashboard.
+Federated login is supported for Google an Microsoft accounts, and can be set up through the `SOCIAL ACCOUNTS` section of the admin dashboard.
 
 ### Google
 
@@ -158,7 +162,7 @@ Then:
 - Click `Choose all` under the `Available sites` box, to enable Google login on this site.
 - Click `Save`.
 
-Then enable Google login with the `ENABLE_GOOGLE_LOGIN` option in the `Config` section of the admin dashboard.
+Then enable Google login with the `ENABLE_GOOGLE_LOGIN` option in the `Config` section of the admin dashboard, as per [these instructions](#main-configuration-options).
 
 ### Microsoft
 
@@ -175,14 +179,15 @@ Then:
 - Click `Choose all` under the `Available sites` box, to enable Google login on this site.
 - Click `Save`.
 
-Then enable Microsoft login with the `ENABLE_MICROSOFT_LOGIN` option in the `Config` section of the admin dashboard.
+Then enable Microsoft login with the `ENABLE_MICROSOFT_LOGIN` option in the `Config` section of the admin dashboard, as per [these instructions](#main-configuration-options).
 
+(inviting_users)=
 ## Inviting Users
 
-In the admin dashboard, click `Add` next to `Users`. Choose a username for them, enter their email address, and enter a temporary password. It does not matter what this password is, and you do not need to remember or store it, as the new user is automatically sent an email welcoming them to the platform and containing instructions for how to reset their password.
+In the admin dashboard, click `Add` next to `Users`. Choose a username for them, enter their email address, and enter a temporary password. It does not matter what this password is, and you do not need to remember or store it, as the new user is automatically sent an email welcoming them to the platform and providing instructions for how to reset their password.
 
-If the user you wish to invite already has a `Person` created for them, they will already have an account with a random username and login disabled. To find this account, go to `People` (in the `People` section) in the admin dashboard and select the appropriate person. Then click the blue eye icon next to the `User` field.
+If the user you wish to invite has already had a `Person` created for them, they will already have an account with login disabled and a random username (starting `autogen_`). To find this account, go to `People` (in the `PEOPLE` section) in the admin dashboard and select the appropriate person. Then click the blue eye icon next to the `User` field.
 
 ![Person's user relation with blue eye icon](images/2-person-user.png "Person's user relation with blue eye icon")
 
-This will take you to the user, and you can then change their username along with add a first name, last name, and email address. Note that a welcome email will not be sent to the user in this case, so you will have to let them know that their account is active and what their username is. They can use the *forgot password* option when logging in to set their password.
+This will take you to the user, and you can then change their username and add a first name, last name, and email address. Note that a welcome email will not be sent to the user in this case, so you will have to let them know that their account is active and what their username is. They can use the *forgot password* option when logging in to set their password.
