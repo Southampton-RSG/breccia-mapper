@@ -1,6 +1,6 @@
 # Configuration
 
-After installing the Network Mapper, some configuration must be done in the web interface. You will need to log in with an admin account.
+After installing the [BRECcIA Network Mapper](https://github.com/Southampton-RSG/breccia-mapper), some configuration must be done in the web interface. You will need to log in with an admin account.
 
 :::{note}
 Admin dashboard: this is the admin section of the site, accessed by clicking `Admin` in the navigation bar at the top of the screen.

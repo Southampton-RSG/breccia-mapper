@@ -1,6 +1,6 @@
 # Deployment
 
-The BRECcIA Network Mapper can be deployed in a variety of ways, most of which utilise Docker.
+The [BRECcIA Network Mapper](https://github.com/Southampton-RSG/breccia-mapper) can be deployed in a variety of ways, most of which utilise Docker.
 Ansible deployment has been tested on RHEL7 and RHEL8.
 
 ## Choosing How to Deploy
