@@ -9,7 +9,7 @@
 project = 'BRECcIA Network Mapper'
 copyright = 'Matthew Grove, University of Southampton'
 author = 'Matthew Grove'
-release = '1.1'
+release = '2.0.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
